@@ -1,274 +1,144 @@
 "use client";
 
-import type React from "react";
-
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Eye, EyeOff, Upload } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import { FormField } from "@/components/FormField";
+import { ImageUpload } from "@/components/ImageUpload";
+import { PasswordField } from "@/components/PasswordField";
+import { schoolRegistrationFormSchema } from "@/schema/schoolRegistrationSchema";
+import { SchoolFormData } from "@/types/school";
+import { registerSchool } from "@/services/httpClient";
 
-export default function SchoolRegistrationForm() {
-  const [formData, setFormData] = useState({
-    name: "",
-    address: "",
-    admin_username: "",
-    admin_password: "",
-    admin_email: "",
-    admin_first_name: "",
-    admin_last_name: "",
-    school_image: "",
-    phone_number: "",
+export default function SchoolRegistrationPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<SchoolFormData>({
+    resolver: zodResolver(schoolRegistrationFormSchema),
+    defaultValues: {
+      name: "",
+      address: "",
+      admin_username: "",
+      admin_password: "",
+      admin_email: "",
+      admin_first_name: "",
+      admin_last_name: "",
+      phone_number: "",
+    },
   });
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState<Date | undefined>(new Date());
+  const mutation = useMutation({
+    mutationFn: registerSchool,
+    onSuccess: () => {
+      toast.success("School registered successfully!");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Registration failed. Please try again.");
+    },
+  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setImagePreview(event.target.result as string);
-          setFormData((prev) => ({ ...prev, school_image: file.name }));
-        }
-      };
-
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Here you would typically send the data to your API
-    alert("School registration submitted successfully!");
+  const onSubmit = (data: SchoolFormData) => {
+    mutation.mutate(data);
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto py-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold">Register your information</h1>
+        <h1 className="text-2xl font-bold">Register Your School</h1>
         <p className="text-muted-foreground">
-          By registering, you will be able to join our team!
+          Create your school profile and administrator account
         </p>
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* School Information */}
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">School Information</h2>
-
-            <div className="space-y-2">
-              <Label htmlFor="name">School Name</Label>
-              <Input
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="School name"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="phone_number">Phone number</Label>
-              <Input
-                id="phone_number"
-                name="phone_number"
-                value={formData.phone_number}
-                onChange={handleChange}
-                placeholder="Phone number"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="admin_email">Email address</Label>
-              <Input
-                id="admin_email"
-                name="admin_email"
-                type="email"
-                value={formData.admin_email}
-                onChange={handleChange}
-                placeholder="Email address"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="address">Address</Label>
-              <Input
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                placeholder="Address"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="school_image">School Logo/Image</Label>
-              <div className="flex items-center gap-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                  onClick={() =>
-                    document.getElementById("school_image")?.click()
-                  }
-                >
-                  <Upload className="mr-2 h-4 w-4" />
-                  Upload Image
-                </Button>
-                <Input
-                  id="school_image"
-                  name="school_image"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-                {imagePreview && (
-                  <div className="h-12 w-12 rounded-md overflow-hidden border">
-                    <img
-                      src={imagePreview || "/placeholder.svg"}
-                      alt="School preview"
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
+            <FormField
+              id="name"
+              label="School Name"
+              placeholder="School name"
+              register={register("name")}
+              error={errors.name}
+            />
+            <FormField
+              id="phone_number"
+              label="Phone Number"
+              placeholder="Phone number"
+              register={register("phone_number")}
+              error={errors.phone_number}
+            />
+            <FormField
+              id="admin_email"
+              label="Email Address"
+              type="email"
+              placeholder="Email address"
+              register={register("admin_email")}
+              error={errors.admin_email}
+            />
+            <FormField
+              id="address"
+              label="Address"
+              placeholder="Address"
+              register={register("address")}
+              error={errors.address}
+            />
+            <ImageUpload
+              id="school_image"
+              label="School Logo/Image"
+              setValue={setValue}
+              error={errors.school_image}
+            />
           </div>
 
           {/* Administrator Information */}
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold">Administrator Account</h2>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="admin_first_name">First Name</Label>
-                  <Input
-                    id="admin_first_name"
-                    name="admin_first_name"
-                    value={formData.admin_first_name}
-                    onChange={handleChange}
-                    placeholder="First name"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="admin_last_name">Last Name</Label>
-                  <Input
-                    id="admin_last_name"
-                    name="admin_last_name"
-                    value={formData.admin_last_name}
-                    onChange={handleChange}
-                    placeholder="Last name"
-                    required
-                  />
-                </div>
-              </div>
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold">Administrator Account</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                id="admin_first_name"
+                label="First Name"
+                placeholder="First name"
+                register={register("admin_first_name")}
+                error={errors.admin_first_name}
+              />
+              <FormField
+                id="admin_last_name"
+                label="Last Name"
+                placeholder="Last name"
+                register={register("admin_last_name")}
+                error={errors.admin_last_name}
+              />
             </div>
-
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold">Login Credentials</h2>
-
-              <div className="space-y-2">
-                <Label htmlFor="admin_username">Username</Label>
-                <Input
-                  id="admin_username"
-                  name="admin_username"
-                  value={formData.admin_username}
-                  onChange={handleChange}
-                  placeholder="Create a username"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="admin_password">Password</Label>
-                <div className="relative">
-                  <Input
-                    id="admin_password"
-                    name="admin_password"
-                    type={showPassword ? "text" : "password"}
-                    value={formData.admin_password}
-                    onChange={handleChange}
-                    placeholder="Create a password"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold">Start Date?</h2>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-left font-normal"
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {startDate
-                      ? format(startDate, "MM/dd/yyyy")
-                      : "Select a date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={startDate}
-                    onSelect={setStartDate}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
+            <FormField
+              id="admin_username"
+              label="Username"
+              placeholder="Create a username"
+              register={register("admin_username")}
+              error={errors.admin_username}
+            />
+            <PasswordField
+              id="admin_password"
+              label="Password"
+              placeholder="Create a password"
+              register={register("admin_password")}
+              error={errors.admin_password}
+            />
           </div>
         </div>
 
-        {/* Submit Button */}
         <Button
           type="submit"
           className="w-full mt-8 py-6 text-lg bg-green-500 hover:bg-green-600"
+          disabled={mutation.isPending}
         >
-          Submit
+          {mutation.isPending ? "Submitting..." : "Submit"}
         </Button>
       </form>
     </div>
