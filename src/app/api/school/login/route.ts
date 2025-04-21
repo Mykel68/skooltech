@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import axios from "axios";
 import { loginSchema } from "@/schema/loginSchema";
+import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   try {
@@ -18,7 +19,18 @@ export async function POST(request: Request) {
       validatedData
     );
 
-    return NextResponse.json(response.data, { status: 200 });
+    // console.log(response.data);
+
+    const { token } = response.data.data;
+
+    // Set the token as an HTTP-only cookie
+    const cookie = `s_id=${token}; HttpOnly; Path=/; Max-Age=36000; SameSite=Strict; Secure`;
+    return new NextResponse(JSON.stringify({ message: "Login successful" }), {
+      status: 200,
+      headers: {
+        "Set-Cookie": cookie,
+      },
+    });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ errors: error.errors }, { status: 400 });
