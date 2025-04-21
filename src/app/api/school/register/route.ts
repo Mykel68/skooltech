@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     }
 
     const response = await axios.post(
-      `${backendUrl}/api/school/register`,
+      `${backendUrl}/api/schools/register`,
       validatedData
     );
 

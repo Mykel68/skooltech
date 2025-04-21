@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { SchoolFormData } from "@/types/school";
-import { uploadSchoolImage } from "@/utils/vercelBlob";
+import { uploadSchoolImage } from "@/app/upload/route";
 
 export class HttpClient {
   private client: AxiosInstance;
@@ -15,17 +15,24 @@ export class HttpClient {
   }
 
   async registerSchool(data: SchoolFormData): Promise<unknown> {
-    let imageUrl = "";
-    if (data.school_image) {
-      imageUrl = await uploadSchoolImage(data.school_image);
+    try {
+      let imageUrl: string | null = null;
+      if (data.school_image) {
+        imageUrl = await uploadSchoolImage(data.school_image);
+      }
+
+      const response = await this.client.post("/school/register", {
+        ...data,
+        school_image: imageUrl,
+      });
+
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Registration failed: ${error.message}`);
+      }
+      throw new Error("Registration failed: Unknown error");
     }
-
-    const response = await this.client.post("/school/register", {
-      ...data,
-      school_image: imageUrl,
-    });
-
-    return response.data;
   }
 }
 

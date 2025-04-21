@@ -29,6 +29,7 @@ export default function SchoolRegistrationPage() {
       admin_first_name: "",
       admin_last_name: "",
       phone_number: "",
+      school_image: undefined,
     },
   });
 
@@ -69,7 +70,7 @@ export default function SchoolRegistrationPage() {
             />
             <FormField
               id="phone_number"
-              label="Phone Number"
+              label="Phone Number (Optional)"
               placeholder="Phone number"
               register={register("phone_number")}
               error={errors.phone_number}
@@ -91,7 +92,7 @@ export default function SchoolRegistrationPage() {
             />
             <ImageUpload
               id="school_image"
-              label="School Logo/Image"
+              label="School Logo/Image (Optional)"
               setValue={setValue}
               error={errors.school_image}
             />
