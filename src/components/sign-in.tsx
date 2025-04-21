@@ -11,8 +11,10 @@ import { loginSchema } from "@/schema/loginSchema";
 import { LoginFormData } from "@/types/login";
 import { loginUser } from "@/services/httpClient";
 import { FaGoogle, FaApple } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -30,6 +32,7 @@ export function LoginForm() {
     mutationFn: loginUser,
     onSuccess: () => {
       toast.success("Login successful!");
+      router.push("/dashboard");
     },
     onError: (error: Error) => {
       toast.error(error.message || "Login failed. Please try again.");
