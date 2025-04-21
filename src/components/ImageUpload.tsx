@@ -39,8 +39,10 @@ export function ImageUpload({ id, label, setValue, error }: ImageUploadProps) {
   };
 
   return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
+    <div className="flex flex-col m-1 gap-2 ">
+      <Label htmlFor={id} className="pl-3">
+        {label}
+      </Label>
       <div className="flex items-center gap-4">
         <Button
           type="button"

@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import axios from "axios";
 import { loginSchema } from "@/schema/loginSchema";
-import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   try {
