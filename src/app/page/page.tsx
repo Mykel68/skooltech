@@ -2,7 +2,7 @@ import CTA from "@/components/CTA";
 import FAQ from "@/components/FAQ";
 import Feature from "@/components/Feature";
 import Footer from "@/components/Footer";
-import Header from "@/components/Header";
+import Header from "@/components/Navbar";
 import { HeroSection } from "@/components/hero-section-dark";
 import Pricing from "@/components/Pricing";
 import Testimonial from "@/components/Testimonial";

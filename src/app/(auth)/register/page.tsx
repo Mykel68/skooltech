@@ -1,6 +1,6 @@
 import SchoolRegistrationForm from "@/components/school-registration-form";
 
-export default function Home() {
+export default function Page() {
   return (
     <main className="flex min-h-screen flex-col md:flex-row">
       <div className="w-full md:w-[70%] p-6 md:p-8 lg:p-12 overflow-y-auto">
