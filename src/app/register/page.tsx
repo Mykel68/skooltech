@@ -10,17 +10,17 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/30 z-10 flex items-start justify-end p-6">
           <div className="bg-white/90 rounded-full p-2 flex items-center gap-2">
             <span className="text-sm font-medium text-black px-2">
-              HOPE FOR HUMANITY
+              SCHOOL TECH
             </span>
             <div className="h-8 w-8 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold">
-              H
+              S
             </div>
           </div>
         </div>
         <img
-          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-04-19%20100034-2TTqvkUqA0nXV3MfwsZnRMqViYOBZB.png"
+          src="/images/login-img.jpg"
           alt="School community"
-          className="object-cover h-full w-full"
+          className="object-cover w-full "
         />
       </div>
     </main>

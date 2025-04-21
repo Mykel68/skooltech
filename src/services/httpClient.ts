@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { SchoolFormData } from "@/types/school";
+import { LoginFormData } from "@/types/login";
 import { uploadSchoolImage } from "@/utils/vercelBlob";
 
 export class HttpClient {
@@ -34,7 +35,24 @@ export class HttpClient {
       throw new Error("Registration failed: Unknown error");
     }
   }
+
+  async loginUser(data: LoginFormData): Promise<unknown> {
+    try {
+      const response = await this.client.post("/school/login", {
+        ...data,
+        agreeToTerms: undefined, // Exclude from API payload
+      });
+
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Login failed: ${error.message}`);
+      }
+      throw new Error("Login failed: Unknown error");
+    }
+  }
 }
 
 export const httpClient = new HttpClient();
 export const registerSchool = httpClient.registerSchool.bind(httpClient);
+export const loginUser = httpClient.loginUser.bind(httpClient);
