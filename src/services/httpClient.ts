@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { SchoolFormData } from "@/types/school";
-import { uploadSchoolImage } from "@/app/upload/route";
+import { uploadSchoolImage } from "@/utils/vercelBlob";
 
 export class HttpClient {
   private client: AxiosInstance;
