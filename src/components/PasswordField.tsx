@@ -24,8 +24,10 @@ export function PasswordField({
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
+    <div className=" flex flex-col gap-2 m-1">
+      <Label htmlFor={id} className="pl-3">
+        {label}
+      </Label>
       <div className="relative">
         <Input
           id={id}

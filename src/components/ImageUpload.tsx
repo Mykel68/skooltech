@@ -39,47 +39,49 @@ export function ImageUpload({ id, label, setValue, error }: ImageUploadProps) {
   };
 
   return (
-    <div className="flex flex-col m-1 gap-2 ">
+    <div className="flex flex-col m-1 gap-2 rounded-md ">
       <Label htmlFor={id} className="pl-3">
         {label}
       </Label>
-      <div className="flex items-center gap-4">
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full"
-          onClick={() => document.getElementById(id)?.click()}
-        >
-          <Upload className="mr-2 h-4 w-4" />
-          Upload Image
-        </Button>
-        <Input
-          id={id}
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="hidden"
-        />
-      </div>
-      {preview && (
-        <div className="mt-2 relative">
-          <img
-            src={preview}
-            alt="School preview"
-            className="h-32 w-32 object-cover rounded-md border"
-          />
+      <div className="border border-dashed p-2">
+        <div className="flex items-center gap-4">
           <Button
             type="button"
-            variant="destructive"
-            size="icon"
-            className="absolute top-0 right-0"
-            onClick={removeImage}
+            variant="outline"
+            className="w-full"
+            onClick={() => document.getElementById(id)?.click()}
           >
-            <X className="h-4 w-4" />
+            <Upload className="mr-2 h-4 w-4" />
+            Upload Image
           </Button>
+          <Input
+            id={id}
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="hidden"
+          />
         </div>
-      )}
-      {error && <p className="text-red-500 text-sm">{error.message}</p>}
+        {preview && (
+          <div className="mt-2 relative w-fit border ">
+            <img
+              src={preview}
+              alt="School preview"
+              className="h-16 w-16 object-cover "
+            />
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              className="absolute top-0 right-0 size-5"
+              onClick={removeImage}
+            >
+              <X className="h-0.5 w-0.5" />
+            </Button>
+          </div>
+        )}
+        {error && <p className="text-red-500 text-sm">{error.message}</p>}
+      </div>
     </div>
   );
 }

@@ -18,13 +18,13 @@ export function SchoolProfileForm() {
   const schoolId = useUserStore((state) => state.schoolId);
 
   // Fetch current school profile
-  const { data: initialData } = useQuery({
+  const { data: initialData, isLoading } = useQuery({
     queryKey: ["schoolProfile", schoolId],
     queryFn: async () => {
       const { data } = await axios.get(`/api/school/get-profile/${schoolId}`);
       return data;
     },
-    enabled: !!schoolId,
+    enabled: !!schoolId, // Only fetch if schoolId exists
   });
 
   const {
@@ -77,6 +77,8 @@ export function SchoolProfileForm() {
     mutation.mutate(changedData);
   };
 
+  if (isLoading) return <div>Loading...</div>;
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -110,7 +112,7 @@ export function SchoolProfileForm() {
         />
         <ImageUpload
           id="school_image"
-          label="School Logo/Image "
+          label="School Logo/Image"
           setValue={setValue}
           error={errors.school_image}
         />

@@ -61,41 +61,43 @@ export default function SchoolRegistrationPage() {
           {/* School Information */}
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">School Information</h2>
-            <FormField
-              id="name"
-              label="School Name"
-              placeholder="School name"
-              register={register("name")}
-              error={errors.name}
-            />
-            <FormField
-              id="phone_number"
-              label="Phone Number (Optional)"
-              placeholder="Phone number"
-              register={register("phone_number")}
-              error={errors.phone_number}
-            />
-            <FormField
-              id="admin_email"
-              label="Email Address"
-              type="email"
-              placeholder="Email address"
-              register={register("admin_email")}
-              error={errors.admin_email}
-            />
-            <FormField
-              id="address"
-              label="Address"
-              placeholder="Address"
-              register={register("address")}
-              error={errors.address}
-            />
-            <ImageUpload
-              id="school_image"
-              label="School Logo/Image (Optional)"
-              setValue={setValue}
-              error={errors.school_image}
-            />
+            <div className="grid grid-cols-1 gap-4">
+              <FormField
+                id="name"
+                label="School Name"
+                placeholder="School name"
+                register={register("name")}
+                error={errors.name}
+              />
+              <FormField
+                id="phone_number"
+                label="Phone Number"
+                placeholder="Phone number"
+                register={register("phone_number")}
+                error={errors.phone_number}
+              />
+              <FormField
+                id="admin_email"
+                label="Email Address"
+                type="email"
+                placeholder="Email address"
+                register={register("admin_email")}
+                error={errors.admin_email}
+              />
+              <FormField
+                id="address"
+                label="Address"
+                placeholder="Address"
+                register={register("address")}
+                error={errors.address}
+              />
+              <ImageUpload
+                id="school_image"
+                label="School Logo/Image "
+                setValue={setValue}
+                error={errors.school_image}
+              />
+            </div>
           </div>
 
           {/* Administrator Information */}
@@ -117,20 +119,22 @@ export default function SchoolRegistrationPage() {
                 error={errors.admin_last_name}
               />
             </div>
-            <FormField
-              id="admin_username"
-              label="Username"
-              placeholder="Create a username"
-              register={register("admin_username")}
-              error={errors.admin_username}
-            />
-            <PasswordField
-              id="admin_password"
-              label="Password"
-              placeholder="Create a password"
-              register={register("admin_password")}
-              error={errors.admin_password}
-            />
+            <div className="grid grid-cols-1 gap-4">
+              <FormField
+                id="admin_username"
+                label="Username"
+                placeholder="Create a username"
+                register={register("admin_username")}
+                error={errors.admin_username}
+              />
+              <PasswordField
+                id="admin_password"
+                label="Password"
+                placeholder="Create a password"
+                register={register("admin_password")}
+                error={errors.admin_password}
+              />
+            </div>
           </div>
         </div>
 
