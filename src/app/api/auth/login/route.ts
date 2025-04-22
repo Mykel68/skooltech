@@ -24,12 +24,15 @@ export async function POST(request: Request) {
 
     // Set the token as an HTTP-only cookie
     const cookie = `s_id=${token}; HttpOnly; Path=/; Max-Age=36000; SameSite=Strict; Secure`;
-    return new NextResponse(JSON.stringify({ message: "Login successful" }), {
-      status: 200,
-      headers: {
-        "Set-Cookie": cookie,
-      },
-    });
+    return new NextResponse(
+      JSON.stringify({ message: "Login successful", token }),
+      {
+        status: 200,
+        headers: {
+          "Set-Cookie": cookie,
+        },
+      }
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ errors: error.errors }, { status: 400 });

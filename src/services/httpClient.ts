@@ -1,9 +1,19 @@
 import axios, { AxiosInstance } from "axios";
+import { jwtDecode } from "jwt-decode";
 import { SchoolFormData } from "@/types/school";
 import { LoginFormData } from "@/types/login";
 import { ProfileFormData } from "@/types/profile";
 import { SchoolProfileFormData } from "@/types/schoolProfile";
 import { uploadSchoolImage } from "@/utils/vercelBlob";
+
+interface DecodedToken {
+  user_id: string;
+  username: string;
+  role: string;
+  school_id: string;
+  iat: number;
+  exp: number;
+}
 
 export class HttpClient {
   private client: AxiosInstance;
@@ -38,16 +48,32 @@ export class HttpClient {
     }
   }
 
-  async loginUser(data: LoginFormData): Promise<unknown> {
+  async loginUser(
+    data: LoginFormData
+  ): Promise<{ token: string; decoded: DecodedToken }> {
     try {
-      const response = await this.client.post("/login", {
+      const response = await this.client.post("/auth/login", {
         ...data,
         agreeToTerms: undefined, // Exclude from API payload
       });
+      console.log("[HttpClient] Login API response:", response.data); // Server-side log
+      const { token } = response.data;
 
-      return response.data;
+      if (!token) {
+        throw new Error("No token received from backend");
+      }
+
+      // Decode the token
+      try {
+        const decoded = jwtDecode<DecodedToken>(token);
+        console.log("[HttpClient] Decoded token:", decoded); // Server-side log
+        return { token, decoded };
+      } catch (decodeError) {
+        throw new Error("Failed to decode token");
+      }
     } catch (error) {
       if (error instanceof Error) {
+        console.error("[HttpClient] Login error:", error.message); // Server-side log
         throw new Error(`Login failed: ${error.message}`);
       }
       throw new Error("Login failed: Unknown error");

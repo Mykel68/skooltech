@@ -1,61 +1,132 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+"use client";
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"form">) {
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { FormField } from "@/components/FormField";
+import { PasswordField } from "@/components/PasswordField";
+import { loginSchema } from "@/schema/loginSchema";
+import { LoginFormData } from "@/types/login";
+import { loginUser } from "@/services/httpClient";
+import { useRouter } from "next/navigation";
+import { FaGoogle, FaApple } from "react-icons/fa";
+import { useUserStore } from "@/stores/userStore";
+
+export function LoginForm() {
+  const router = useRouter();
+  const setUser = useUserStore((state) => state.setUser);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+      agreeToTerms: false,
+    },
+  });
+
+  const mutation = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      console.log("[LoginForm] Login mutation success:", data); // Client-side log
+      setUser({
+        userId: data.decoded.user_id,
+        username: data.decoded.username,
+        role: data.decoded.role,
+        schoolId: data.decoded.school_id,
+      });
+      toast.success("Login successful!");
+      router.push("/dashboard");
+    },
+    onError: (error: Error) => {
+      console.error("[LoginForm] Login mutation error:", error); // Client-side log
+      toast.error(error.message || "Login failed. Please try again.");
+    },
+  });
+
+  const onSubmit = (data: LoginFormData) => {
+    console.log("[LoginForm] Form submitted with data:", data); // Client-side log
+    mutation.mutate(data);
+  };
+
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Login to your account</h1>
-        <p className="text-muted-foreground text-sm text-balance">
-          Enter your email below to login to your account
-        </p>
-      </div>
-      <div className="grid gap-6">
-        <div className="grid gap-3">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" required />
-        </div>
-        <div className="grid gap-3">
-          <div className="flex items-center">
-            <Label htmlFor="password">Password</Label>
-            <a
-              href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
-              Forgot your password?
-            </a>
-          </div>
-          <Input id="password" type="password" required />
-        </div>
-        <Button type="submit" className="w-full">
-          Login
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="grid grid-cols-1 gap-4">
+        <Button
+          variant="outline"
+          type="button"
+          className="flex items-center justify-center gap-2"
+          onClick={() => console.log("[LoginForm] Google login clicked")} // Client-side log
+        >
+          <FaGoogle className="h-4 w-4" />
+          Continue with Google
         </Button>
-        <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-          <span className="bg-background text-muted-foreground relative z-10 px-2">
-            Or continue with
-          </span>
-        </div>
-        <Button variant="outline" className="w-full">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path
-              d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
-              fill="currentColor"
-            />
-          </svg>
-          Login with GitHub
+        <Button
+          variant="outline"
+          type="button"
+          className="flex items-center justify-center gap-2"
+          onClick={() => console.log("[LoginForm] Apple login clicked")} // Client-side log
+        >
+          <FaApple className="h-4 w-4" />
+          Continue with Apple
         </Button>
       </div>
-      <div className="text-center text-sm">
-        Don&apos;t have an account?{" "}
-        <a href="#" className="underline underline-offset-4">
-          Sign up
-        </a>
+
+      <div className="relative flex items-center">
+        <div className="flex-grow border-t border-gray-300"></div>
+        <span className="mx-4 text-sm text-gray-500">or</span>
+        <div className="flex-grow border-t border-gray-300"></div>
       </div>
+
+      <div className="space-y-4">
+        <FormField
+          id="username"
+          label="Username"
+          placeholder="Enter your username"
+          register={register("username")}
+          error={errors.username}
+        />
+        <PasswordField
+          id="password"
+          label="Password"
+          placeholder="Enter your password"
+          register={register("password")}
+          error={errors.password}
+        />
+      </div>
+
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          id="agreeToTerms"
+          {...register("agreeToTerms")}
+          className="h-4 w-4 rounded border-gray-300 text-green-500 focus:ring-green-500"
+        />
+        <label
+          htmlFor="agreeToTerms"
+          className="ml-2 block text-sm text-gray-700"
+        >
+          I understand the terms & policy
+        </label>
+        {errors.agreeToTerms && (
+          <p className="ml-2 text-red-500 text-sm">
+            {errors.agreeToTerms.message}
+          </p>
+        )}
+      </div>
+
+      <Button
+        type="submit"
+        className="w-full bg-green-500 hover:bg-green-600"
+        disabled={mutation.isPending}
+      >
+        {mutation.isPending ? "Logging in..." : "Login"}
+      </Button>
     </form>
-  )
+  );
 }
