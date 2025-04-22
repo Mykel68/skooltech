@@ -14,7 +14,7 @@ import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
 
 export function UserProfileForm() {
-  const userId = useUserStore((state) => state.userId);
+  const { userId, username, role, schoolId } = useUserStore((state) => state);
 
   // Fetch current user profile
   const { data: initialData, isLoading } = useQuery({
@@ -100,7 +100,7 @@ export function UserProfileForm() {
         <FormField
           id="username"
           label="Username"
-          placeholder="Enter Username"
+          placeholder={username as string}
           register={register("username")}
           error={errors.username}
         />

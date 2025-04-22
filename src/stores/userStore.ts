@@ -8,11 +8,17 @@ interface UserState {
   username: string | null;
   role: string | null;
   schoolId: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
   setUser: (user: {
     userId: string;
     username: string;
     role: string;
     schoolId: string;
+    firstName: string;
+    lastName: string;
+    email: string;
   }) => void;
   clearUser: () => void;
 }
@@ -23,6 +29,9 @@ const defaultState: UserState = {
   username: null,
   role: null,
   schoolId: null,
+  firstName: null,
+  lastName: null,
+  email: null,
   setUser: () => {},
   clearUser: () => {},
 };
@@ -51,6 +60,9 @@ export const useUserStore = create<UserState>()(
       username: null,
       role: null,
       schoolId: null,
+      firstName: null,
+      lastName: null,
+      email: null,
       setUser: (user) => {
         console.log("[UserStore] Updating user store:", user);
         set({ ...user });
