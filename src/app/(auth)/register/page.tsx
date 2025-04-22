@@ -1,4 +1,4 @@
-import SchoolRegistrationForm from "@/components/school-registration-form";
+import SchoolRegistrationForm from "@/components/forms/school-registration-form";
 
 export default function Page() {
   return (

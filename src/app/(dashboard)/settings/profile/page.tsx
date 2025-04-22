@@ -1,6 +1,6 @@
 "use client";
 
-import { SchoolProfileForm } from "@/components/SchoolProfileForm";
+import { SchoolProfileForm } from "@/components/forms/SchoolProfileForm";
 import {
   Card,
   CardContent,
@@ -8,7 +8,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { UserProfileForm } from "@/components/UserProfileForm";
+import { UserProfileForm } from "@/components/forms/UserProfileForm";
 
 export default function ProfileSettingsPage() {
   return (
