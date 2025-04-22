@@ -69,7 +69,15 @@ export const useUserStore = create<UserState>()(
       },
       clearUser: () => {
         console.log("[UserStore] Clearing user store");
-        set({ userId: null, username: null, role: null, schoolId: null });
+        set({
+          userId: null,
+          username: null,
+          role: null,
+          schoolId: null,
+          firstName: null,
+          lastName: null,
+          email: null,
+        });
       },
     }),
     persistOptions
