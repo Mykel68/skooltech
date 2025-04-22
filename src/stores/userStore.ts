@@ -1,5 +1,7 @@
+"use client";
+
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { persist, createJSONStorage, PersistOptions } from "zustand/middleware";
 
 interface UserState {
   userId: string | null;
@@ -15,6 +17,33 @@ interface UserState {
   clearUser: () => void;
 }
 
+// Default state for server-side rendering
+const defaultState: UserState = {
+  userId: null,
+  username: null,
+  role: null,
+  schoolId: null,
+  setUser: () => {},
+  clearUser: () => {},
+};
+
+// Persist options with SSR handling
+const persistOptions: PersistOptions<UserState> = {
+  name: "user-storage",
+  storage: createJSONStorage(() => localStorage),
+  getStorage: () => {
+    // Only use localStorage on the client
+    if (typeof window === "undefined") {
+      return {
+        getItem: async () => null,
+        setItem: async () => {},
+        removeItem: async () => {},
+      };
+    }
+    return localStorage;
+  },
+};
+
 export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
@@ -23,17 +52,19 @@ export const useUserStore = create<UserState>()(
       role: null,
       schoolId: null,
       setUser: (user) => {
-        console.log("Updating user store:", user); // Debug log
+        console.log("[UserStore] Updating user store:", user);
         set({ ...user });
       },
       clearUser: () => {
-        console.log("Clearing user store"); // Debug log
+        console.log("[UserStore] Clearing user store");
         set({ userId: null, username: null, role: null, schoolId: null });
       },
     }),
-    {
-      name: "user-storage",
-      storage: createJSONStorage(() => localStorage),
-    }
+    persistOptions
   )
 );
+
+// Export a function to get initial state for SSR
+export function getUserStoreInitialState(): UserState {
+  return defaultState;
+}

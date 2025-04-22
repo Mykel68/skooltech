@@ -54,37 +54,47 @@ export class HttpClient {
     try {
       const response = await this.client.post("/auth/login", {
         ...data,
-        agreeToTerms: undefined, // Exclude from API payload
+        agreeToTerms: undefined,
       });
-      console.log("[HttpClient] Login API response:", response.data); // Server-side log
+      console.log("[HttpClient] Login API response:", response.data);
       const { token } = response.data;
 
       if (!token) {
         throw new Error("No token received from backend");
       }
 
-      // Decode the token
       try {
         const decoded = jwtDecode<DecodedToken>(token);
-        console.log("[HttpClient] Decoded token:", decoded); // Server-side log
+        console.log("[HttpClient] Decoded token:", decoded);
         return { token, decoded };
       } catch (decodeError) {
         throw new Error("Failed to decode token");
       }
     } catch (error) {
       if (error instanceof Error) {
-        console.error("[HttpClient] Login error:", error.message); // Server-side log
+        console.error("[HttpClient] Login error:", error.message);
         throw new Error(`Login failed: ${error.message}`);
       }
       throw new Error("Login failed: Unknown error");
     }
   }
 
+  async logoutUser(): Promise<void> {
+    try {
+      await this.client.post("/auth/logout");
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Logout failed: ${error.message}`);
+      }
+      throw new Error("Logout failed: Unknown error");
+    }
+  }
+
   async updateSchoolProfile(data: SchoolProfileFormData): Promise<unknown> {
     try {
       let imageUrl: string | null = null;
-      if (data.schoolImage) {
-        imageUrl = await uploadSchoolImage(data.schoolImage);
+      if (data.school_image) {
+        imageUrl = await uploadSchoolImage(data.school_image);
       }
 
       const response = await this.client.patch("/school/profile", {
@@ -104,7 +114,6 @@ export class HttpClient {
   async updateUserProfile(data: ProfileFormData): Promise<unknown> {
     try {
       const response = await this.client.patch("/user/profile", data);
-
       return response.data;
     } catch (error) {
       if (error instanceof Error) {
@@ -118,6 +127,7 @@ export class HttpClient {
 export const httpClient = new HttpClient();
 export const registerSchool = httpClient.registerSchool.bind(httpClient);
 export const loginUser = httpClient.loginUser.bind(httpClient);
+export const logoutUser = httpClient.logoutUser.bind(httpClient);
 export const updateSchoolProfile =
   httpClient.updateSchoolProfile.bind(httpClient);
 export const updateUserProfile = httpClient.updateUserProfile.bind(httpClient);

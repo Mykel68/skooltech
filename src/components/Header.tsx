@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useSidebar } from "./sidebar-provider"
-import { Bell, Search, User, Menu } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useSidebar } from "./sidebar-provider";
+import { Bell, Search, User, Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,15 +11,22 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
+import { useUserStore } from "@/stores/userStore";
 
 export function Header() {
-  const { toggle } = useSidebar()
+  const { toggle } = useSidebar();
+  const { userId, username, role, schoolId } = useUserStore((state) => state);
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background">
       <div className="flex h-14 items-center px-4 gap-4">
-        <Button variant="ghost" size="icon" className="lg:hidden" onClick={toggle}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden"
+          onClick={toggle}
+        >
           <Menu className="h-5 w-5" />
           <span className="sr-only">Toggle sidebar</span>
         </Button>
@@ -44,7 +51,11 @@ export function Header() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full"
+            >
               <User className="h-4 w-4" />
               <span className="sr-only">User menu</span>
             </Button>
@@ -60,5 +71,5 @@ export function Header() {
         </DropdownMenu>
       </div>
     </header>
-  )
+  );
 }
