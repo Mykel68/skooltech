@@ -4,23 +4,27 @@ import axios from "axios";
 import { profileSchema } from "@/schema/profileSchema";
 import { cookies } from "next/headers";
 
-export async function PATCH(request: Request) {
+// PATCH user profile
+export async function PATCH(
+  request: Request,
+  context: { params: { user_id: string } }
+) {
   try {
+    const { params } = await context;
     const body = await request.json();
     const validatedData = profileSchema.parse(body);
 
     const backendUrl = process.env.MAIN_BACKEND_URL;
-    if (!backendUrl) {
-      throw new Error("MAIN_BACKEND_URL is not set");
-    }
+    if (!backendUrl) throw new Error("MAIN_BACKEND_URL is not set");
 
-    const token = cookies().get("token")?.value;
+    const cookieStore = await cookies();
+    const token = cookieStore.get("s_id")?.value;
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const response = await axios.patch(
-      `${backendUrl}/api/user/profile`,
+    const response = await axios.put(
+      `${backendUrl}/api/users/profile/${params.user_id}`,
       validatedData,
       {
         headers: {
@@ -34,6 +38,7 @@ export async function PATCH(request: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ errors: error.errors }, { status: 400 });
     }
+
     if (axios.isAxiosError(error)) {
       return NextResponse.json(
         {
@@ -42,6 +47,7 @@ export async function PATCH(request: Request) {
         { status: error.response?.status || 500 }
       );
     }
+
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },

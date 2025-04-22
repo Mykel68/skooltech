@@ -97,11 +97,20 @@ export class HttpClient {
         imageUrl = await uploadSchoolImage(data.school_image);
       }
 
-      const response = await this.client.patch("/school/profile", {
-        ...data,
-        schoolImage: imageUrl,
-      });
+      // Filter out undefined or null fields
+      const filteredData = Object.fromEntries(
+        Object.entries({
+          ...data,
+          schoolImage: imageUrl,
+        }).filter(([_, value]) => value !== undefined && value !== null)
+      );
 
+      console.log("[HttpClient] Filtered school profile data:", filteredData);
+
+      const response = await this.client.patch(
+        "/school/edit-profile",
+        filteredData
+      );
       return response.data;
     } catch (error) {
       if (error instanceof Error) {
@@ -113,7 +122,19 @@ export class HttpClient {
 
   async updateUserProfile(data: ProfileFormData): Promise<unknown> {
     try {
-      const response = await this.client.patch("/user/profile", data);
+      // Filter out undefined or null fields
+      const filteredData = Object.fromEntries(
+        Object.entries(data).filter(
+          ([_, value]) => value !== undefined && value !== null
+        )
+      );
+
+      console.log("[HttpClient] Filtered user profile data:", filteredData);
+
+      const response = await this.client.patch(
+        "/user/edit-profile",
+        filteredData
+      );
       return response.data;
     } catch (error) {
       if (error instanceof Error) {

@@ -8,7 +8,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import UserProfileForm from "@/components/UserProfileForm";
+import { UserProfileForm } from "@/components/UserProfileForm";
 
 export default function ProfileSettingsPage() {
   return (
