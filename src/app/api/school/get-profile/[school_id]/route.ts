@@ -23,7 +23,7 @@ export async function GET(
     }
 
     const response = await axios.get(
-      `${backendUrl}/api/schools/${params.school_id}`,
+      `${backendUrl}/api/schools/profile/${params.school_id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
