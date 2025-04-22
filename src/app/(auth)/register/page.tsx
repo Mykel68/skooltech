@@ -20,7 +20,7 @@ export default function Page() {
         <img
           src="/images/login-img.jpg"
           alt="School community"
-          className="object-cover w-full "
+          className="fixed "
         />
       </div>
     </main>

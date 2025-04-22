@@ -5,8 +5,8 @@ import { LoginForm } from "@/components/sign-in";
 export default function LoginPage() {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen md:h-screen p-3">
-      {/* Form Section - 30% on large screens */}
-      <div className="w-full lg:w-[30%] p-8 flex flex-col justify-center">
+      {/* Form Section - 35% on large screens */}
+      <div className="w-full lg:w-[35%] p-8 flex flex-col justify-center">
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-8">
             <div className="h-8 w-8 rounded-md bg-green-500 flex items-center justify-center text-white font-bold">
@@ -26,7 +26,7 @@ export default function LoginPage() {
 
         <LoginForm />
       </div>
-      <div className="hidden lg:block lg:w-[70%] relative">
+      <div className="hidden lg:block lg:w-[65%] relative">
         <div className="absolute inset-0 bg-black/20 z-10"></div>
         <img
           src="/images/reg-img.jpg"

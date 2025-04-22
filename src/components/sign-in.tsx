@@ -72,7 +72,7 @@ export function LoginForm() {
         <div className="flex-grow border-t border-gray-300"></div>
       </div>
 
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-4">
         <FormField
           id="username"
           label="Username"
