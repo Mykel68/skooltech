@@ -11,12 +11,12 @@ import React from "react";
 
 export default function page() {
   return (
-    <>
+    <div className="overflow-x-hidden">
       <Header />
       <HeroSection
-        title="Welcome to Our Platform"
+        title="Number one technology for schools"
         subtitle={{
-          regular: "Transform your ideas into ",
+          regular: "Transform your School into ",
           gradient: "beautiful digital experiences",
         }}
         description="Transform your ideas into reality with our comprehensive suite of development tools and resources."
@@ -41,6 +41,6 @@ export default function page() {
       <FAQ />
       <CTA />
       <Footer />
-    </>
+    </div>
   );
 }
