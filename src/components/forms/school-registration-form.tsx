@@ -22,7 +22,6 @@ export default function SchoolRegistrationPage() {
     resolver: zodResolver(schoolRegistrationFormSchema),
     defaultValues: {
       name: "",
-      address: "",
       admin_username: "",
       admin_password: "",
       admin_email: "",
@@ -83,13 +82,6 @@ export default function SchoolRegistrationPage() {
                 placeholder="Email address"
                 register={register("admin_email")}
                 error={errors.admin_email}
-              />
-              <FormField
-                id="address"
-                label="Address"
-                placeholder="Address"
-                register={register("address")}
-                error={errors.address}
               />
               <ImageUpload
                 id="school_image"

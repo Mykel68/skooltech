@@ -2,7 +2,6 @@ import { z } from "zod";
 
 export const schoolRegistrationFormSchema = z.object({
   name: z.string().min(2, "School name must be at least 2 characters"),
-  address: z.string().min(5, "Address must be at least 5 characters"),
   admin_username: z.string().min(3, "Username must be at least 3 characters"),
   admin_password: z.string().min(8, "Password must be at least 8 characters"),
   admin_email: z.string().email("Invalid email address"),
@@ -22,7 +21,6 @@ export const schoolRegistrationFormSchema = z.object({
 
 export const schoolRegistrationApiSchema = z.object({
   name: z.string().min(2),
-  address: z.string().min(5),
   admin_username: z.string().min(3),
   admin_password: z.string().min(8),
   admin_email: z.string().email(),
