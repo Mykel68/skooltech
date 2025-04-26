@@ -29,6 +29,7 @@ export class HttpClient {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
   }
 
@@ -94,32 +95,35 @@ export class HttpClient {
       throw new Error("Logout failed: Unknown error");
     }
   }
-
-  async updateSchoolProfile(data: SchoolProfileFormData): Promise<unknown> {
+  async updateSchoolProfile(
+    data: SchoolProfileFormData & { school_id: string }
+  ): Promise<unknown> {
     try {
-      let imageUrl: string | null = null;
-      if (data.school_image) {
-        imageUrl = await uploadSchoolImage(data.school_image);
+      // pull out school_id and the raw school_image value
+      const { school_id, school_image, ...rest } = data;
+
+      // start with everything else
+      const payload: Record<string, any> = { ...rest };
+
+      // only upload when it's really a File—never for a string URL
+      if (school_image instanceof File) {
+        const url = await uploadSchoolImage(school_image);
+        payload.school_image = url;
       }
 
-      const filteredData = Object.fromEntries(
-        Object.entries({
-          ...data,
-          schoolImage: imageUrl,
-        }).filter(([_, value]) => value !== undefined && value !== null)
+      // now strip out any undefined/null (so if you never touched school_image, it's gone)
+      const filtered = Object.fromEntries(
+        Object.entries(payload).filter(([, v]) => v != null)
       );
 
-      console.log("[HttpClient] Filtered school profile data:", filteredData);
+      console.log("[HttpClient] PATCH payload:", filtered);
 
-      const response = await this.client.patch(
-        `/school/edit-profile/${data.school_id}`,
-        filteredData
-      );
-      return response.data;
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`School profile update failed: ${error.message}`);
-      }
+      return (
+        await this.client.patch(`/school/edit-profile/${school_id}`, filtered)
+      ).data;
+    } catch (err) {
+      if (err instanceof Error)
+        throw new Error(`School profile update failed: ${err.message}`);
       throw new Error("School profile update failed: Unknown error");
     }
   }
