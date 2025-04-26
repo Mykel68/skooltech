@@ -128,21 +128,28 @@ export class HttpClient {
     }
   }
 
-  async updateUserProfile(data: ProfileFormData): Promise<unknown> {
+  async updateUserProfile(
+    data: ProfileFormData & { user_id: string }
+  ): Promise<unknown> {
     try {
-      // Filter out undefined or null fields
+      // 1) Pull user_id out of the payload
+      const { user_id, ...rest } = data;
+
+      // 2) Filter out undefined / null fields
       const filteredData = Object.fromEntries(
-        Object.entries(data).filter(
+        Object.entries(rest).filter(
           ([_, value]) => value !== undefined && value !== null
         )
       );
 
       console.log("[HttpClient] Filtered user profile data:", filteredData);
 
+      // 3) PATCH to the correct endpoint with a slash before the ID
       const response = await this.client.patch(
-        "/user/edit-profile",
+        `/user/edit-profile/${user_id}`,
         filteredData
       );
+
       return response.data;
     } catch (error) {
       if (error instanceof Error) {

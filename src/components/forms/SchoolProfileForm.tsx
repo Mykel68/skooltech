@@ -93,7 +93,7 @@ export function SchoolProfileForm() {
       ...changedData,
     };
 
-    mutation.mutate(payload);
+    mutation.mutate(payload as any);
   };
 
   if (isLoading) return <div>Loading...</div>;

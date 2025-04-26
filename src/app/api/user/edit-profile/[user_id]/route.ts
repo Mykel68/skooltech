@@ -1,54 +1,63 @@
+// src/app/api/user/edit-profile/[user_id]/route.ts
+
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import axios from "axios";
-import { profileSchema } from "@/schema/profileSchema";
 import { cookies } from "next/headers";
 
-// PATCH user profile
+const partialUserSchema = z.object({
+  first_name: z.string().min(1).optional(),
+  last_name: z.string().min(1).optional(),
+  email: z.string().email().optional(),
+  username: z.string().min(3).optional(),
+});
+
 export async function PATCH(
   request: Request,
-  context: { params: { user_id: string } }
+  { params }: { params: Promise<{ user_id: string }> }
 ) {
   try {
-    const { params } = await context;
+    // 1) await params before destructuring
+    const { user_id } = await params;
+
+    // 2) parse & validate incoming body
     const body = await request.json();
-    const validatedData = profileSchema.parse(body);
+    const validated = partialUserSchema.parse(body);
 
-    const backendUrl = process.env.MAIN_BACKEND_URL;
-    if (!backendUrl) throw new Error("MAIN_BACKEND_URL is not set");
+    // 3) strip undefined/null
+    const filtered = Object.fromEntries(
+      Object.entries(validated).filter(([, v]) => v != null)
+    );
 
-    const cookieStore = await cookies();
-    const token = cookieStore.get("s_id")?.value;
+    if (Object.keys(filtered).length === 0) {
+      return NextResponse.json({ error: "No data to update" }, { status: 400 });
+    }
+
+    // 4) grab your backend URL & auth token
+    const backendUrl = process.env.MAIN_BACKEND_URL!;
+    const token = (await cookies()).get("s_id")?.value;
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const response = await axios.put(
-      `${backendUrl}/api/users/profile/${params.user_id}`,
-      validatedData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    // 5) call the correct user-profile endpoint (note singular “user”)
+    const resp = await axios.patch(
+      `${backendUrl}/api/users/profile/${user_id}`,
+      filtered,
+      { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    return NextResponse.json(response.data, { status: 200 });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ errors: error.errors }, { status: 400 });
+    return NextResponse.json(resp.data, { status: 200 });
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return NextResponse.json({ errors: err.errors }, { status: 400 });
     }
-
-    if (axios.isAxiosError(error)) {
+    if (axios.isAxiosError(err)) {
       return NextResponse.json(
-        {
-          error: error.response?.data?.message || "User profile update failed",
-        },
-        { status: error.response?.status || 500 }
+        { error: err.response?.data?.message || "Update failed" },
+        { status: err.response?.status || 500 }
       );
     }
-
-    console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
