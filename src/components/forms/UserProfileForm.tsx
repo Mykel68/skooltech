@@ -23,7 +23,7 @@ export function UserProfileForm() {
     queryFn: async () => {
       const { data } = await axios.get(`/api/user/get-profile/${userId}`);
       console.log("[UserProfileForm] Fetched profile data:", data);
-      return data;
+      return data.data;
     },
     enabled: !!userId,
   });
@@ -86,7 +86,7 @@ export function UserProfileForm() {
           id="firstName"
           label="First Name"
           placeholder="Enter first name"
-          defaultValue={initialData?.first_name}
+          defaultValue={initialData?.data?.first_name}
           register={register("first_name")}
           error={errors.first_name}
         />
