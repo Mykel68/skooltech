@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 // ✅ GET school profile
 export async function GET(
   _request: Request,
-  context: { params: { school_id: string } }
+  context: { params: Promise<{ school_id: string }> }
 ) {
   try {
     const { params } = await context;
@@ -23,7 +23,7 @@ export async function GET(
     }
 
     const response = await axios.get(
-      `${backendUrl}/api/schools/profile/${params.school_id}`,
+      `${backendUrl}/api/schools/profile/${(await params).school_id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
