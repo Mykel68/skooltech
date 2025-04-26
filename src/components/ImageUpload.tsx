@@ -7,10 +7,15 @@ import { FieldError } from "react-hook-form";
 import { UseFormSetValue } from "react-hook-form";
 import { SchoolFormData } from "@/types/school";
 
+type Image = {
+  school_image?: File | undefined;
+  profile_picture?: File | undefined;
+};
+
 interface ImageUploadProps {
   id: string;
   label: string;
-  setValue: UseFormSetValue<SchoolFormData>;
+  setValue: UseFormSetValue<Image>;
   error?: FieldError;
 }
 

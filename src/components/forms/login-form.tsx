@@ -42,6 +42,8 @@ export function LoginForm() {
         firstName: data.decoded.first_name,
         lastName: data.decoded.last_name,
         email: data.decoded.email,
+        schoolName: data.decoded.school_name,
+        schoolCode: data.decoded.school_code,
       });
       toast.success("Login successful!");
       router.push("/dashboard");

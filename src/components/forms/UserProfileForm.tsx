@@ -14,23 +14,25 @@ import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
 
 export function UserProfileForm() {
-  const { userId, username, role, schoolId } = useUserStore((state) => state);
+  const userId = useUserStore((state) => state.userId);
+  const updateProfile = useUserStore((state) => state.updateProfile);
 
   // Fetch current user profile
   const { data: initialData, isLoading } = useQuery({
     queryKey: ["userProfile", userId],
     queryFn: async () => {
       const { data } = await axios.get(`/api/user/get-profile/${userId}`);
+      console.log("[UserProfileForm] Fetched profile data:", data);
       return data;
     },
-    enabled: !!userId, // Only fetch if userId exists
+    enabled: !!userId,
   });
 
   const {
     register,
     handleSubmit,
     formState: { errors, dirtyFields },
-    reset, // to reset form values after data fetch
+    reset,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(userProfileSchema),
     defaultValues: {
@@ -41,17 +43,22 @@ export function UserProfileForm() {
     },
   });
 
-  // Once the data is loaded, reset the form values to initialData
   useEffect(() => {
     if (initialData) {
-      reset(initialData); // Reset the form with fetched data
+      reset(initialData);
     }
   }, [initialData, reset]);
 
   const mutation = useMutation({
     mutationFn: updateUserProfile,
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       toast.success("User profile updated successfully!");
+      updateProfile({
+        firstName: data.first_name,
+        lastName: data.last_name,
+        email: data.email,
+        username: data.username,
+      });
     },
     onError: (error: Error) => {
       console.error("[UserProfileForm] Update error:", error);
@@ -67,7 +74,6 @@ export function UserProfileForm() {
     );
 
     console.log("[UserProfileForm] Submitting changed data:", changedData);
-
     mutation.mutate(changedData);
   };
 
@@ -80,6 +86,7 @@ export function UserProfileForm() {
           id="firstName"
           label="First Name"
           placeholder="Enter first name"
+          defaultValue={initialData?.first_name}
           register={register("first_name")}
           error={errors.first_name}
         />
@@ -87,6 +94,7 @@ export function UserProfileForm() {
           id="lastName"
           label="Last Name"
           placeholder="Enter last name"
+          defaultValue={initialData?.last_name}
           register={register("last_name")}
           error={errors.last_name}
         />
@@ -94,13 +102,15 @@ export function UserProfileForm() {
           id="email"
           label="Email"
           placeholder="Enter email address"
+          defaultValue={initialData?.email}
           register={register("email")}
           error={errors.email}
         />
         <FormField
           id="username"
           label="Username"
-          placeholder={username as string}
+          placeholder="Enter username"
+          defaultValue={initialData?.username}
           register={register("username")}
           error={errors.username}
         />

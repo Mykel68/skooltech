@@ -14,6 +14,8 @@ interface DecodedToken {
   email: string;
   first_name: string;
   last_name: string;
+  school_name: string;
+  school_code: string;
   iat: number;
   exp: number;
 }
@@ -100,7 +102,6 @@ export class HttpClient {
         imageUrl = await uploadSchoolImage(data.school_image);
       }
 
-      // Filter out undefined or null fields
       const filteredData = Object.fromEntries(
         Object.entries({
           ...data,
@@ -111,7 +112,7 @@ export class HttpClient {
       console.log("[HttpClient] Filtered school profile data:", filteredData);
 
       const response = await this.client.patch(
-        "/school/edit-profile",
+        `/school/edit-profile/${data.school_id}`,
         filteredData
       );
       return response.data;

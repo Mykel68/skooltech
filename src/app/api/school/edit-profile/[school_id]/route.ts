@@ -39,8 +39,8 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const response = await axios.put(
-      `${backendUrl}/api/schools/${params.school_id}`,
+    const response = await axios.patch(
+      `${backendUrl}/api/schools/profile/${params.school_id}`,
       filteredData,
       {
         headers: {
