@@ -22,26 +22,26 @@ import type { ProfileFormData } from "@/types/profile";
 import { updateUserProfile } from "@/services/httpClient";
 import { useUserStore } from "@/stores/userStore";
 
-export default function UserProfileForm(): JSX.Element {
+export function UserProfileForm() {
   const userId = useUserStore((state) => state.userId);
   const updateProfile = useUserStore((state) => state.updateProfile);
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState(false);
 
-  // Fetch current profile using object syntax
-  const { data: initialData, isLoading } = useQuery<ProfileFormData>({
+  // Fetch current profile
+  const { data: initialData, isLoading } = useQuery({
     queryKey: ["userProfile", userId],
-    queryFn: async (): Promise<ProfileFormData> => {
-      const res = await axios.get(`/api/user/get-profile/${userId}`);
-      return res.data.data;
+    queryFn: async () => {
+      const { data } = await axios.get(`/api/user/get-profile/${userId}`);
+      return data.data;
     },
-    enabled: Boolean(userId),
+    enabled: !!userId,
   });
 
   // Form setup
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, dirtyFields },
     reset,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(userProfileSchema),
@@ -59,11 +59,10 @@ export default function UserProfileForm(): JSX.Element {
     }
   }, [initialData, reset]);
 
-  // Mutation for updating user profile
   const mutation = useMutation({
     mutationFn: (payload: ProfileFormData & { user_id: string }) =>
       updateUserProfile(payload),
-    onSuccess: (data: ProfileFormData) => {
+    onSuccess: (data: any) => {
       toast.success("User profile updated successfully!");
       updateProfile({
         firstName: data.first_name,
@@ -79,34 +78,30 @@ export default function UserProfileForm(): JSX.Element {
     },
   });
 
-  const onSubmit = (data: ProfileFormData): void => {
+  const onSubmit = (data: ProfileFormData) => {
     if (!initialData) return;
 
-    // Build changed data by comparing values
-    const changedData: Partial<ProfileFormData> = {};
-    (Object.keys(data) as (keyof ProfileFormData)[]).forEach((key) => {
-      if (data[key] !== initialData[key]) {
-        changedData[key] = data[key];
-      }
-    });
+    const changedData = Object.fromEntries(
+      Object.entries(data).filter(
+        ([key]) => dirtyFields[key as keyof ProfileFormData]
+      )
+    );
 
-    // If nothing changed, do nothing
-    if (Object.keys(changedData).length === 0) {
-      toast("No changes detected.", { icon: "ℹ️" });
-      return;
-    }
+    const payload = {
+      user_id: userId, // ← add this
+      ...changedData,
+    };
 
-    const payload = { user_id: userId, ...changedData };
+    // Build payload with user_id
     console.log("[UserProfileForm] Submitting payload:", payload);
-    mutation.mutate(payload as ProfileFormData & { user_id: string });
+    mutation.mutate(payload as any);
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <>
+      {/* Display Section */}
       <div className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
@@ -188,12 +183,15 @@ export default function UserProfileForm(): JSX.Element {
                   type="button"
                   variant="outline"
                   onClick={() => setOpen(false)}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || mutation.isPending}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Saving..." : "Save Changes"}
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || mutation.isPending}
+                >
+                  {mutation.isPending ? "Saving..." : "Save Changes"}
                 </Button>
               </DialogFooter>
             </form>
