@@ -42,18 +42,20 @@ export function Sidebar() {
       {/* Sidebar panel */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-72 bg-sky-50 border-r border-sky-100",
+          "fixed inset-y-0 left-0 z-50 w-72 bg-emerald-50 border-r border-emerald-50",
           "transition-transform duration-300 ease-in-out lg:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Header */}
-        <div className="flex h-16 items-center border-b border-sky-100 px-4">
-          <span className="text-xl font-semibold text-sky-700">SchoolApp</span>
+        <div className="flex h-16 items-center border-b border-emerald-100 px-4">
+          <span className="text-xl font-semibold text-green-950">
+            Skooltech
+          </span>
           <Button
             variant="ghost"
             size="icon"
-            className="ml-auto text-sky-700 lg:hidden"
+            className="ml-auto text-green-950 lg:hidden"
             onClick={toggle}
           >
             <Menu className="h-6 w-6" />
@@ -72,8 +74,8 @@ export function Sidebar() {
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium",
                     isActive
-                      ? "bg-sky-500 text-white"
-                      : "text-sky-700 hover:bg-sky-100"
+                      ? "bg-green-700 text-white"
+                      : "text-green-950 hover:bg-emerald-100"
                   )}
                 >
                   <item.icon className="h-5 w-5" />
@@ -89,7 +91,7 @@ export function Sidebar() {
           </nav>
 
           {/* Footer / Settings */}
-          <div className="border-t border-sky-100 p-3">
+          <div className="border-t border-emerald-100 p-3">
             <nav className="space-y-1">
               {footerItems.map((item) => (
                 <div key={item.name}>
@@ -99,8 +101,8 @@ export function Sidebar() {
                         className={cn(
                           "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium cursor-pointer",
                           pathname.startsWith(item.href)
-                            ? "bg-sky-100 text-sky-700"
-                            : "text-sky-700 hover:bg-sky-50"
+                            ? "bg-green-700 text-white"
+                            : "text-green-950 hover:bg-emerald-100"
                         )}
                       >
                         <item.icon className="h-5 w-5" />
@@ -117,8 +119,8 @@ export function Sidebar() {
                             className={cn(
                               "block rounded-lg px-3 py-1.5 text-sm",
                               pathname === sub.href
-                                ? "bg-sky-200 text-sky-700"
-                                : "text-sky-700 hover:bg-sky-100"
+                                ? "bg-sky-200 text-green-950"
+                                : "text-green-950 hover:bg-emerald-100"
                             )}
                           >
                             {sub.name}
@@ -133,7 +135,7 @@ export function Sidebar() {
                         "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium",
                         pathname === item.href
                           ? "bg-sky-500 text-white"
-                          : "text-sky-700 hover:bg-sky-100"
+                          : "text-sky-700 hover:bg-emerald-100"
                       )}
                     >
                       <item.icon className="h-5 w-5" />
