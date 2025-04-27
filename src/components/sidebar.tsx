@@ -4,16 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "./sidebar-provider";
 import { cn } from "@/lib/utils";
-import {
-  LayoutDashboard,
-  Users,
-  Wallet,
-  BarChart3,
-  Settings,
-  HelpCircle,
-  LogOut,
-  Menu,
-} from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,6 +16,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
+import { footerItems, navItems } from "@/constants/sidebar";
 
 // Main Sidebar component
 export function Sidebar() {
@@ -164,31 +156,6 @@ export function Sidebar() {
     </>
   );
 }
-
-// Navigation data
-const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Students", href: "/students", icon: Users, badge: "12" },
-  { name: "Fees", href: "/fees", icon: Wallet },
-  { name: "Reports", href: "/reports", icon: BarChart3 },
-];
-
-// Footer and Settings items
-const footerItems = [
-  {
-    name: "Settings",
-    href: "/settings",
-    icon: Settings,
-    subItems: [
-      { name: "Profile", href: "/settings/profile" },
-      { name: "Security", href: "/settings/security" },
-      { name: "Communication", href: "/settings/communication" },
-      { name: "Permissions", href: "/settings/permissions" },
-    ],
-  },
-  { name: "Help", href: "/help", icon: HelpCircle },
-  { name: "Logout", href: "/logout", icon: LogOut },
-];
 
 // Settings page with cards
 export function SettingsPage() {
