@@ -22,26 +22,26 @@ import type { ProfileFormData } from "@/types/profile";
 import { updateUserProfile } from "@/services/httpClient";
 import { useUserStore } from "@/stores/userStore";
 
-export function UserProfileForm() {
+export default function UserProfileForm(): JSX.Element {
   const userId = useUserStore((state) => state.userId);
   const updateProfile = useUserStore((state) => state.updateProfile);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
 
-  // Fetch current profile
-  const { data: initialData, isLoading } = useQuery({
+  // Fetch current profile using object syntax
+  const { data: initialData, isLoading } = useQuery<ProfileFormData>({
     queryKey: ["userProfile", userId],
-    queryFn: async () => {
-      const { data } = await axios.get(`/api/user/get-profile/${userId}`);
-      return data.data;
+    queryFn: async (): Promise<ProfileFormData> => {
+      const res = await axios.get(`/api/user/get-profile/${userId}`);
+      return res.data.data;
     },
-    enabled: !!userId,
+    enabled: Boolean(userId),
   });
 
   // Form setup
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, dirtyFields },
+    formState: { errors, isSubmitting },
     reset,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(userProfileSchema),
@@ -59,10 +59,11 @@ export function UserProfileForm() {
     }
   }, [initialData, reset]);
 
+  // Mutation for updating user profile
   const mutation = useMutation({
     mutationFn: (payload: ProfileFormData & { user_id: string }) =>
       updateUserProfile(payload),
-    onSuccess: (data: any) => {
+    onSuccess: (data: ProfileFormData) => {
       toast.success("User profile updated successfully!");
       updateProfile({
         firstName: data.first_name,
@@ -78,30 +79,34 @@ export function UserProfileForm() {
     },
   });
 
-  const onSubmit = (data: ProfileFormData) => {
+  const onSubmit = (data: ProfileFormData): void => {
     if (!initialData) return;
 
-    const changedData = Object.fromEntries(
-      Object.entries(data).filter(
-        ([key]) => dirtyFields[key as keyof ProfileFormData]
-      )
-    );
+    // Build changed data by comparing values
+    const changedData: Partial<ProfileFormData> = {};
+    (Object.keys(data) as (keyof ProfileFormData)[]).forEach((key) => {
+      if (data[key] !== initialData[key]) {
+        changedData[key] = data[key];
+      }
+    });
 
-    const payload = {
-      user_id: userId, // ← add this
-      ...changedData,
-    };
+    // If nothing changed, do nothing
+    if (Object.keys(changedData).length === 0) {
+      toast("No changes detected.", { icon: "ℹ️" });
+      return;
+    }
 
-    // Build payload with user_id
+    const payload = { user_id: userId, ...changedData };
     console.log("[UserProfileForm] Submitting payload:", payload);
-    mutation.mutate(payload as any);
+    mutation.mutate(payload as ProfileFormData & { user_id: string });
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
-      {/* Display Section */}
       <div className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
@@ -183,15 +188,12 @@ export function UserProfileForm() {
                   type="button"
                   variant="outline"
                   onClick={() => setOpen(false)}
-                  disabled={isSubmitting || mutation.isPending}
+                  disabled={isSubmitting}
                 >
                   Cancel
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting || mutation.isPending}
-                >
-                  {mutation.isPending ? "Saving..." : "Save Changes"}
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Saving..." : "Save Changes"}
                 </Button>
               </DialogFooter>
             </form>

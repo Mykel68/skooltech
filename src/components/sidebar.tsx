@@ -15,122 +15,129 @@ import {
   Menu,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 
+// Main Sidebar component
 export function Sidebar() {
   const pathname = usePathname();
   const { isOpen, toggle } = useSidebar();
 
   return (
     <>
+      {/* Mobile overlay */}
       <div
         className={cn(
-          "fixed inset-0 z-50 bg-background/80 backdrop-blur-sm lg:hidden",
+          "fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm lg:hidden",
           isOpen ? "block" : "hidden"
         )}
         onClick={toggle}
       />
-      <div
+
+      {/* Sidebar panel */}
+      <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-72 bg-background",
-          "transition-transform duration-300 ease-in-out",
-          "border-r",
-          isOpen ? "translate-x-0" : "-translate-x-full",
-          "lg:translate-x-0"
+          "fixed inset-y-0 left-0 z-50 w-72 bg-sky-50 border-r border-sky-100",
+          "transition-transform duration-300 ease-in-out lg:translate-x-0",
+          isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex h-14 items-center border-b px-4">
-          <span className="text-lg font-semibold">Sambo Admin</span>
+        {/* Header */}
+        <div className="flex h-16 items-center border-b border-sky-100 px-4">
+          <span className="text-xl font-semibold text-sky-700">SchoolApp</span>
           <Button
             variant="ghost"
             size="icon"
-            className="ml-auto lg:hidden"
+            className="ml-auto text-sky-700 lg:hidden"
             onClick={toggle}
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-6 w-6" />
           </Button>
         </div>
-        <div className="flex flex-col h-[calc(100vh-3.5rem)]">
-          <div className="flex-1 overflow-auto py-2">
-            <nav className="grid gap-1 px-2">
-              {navItems.map((item, index) => (
+
+        {/* Navigation links */}
+        <div className="flex flex-col h-[calc(100vh-64px)]">
+          <nav className="flex-1 overflow-auto py-4 px-3 space-y-2">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
                 <Link
-                  key={index}
+                  key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-                    pathname === item.href
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground"
+                    "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium",
+                    isActive
+                      ? "bg-sky-500 text-white"
+                      : "text-sky-700 hover:bg-sky-100"
                   )}
                 >
                   <item.icon className="h-5 w-5" />
                   <span>{item.name}</span>
                   {item.badge && (
-                    <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[0.625rem] font-medium text-primary-foreground">
+                    <span className="ml-auto inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
                       {item.badge}
                     </span>
                   )}
                 </Link>
-              ))}
-            </nav>
-          </div>
-          <div className="border-t p-2">
-            <nav className="grid gap-1">
-              {footerItems.map((item, index) => (
-                <div key={index}>
+              );
+            })}
+          </nav>
+
+          {/* Footer / Settings */}
+          <div className="border-t border-sky-100 p-3">
+            <nav className="space-y-1">
+              {footerItems.map((item) => (
+                <div key={item.name}>
                   {item.subItems ? (
-                    <div className="space-y-1">
-                      <Link
-                        href={item.href}
+                    <details className="group">
+                      <summary
                         className={cn(
-                          "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-                          pathname === item.href
-                            ? "bg-accent text-accent-foreground"
-                            : "text-muted-foreground"
+                          "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium cursor-pointer",
+                          pathname.startsWith(item.href)
+                            ? "bg-sky-100 text-sky-700"
+                            : "text-sky-700 hover:bg-sky-50"
                         )}
                       >
                         <item.icon className="h-5 w-5" />
                         <span>{item.name}</span>
-                      </Link>
-                      <div className="pl-4 space-y-1">
-                        {item.subItems.map((subItem, subIndex) => (
+                        <span className="ml-auto transition-transform group-open:rotate-180">
+                          ▼
+                        </span>
+                      </summary>
+                      <div className="mt-1 space-y-1 pl-8">
+                        {item.subItems.map((sub) => (
                           <Link
-                            key={subIndex}
-                            href={subItem.href}
+                            key={sub.href}
+                            href={sub.href}
                             className={cn(
-                              "flex items-center gap-3 rounded-md px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground",
-                              pathname === subItem.href
-                                ? "bg-accent text-accent-foreground"
-                                : "text-muted-foreground"
+                              "block rounded-lg px-3 py-1.5 text-sm",
+                              pathname === sub.href
+                                ? "bg-sky-200 text-sky-700"
+                                : "text-sky-700 hover:bg-sky-100"
                             )}
                           >
-                            <span>{subItem.name}</span>
-                            {subItem.description && (
-                              <span className="ml-auto text-xs text-muted-foreground">
-                                {subItem.description}
-                              </span>
-                            )}
+                            {sub.name}
                           </Link>
                         ))}
                       </div>
-                    </div>
+                    </details>
                   ) : (
                     <Link
                       href={item.href}
                       className={cn(
-                        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+                        "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium",
                         pathname === item.href
-                          ? "bg-accent text-accent-foreground"
-                          : "text-muted-foreground"
+                          ? "bg-sky-500 text-white"
+                          : "text-sky-700 hover:bg-sky-100"
                       )}
                     >
                       <item.icon className="h-5 w-5" />
                       <span>{item.name}</span>
-                      {item.description && (
-                        <span className="ml-auto text-xs text-muted-foreground">
-                          {item.description}
-                        </span>
-                      )}
                     </Link>
                   )}
                 </div>
@@ -138,51 +145,61 @@ export function Sidebar() {
             </nav>
           </div>
         </div>
-      </div>
+      </aside>
     </>
   );
 }
 
+// Navigation data
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Users", href: "/users", icon: Users, badge: "8" },
-  { name: "Transactions", href: "/transactions", icon: Wallet },
-  { name: "Analytics", href: "/analytics", icon: BarChart3 },
+  { name: "Students", href: "/students", icon: Users, badge: "12" },
+  { name: "Fees", href: "/fees", icon: Wallet },
+  { name: "Reports", href: "/reports", icon: BarChart3 },
 ];
 
+// Footer and Settings items
 const footerItems = [
   {
     name: "Settings",
     href: "/settings",
     icon: Settings,
     subItems: [
-      {
-        name: "Profile",
-        href: "/settings/profile",
-        description: "Update your details",
-      },
-      {
-        name: "Security",
-        href: "/settings/security",
-        description: "Manage your password",
-      },
-      {
-        name: "Communication",
-        href: "/settings/communication",
-        description: "Email and phone",
-      },
-      {
-        name: "Permissions",
-        href: "/settings/permissions",
-        description: "Access control",
-      },
+      { name: "Profile", href: "/settings/profile" },
+      { name: "Security", href: "/settings/security" },
+      { name: "Communication", href: "/settings/communication" },
+      { name: "Permissions", href: "/settings/permissions" },
     ],
   },
-  { name: "Help", href: "/help", icon: HelpCircle, description: "Get support" },
-  {
-    name: "Logout",
-    href: "/logout",
-    icon: LogOut,
-    description: "Exit the app",
-  },
+  { name: "Help", href: "/help", icon: HelpCircle },
+  { name: "Logout", href: "/logout", icon: LogOut },
 ];
+
+// Settings page with cards
+export function SettingsPage() {
+  const sections =
+    footerItems.find((i) => i.name === "Settings")?.subItems || [];
+
+  return (
+    <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold text-sky-700">Settings</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {sections.map((sec) => (
+          <Card key={sec.href} className="border-sky-100 shadow-sm">
+            <CardHeader>
+              <CardTitle>{sec.name}</CardTitle>
+              <CardDescription>Manage {sec.name.toLowerCase()}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href={sec.href}>
+                <Button variant="outline" className="w-full">
+                  Go to {sec.name}
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
