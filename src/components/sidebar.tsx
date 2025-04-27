@@ -22,11 +22,24 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+import { useUserStore } from "@/stores/userStore";
+import axios from "axios";
 
 // Main Sidebar component
 export function Sidebar() {
   const pathname = usePathname();
   const { isOpen, toggle } = useSidebar();
+  const schoolId = useUserStore((state) => state.schoolId);
+
+  const { data, isPending } = useQuery({
+    queryKey: ["schoolProfile", schoolId],
+    queryFn: async () => {
+      const { data } = await axios.get(`/api/school/get-profile/${schoolId}`);
+      return data.data;
+    },
+    enabled: !!schoolId,
+  });
 
   return (
     <>
