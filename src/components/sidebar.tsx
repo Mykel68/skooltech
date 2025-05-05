@@ -58,7 +58,7 @@ export function Sidebar() {
             Skooltech
           </span> */}
           <img
-            src="/images/logo.png"
+            src={data.school_image}
             alt="logo"
             className="w-full h-auto p-2"
           />

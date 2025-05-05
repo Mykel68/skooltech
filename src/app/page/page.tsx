@@ -14,12 +14,12 @@ export default function page() {
     <div className="overflow-x-hidden">
       <Header />
       <HeroSection
-        title="Number one technology for schools"
+        title="Empowering Schools with Smart Technology"
         subtitle={{
-          regular: "Transform your School into ",
-          gradient: "beautiful digital experiences",
+          regular: "Digitize, Simplify, and Transform ",
+          gradient: "your entire school system",
         }}
-        description="Transform your ideas into reality with our comprehensive suite of development tools and resources."
+        description="Skooltech helps schools go digital—manage students, teachers, scores, and records effortlessly with our intuitive platform."
         ctaText="Get Started"
         ctaHref="/signup"
         bottomImage={{

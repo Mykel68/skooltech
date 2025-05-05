@@ -16,50 +16,53 @@ import Link from "next/link";
 function Header1() {
   const navigationItems = [
     {
-      title: "Skooltech",
+      title: (
+        <img src="/images/logo.png" alt="Skooltech Logo" className="h-24" />
+      ),
+      image: null,
       href: "/",
       description: "",
     },
     {
-      title: "Product",
-      description: "Managing a small business today is already tough.",
+      title: "Solutions",
+      description: "Tools for managing students, teachers, and performance.",
       items: [
         {
-          title: "Reports",
+          title: "Student Portal",
+          href: "/students",
+        },
+        {
+          title: "Teacher Dashboard",
+          href: "/teachers",
+        },
+        {
+          title: "Admin Panel",
+          href: "/admins",
+        },
+        {
+          title: "Performance Reports",
           href: "/reports",
-        },
-        {
-          title: "Statistics",
-          href: "/statistics",
-        },
-        {
-          title: "Dashboards",
-          href: "/dashboards",
-        },
-        {
-          title: "Recordings",
-          href: "/recordings",
         },
       ],
     },
     {
       title: "Company",
-      description: "Managing a small business today is already tough.",
+      description: "Learn about our mission to transform school operations.",
       items: [
         {
-          title: "About us",
+          title: "About Skooltech",
           href: "/about",
         },
         {
-          title: "Fundraising",
-          href: "/fundraising",
+          title: "Careers",
+          href: "/careers",
         },
         {
-          title: "Investors",
-          href: "/investors",
+          title: "Blog",
+          href: "/blog",
         },
         {
-          title: "Contact us",
+          title: "Contact",
           href: "/contact",
         },
       ],
@@ -77,8 +80,12 @@ function Header1() {
                 <NavigationMenuItem key={item.title}>
                   {item.href ? (
                     <>
-                      <NavigationMenuLink>
-                        <Button variant="ghost">{item.title}</Button>
+                      <NavigationMenuLink className="flex item-center justify-start">
+                        {item.image ? (
+                          item.image
+                        ) : (
+                          <Button variant="ghost">{item.title}</Button>
+                        )}
                       </NavigationMenuLink>
                     </>
                   ) : (
@@ -121,7 +128,12 @@ function Header1() {
           </NavigationMenu>
         </div>
         <div className="md:hidden flex lg:justify-center">
-          <p className="font-semibold">Skooltech</p>
+          {/* <p className="font-semibold">Skooltech</p> */}
+          <img
+            src="/images/logo.png"
+            alt="logo"
+            className="w-full h-auto p-2"
+          />
         </div>
         <div className="flex justify-end w-full gap-4">
           <Button variant="ghost" className="hidden md:inline">
