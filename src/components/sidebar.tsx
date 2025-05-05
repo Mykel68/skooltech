@@ -54,9 +54,14 @@ export function Sidebar() {
       >
         {/* Header */}
         <div className="flex h-16 items-center border-b border-emerald-100 px-4">
-          <span className="text-xl font-semibold text-green-950">
+          {/* <span className="text-xl font-semibold text-green-950">
             Skooltech
-          </span>
+          </span> */}
+          <img
+            src="/images/logo.png"
+            alt="logo"
+            className="w-full h-auto p-2"
+          />
           <Button
             variant="ghost"
             size="icon"
