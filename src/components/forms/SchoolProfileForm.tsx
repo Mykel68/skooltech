@@ -68,10 +68,17 @@ export function SchoolProfileForm() {
 
   const mutation = useMutation({
     mutationFn: updateSchoolProfile,
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       toast.success("School profile updated successfully!");
       setOpen(false);
       setPreview(null);
+
+      // Update user store only with the changed fields
+      useUserStore.setState((prev: any) => ({
+        ...prev,
+        ...(variables.name && { schoolName: variables.name }),
+        ...(variables.school_image && { schoolImage: variables.school_image }),
+      }));
     },
     onError: (error: Error) => {
       console.error("[SchoolProfileForm] Update error:", error);

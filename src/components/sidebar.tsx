@@ -25,7 +25,6 @@ import { restoreUserFromCookie } from "@/utils/restoreAuth";
 export function Sidebar() {
   const pathname = usePathname();
   const { isOpen, toggle } = useSidebar();
-  const schoolImage = useUserStore((state) => state.schoolImage);
 
   const [hydrated, setHydrated] = useState(false);
   const user = useUserStore((s) => s);
@@ -69,7 +68,12 @@ export function Sidebar() {
           {/* <span className="text-xl font-semibold text-green-950">
             Skooltech
           </span> */}
-          <img src={schoolImage} alt="logo" className=" h-12 rounded-full " />
+          <img
+            src={user.schoolImage}
+            alt="logo"
+            className=" h-12 rounded-full "
+          />
+          <p className="text-[1rem] font-semibold pl-1">{user.schoolName}</p>
           <Button
             variant="ghost"
             size="icon"
