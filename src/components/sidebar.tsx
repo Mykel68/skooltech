@@ -17,21 +17,33 @@ import { useQuery } from "@tanstack/react-query";
 import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
 import { footerItems, navItems } from "@/constants/sidebar";
+import { useSchoolStore } from "@/stores/school";
+import { useEffect, useState } from "react";
+import { restoreUserFromCookie } from "@/utils/restoreAuth";
 
 // Main Sidebar component
 export function Sidebar() {
   const pathname = usePathname();
   const { isOpen, toggle } = useSidebar();
-  const schoolId = useUserStore((state) => state.schoolId);
+  const schoolImage = useUserStore((state) => state.schoolImage);
 
-  const { data, isPending } = useQuery({
-    queryKey: ["schoolProfile", schoolId],
-    queryFn: async () => {
-      const { data } = await axios.get(`/api/school/get-profile/${schoolId}`);
-      return data.data;
-    },
-    enabled: !!schoolId,
-  });
+  const [hydrated, setHydrated] = useState(false);
+  const user = useUserStore((s) => s);
+
+  // On mount, restore user from cookie
+  useEffect(() => {
+    try {
+      restoreUserFromCookie();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setHydrated(true);
+    }
+    console.log("user", user);
+  }, []);
+
+  // While restoring, you can return null or a loader
+  if (!hydrated) return null;
 
   return (
     <>
@@ -57,11 +69,7 @@ export function Sidebar() {
           {/* <span className="text-xl font-semibold text-green-950">
             Skooltech
           </span> */}
-          <img
-            src={data.school_image}
-            alt="logo"
-            className="w-full h-auto p-2"
-          />
+          <img src={schoolImage} alt="logo" className=" h-12 rounded-full " />
           <Button
             variant="ghost"
             size="icon"

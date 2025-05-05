@@ -29,6 +29,7 @@ interface UserState {
   lastName: string | null;
   email: string | null;
   schoolName: string | null;
+  schoolImage: string | null;
   schoolCode: string | null;
   setUser: (user: {
     userId: string;
@@ -39,13 +40,8 @@ interface UserState {
     lastName: string;
     email: string;
     schoolName: string;
+    schoolImage: string;
     schoolCode: string;
-  }) => void;
-  updateProfile: (profile: {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    username?: string;
   }) => void;
   clearUser: () => void;
 }
@@ -61,17 +57,11 @@ export const useUserStore = create<UserState>()(
       lastName: null,
       email: null,
       schoolName: null,
+      schoolImage: null,
       schoolCode: null,
       setUser: (user) => {
         console.log("[UserStore] Updating user store:", user);
         set({ ...user });
-      },
-      updateProfile: (profile) => {
-        console.log("[UserStore] Updating profile:", profile);
-        set((state) => ({
-          ...state,
-          ...profile,
-        }));
       },
       clearUser: () => {
         console.log("[UserStore] Clearing user store");
@@ -84,6 +74,7 @@ export const useUserStore = create<UserState>()(
           lastName: null,
           email: null,
           schoolName: null,
+          schoolImage: null,
           schoolCode: null,
         });
       },
