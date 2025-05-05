@@ -156,10 +156,7 @@ export function SchoolProfileForm() {
       </div>
 
       <div className="flex items-center justify-end">
-        <Button
-          onClick={() => setOpen(true)}
-          className="bg-blue-500 hover:bg-blue-600 w-md"
-        >
+        <Button onClick={() => setOpen(true)} className=" w-md">
           Edit Profile
         </Button>
       </div>

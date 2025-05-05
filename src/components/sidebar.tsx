@@ -58,7 +58,7 @@ export function Sidebar() {
       {/* Sidebar panel */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-72 bg-teal-50 border-r border-emerald-50",
+          "fixed inset-y-0 left-0 z-50 w-72 bg-green-700 border-r border-emerald-50",
           "transition-transform duration-300 ease-in-out lg:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
@@ -73,7 +73,7 @@ export function Sidebar() {
             alt="logo"
             className=" h-12 rounded-full "
           />
-          <p className="text-[1rem] font-semibold pl-1">{user.schoolName}</p>
+          <p className="text-[1.3rem] font-semibold pl-1">{user.schoolName}</p>
           <Button
             variant="ghost"
             size="icon"
@@ -94,10 +94,10 @@ export function Sidebar() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium",
+                    "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-semibold",
                     isActive
-                      ? "bg-green-700 text-white"
-                      : "text-green-950 hover:bg-emerald-100"
+                      ? "bg-green-400 text-white"
+                      : "text-black hover:bg-emerald-100"
                   )}
                 >
                   <item.icon className="h-5 w-5" />
@@ -113,7 +113,7 @@ export function Sidebar() {
           </nav>
 
           {/* Footer / Settings */}
-          <div className="border-t border-emerald-100 p-3">
+          <div className="border-t border-black p-3">
             <nav className="space-y-1">
               {footerItems.map((item) => (
                 <div key={item.name}>
@@ -123,8 +123,8 @@ export function Sidebar() {
                         className={cn(
                           "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium cursor-pointer",
                           pathname.startsWith(item.href)
-                            ? "bg-green-700 text-white"
-                            : "text-green-950 hover:bg-emerald-100"
+                            ? "bg-green-400 text-white"
+                            : "text-black hover:bg-emerald-100"
                         )}
                       >
                         <item.icon className="h-5 w-5" />
@@ -142,7 +142,7 @@ export function Sidebar() {
                               "block rounded-lg px-3 py-1.5 text-sm",
                               pathname === sub.href
                                 ? "bg-sky-200 text-green-950"
-                                : "text-green-950 hover:bg-emerald-100"
+                                : "text-black hover:bg-emerald-100"
                             )}
                           >
                             {sub.name}
@@ -156,8 +156,8 @@ export function Sidebar() {
                       className={cn(
                         "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium",
                         pathname === item.href
-                          ? "bg-sky-500 text-white"
-                          : "text-sky-700 hover:bg-emerald-100"
+                          ? "bg-green-400 text-white"
+                          : "text-black hover:bg-emerald-100"
                       )}
                     >
                       <item.icon className="h-5 w-5" />
@@ -181,7 +181,7 @@ export function SettingsPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-sky-700">Settings</h1>
+      <h1 className="text-2xl font-bold text-black">Settings</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {sections.map((sec) => (
           <Card key={sec.href} className="border-sky-100 shadow-sm">
