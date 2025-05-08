@@ -68,7 +68,7 @@ export function Sidebar() {
             alt="logo"
             className="h-12 w-12 rounded-full object-cover"
           />
-          <p className="ml-2 text-lg font-semibold text-white">
+          <p className="ml-2 text-lg font-bold text-white uppercase  ">
             {schoolName ?? "Loading school…"}
           </p>
           <Button
