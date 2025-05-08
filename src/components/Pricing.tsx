@@ -1,10 +1,10 @@
 import React from "react";
-import { Pricing as Price } from "@/components/ui/pricing-cards";
+import Pricing from "./ui/pricing-cards";
 
-export default function Pricing() {
+export default function PricingPage() {
   return (
-    <div className="w-full">
-      <Price />
+    <div>
+      <Pricing />
     </div>
   );
 }
