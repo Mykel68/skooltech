@@ -35,8 +35,7 @@ async function fetchTeachers(schoolId: string): Promise<Teacher[]> {
 }
 
 export function TeacherTable() {
-  const schoolId = useUserStore((s) => s.schoolId);
-  const userId = useUserStore((s) => s.userId);
+  const schoolId = useUserStore((s) => s.schoolId)!;
   const queryClient = useQueryClient();
 
   const {
@@ -45,9 +44,19 @@ export function TeacherTable() {
     error,
   } = useQuery<Teacher[], Error>({
     queryKey: ["teachers", schoolId],
-    queryFn: () => fetchTeachers(schoolId!),
+    queryFn: () => fetchTeachers(schoolId),
     enabled: Boolean(schoolId),
   });
+
+  const toggleApproval = async (userId: string, approve: boolean) => {
+    await axios.patch(
+      `/api/user/verify-teacher/${userId}`,
+      { is_approved: approve }
+      // ensure header config if needed, e.g. auth
+    );
+    // refetch this school's teachers
+    queryClient.invalidateQueries({ queryKey: ["teachers", schoolId] });
+  };
 
   if (isLoading) return <div>Loading…</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -76,20 +85,23 @@ export function TeacherTable() {
             <TableCell>{t.last_name}</TableCell>
             <TableCell>{t.role}</TableCell>
             <TableCell>{t.is_approved ? "✅" : "❌"}</TableCell>
-            <TableCell>
-              <Button
-                size="sm"
-                onClick={async () => {
-                  await axios.patch(`/api/user/verify-teacher/${t.user_id}`, {
-                    is_approved: true,
-                  });
-                  queryClient.invalidateQueries({
-                    queryKey: ["teachers", schoolId, userId],
-                  });
-                }}
-              >
-                Approve
-              </Button>
+            <TableCell className="flex space-x-2">
+              {t.is_approved ? (
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => toggleApproval(t.user_id, false)}
+                >
+                  Disapprove
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  onClick={() => toggleApproval(t.user_id, true)}
+                >
+                  Approve
+                </Button>
+              )}
             </TableCell>
           </TableRow>
         ))}
