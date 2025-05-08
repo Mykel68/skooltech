@@ -5,8 +5,8 @@ import { testimonials } from "@/constants/testimonial";
 export default function Testimonial() {
   return (
     <TestimonialsSection
-      title="Trusted by developers worldwide"
-      description="Join thousands of developers who are already building the future with our AI platform"
+      title="Trusted by schools, loved by educators"
+      description="Teachers and school admins across the country trust SkoolTech to simplify their work and improve student outcomes."
       testimonials={testimonials}
     />
   );
