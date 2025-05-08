@@ -4,10 +4,11 @@ import { CTASection } from "./cta-with-glow";
 export default function CTA() {
   return (
     <CTASection
-      title="Start building today"
+      title="School Management with SkoolTech"
+      // description="Say goodbye to paperwork — manage exams, scores, and users in one place."
       action={{
         text: "Get Started",
-        href: "/docs",
+        href: "/get-started", // You can adjust this path to match your actual onboarding route
         variant: "default",
       }}
     />
