@@ -34,7 +34,7 @@ export async function PATCH(
     }
 
     const backendUrl = process.env.MAIN_BACKEND_URL!;
-    const token = (await cookies()).get("s_id")?.value;
+    const token = (await cookies()).get("user_id")?.value;
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
