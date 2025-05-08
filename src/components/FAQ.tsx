@@ -6,12 +6,15 @@ export default function FAQ() {
   return (
     <FaqSectionWithCategories
       title="Frequently Asked Questions"
-      description="Find answers to common questions about our services"
+      description="Quick answers about how SkoolTech helps you manage exams and users effectively."
       items={FAQS}
       contactInfo={{
-        title: "Still have questions?",
-        buttonText: "Contact Support",
-        // onContact: () => console.log("Contact support clicked"),
+        title: "Need further assistance?",
+        buttonText: "Contact SkoolTech Support",
+        // onContact: () => {
+        //   // Navigate to contact page or open modal
+        //   window.location.href = "/contact";
+        // },
       }}
     />
   );

@@ -1,26 +1,38 @@
 export const FAQS = [
   {
-    question: "How do I get started?",
+    question: "How do students register on SkoolTech?",
     answer:
-      "Getting started is easy! Simply sign up for an account and follow our quick setup guide. We'll walk you through each step of the process.",
+      "Students can register using their name and a unique ID provided by the school. After registration, they can update their bio-data and select subjects.",
     category: "Getting Started",
   },
   {
-    question: "What payment methods do you accept?",
+    question: "How do teachers add student scores?",
     answer:
-      "We accept all major credit cards, PayPal, and bank transfers. All payments are processed securely through our payment partners.",
-    category: "Billing",
+      "Once a teacher is assigned a subject and class, they can view their student list and input scores directly from their dashboard.",
+    category: "Teachers",
   },
   {
-    question: "Is there a free trial available?",
+    question: "Can SkoolTech work offline?",
     answer:
-      "Yes! We offer a 14-day free trial with full access to all features. No credit card required to start your trial.",
-    category: "Pricing",
+      "SkoolTech is a fully cloud-based platform, so an internet connection is required. However, we're exploring offline support for future versions.",
+    category: "Technical",
   },
   {
-    question: "How can I contact support?",
+    question: "Is student data carried over to the next session?",
     answer:
-      "Our support team is available 24/7 through our help center, email support, or live chat. We typically respond within 2 hours.",
+      "Yes, all data including scores, attendance, and remarks are retained and available for admins to review across sessions.",
+    category: "Admin",
+  },
+  {
+    question: "How can I reset my password?",
+    answer:
+      "You can reset your password using the 'Forgot Password' option on the login page. A secure link will be sent to your registered email.",
     category: "Support",
+  },
+  {
+    question: "Who can access admin privileges?",
+    answer:
+      "Only designated admins or teachers granted admin rights can view sensitive data and manage system-wide settings.",
+    category: "Admin",
   },
 ];
