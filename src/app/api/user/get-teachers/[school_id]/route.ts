@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 // GET user profile
 export async function GET(
   request: Request,
-  context: { params: Promise<{ user_id: string }> }
+  context: { params: Promise<{ school_id: string }> }
 ) {
   try {
     const params = await context.params; // Await the params here
@@ -21,7 +21,7 @@ export async function GET(
     }
 
     const response = await axios.get(
-      `${backendUrl}/api/users/${params.user_id}/teachers`, // Use awaited user_id
+      `${backendUrl}/api/users/${params.school_id}/teachers`, // Use awaited school_id
       {
         headers: {
           Authorization: `Bearer ${token}`,

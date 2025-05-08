@@ -51,7 +51,7 @@ export function DataTable<T extends Record<string, any>>({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((row, idx) => (
+        {data.map((row: any, idx: number) => (
           <TableRow key={idx}>
             {columns.map((col) => (
               <TableCell key={String(col.accessor)}>

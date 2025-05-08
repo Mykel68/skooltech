@@ -36,6 +36,7 @@ async function fetchTeachers(schoolId: string): Promise<Teacher[]> {
 
 export function TeacherTable() {
   const schoolId = useUserStore((s) => s.schoolId);
+  const userId = useUserStore((s) => s.userId);
   const queryClient = useQueryClient();
 
   const {
@@ -44,7 +45,7 @@ export function TeacherTable() {
     error,
   } = useQuery<Teacher[], Error>({
     queryKey: ["teachers", schoolId],
-    queryFn: () => fetchTeachers(schoolId),
+    queryFn: () => fetchTeachers(schoolId!),
     enabled: Boolean(schoolId),
   });
 
@@ -79,9 +80,11 @@ export function TeacherTable() {
               <Button
                 size="sm"
                 onClick={async () => {
-                  await axios.post(`/api/teachers/${t.user_id}/approve`);
+                  await axios.patch(`/api/user/verify-teacher/${t.user_id}`, {
+                    is_approved: true,
+                  });
                   queryClient.invalidateQueries({
-                    queryKey: ["teachers", schoolId],
+                    queryKey: ["teachers", schoolId, userId],
                   });
                 }}
               >
