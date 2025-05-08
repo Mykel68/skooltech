@@ -11,6 +11,7 @@ import {
 // Navigation data
 export const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Teachers", href: "/teachers", icon: Users, badge: "7" },
   { name: "Students", href: "/students", icon: Users, badge: "12" },
   { name: "Fees", href: "/fees", icon: Wallet },
   { name: "Reports", href: "/reports", icon: BarChart3 },
