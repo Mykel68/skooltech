@@ -1,4 +1,3 @@
-// app/api/users/teachers/[user_id]/verify/route.ts
 import { NextResponse } from "next/server";
 import axios from "axios";
 import { cookies } from "next/headers";
