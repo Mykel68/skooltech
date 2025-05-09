@@ -13,6 +13,7 @@ export const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Teachers", href: "/teachers", icon: Users, badge: "7" },
   { name: "Students", href: "/students", icon: Users, badge: "12" },
+  { name: "Classes", href: "/classes", icon: Users, badge: "5" },
   { name: "Fees", href: "/fees", icon: Wallet },
   { name: "Reports", href: "/reports", icon: BarChart3 },
 ];
