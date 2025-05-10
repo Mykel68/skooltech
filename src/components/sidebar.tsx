@@ -81,85 +81,87 @@ export function Sidebar() {
           </Button>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex flex-col h-[calc(100vh-64px)] overflow-auto py-4 px-3 space-y-2">
-          {navItems.map((item) => {
-            const active = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-semibold",
-                  active
-                    ? "bg-green-400 text-white"
-                    : "text-white hover:bg-emerald-600"
-                )}
-              >
-                <item.icon className="h-5 w-5" />
-                <span>{item.name}</span>
-                {item.badge && (
-                  <span className="ml-auto inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
-                    {item.badge}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Footer / Settings */}
-        <div className="border-t border-emerald-600 p-3">
-          {footerItems.map((item) =>
-            item.subItems ? (
-              <details key={item.name} className="group">
-                <summary
+        <div className="flex flex-col h-[calc(100vh-64px)] overflow-auto justify-between">
+          {/* Navigation */}
+          <nav className="flex flex-col py-4 px-3 space-y-2">
+            {navItems.map((item) => {
+              const active = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-4 py-2 text-sm text-white cursor-pointer",
-                    pathname.startsWith(item.href)
+                    "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-semibold",
+                    active
+                      ? "bg-green-400 text-white"
+                      : "text-white hover:bg-emerald-600"
+                  )}
+                >
+                  <item.icon className="h-5 w-5" />
+                  <span>{item.name}</span>
+                  {item.badge && (
+                    <span className="ml-auto inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Footer / Settings */}
+          <div className="border-t border-emerald-600 p-3">
+            {footerItems.map((item) =>
+              item.subItems ? (
+                <details key={item.name} className="group">
+                  <summary
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-4 py-2 text-sm text-white cursor-pointer",
+                      pathname.startsWith(item.href)
+                        ? "bg-green-400"
+                        : "hover:bg-emerald-600"
+                    )}
+                  >
+                    <item.icon className="h-5 w-5" />
+                    <span>{item.name}</span>
+                    <span className="ml-auto transition-transform group-open:rotate-180">
+                      ▼
+                    </span>
+                  </summary>
+                  <div className="mt-1 space-y-1 pl-8">
+                    {item.subItems.map((sub) => (
+                      <Link
+                        key={sub.href}
+                        href={sub.href}
+                        className={cn(
+                          "block rounded px-3 py-1 text-sm text-white",
+                          pathname === sub.href
+                            ? "bg-sky-700"
+                            : "hover:bg-emerald-600"
+                        )}
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                </details>
+              ) : (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-4 py-2 text-sm text-white",
+                    pathname === item.href
                       ? "bg-green-400"
                       : "hover:bg-emerald-600"
                   )}
                 >
                   <item.icon className="h-5 w-5" />
                   <span>{item.name}</span>
-                  <span className="ml-auto transition-transform group-open:rotate-180">
-                    ▼
-                  </span>
-                </summary>
-                <div className="mt-1 space-y-1 pl-8">
-                  {item.subItems.map((sub) => (
-                    <Link
-                      key={sub.href}
-                      href={sub.href}
-                      className={cn(
-                        "block rounded px-3 py-1 text-sm text-white",
-                        pathname === sub.href
-                          ? "bg-sky-700"
-                          : "hover:bg-emerald-600"
-                      )}
-                    >
-                      {sub.name}
-                    </Link>
-                  ))}
-                </div>
-              </details>
-            ) : (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-4 py-2 text-sm text-white",
-                  pathname === item.href
-                    ? "bg-green-400"
-                    : "hover:bg-emerald-600"
-                )}
-              >
-                <item.icon className="h-5 w-5" />
-                <span>{item.name}</span>
-              </Link>
-            )
-          )}
+                </Link>
+              )
+            )}
+          </div>
         </div>
       </aside>
     </>
