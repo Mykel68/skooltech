@@ -72,8 +72,8 @@ export function StudentTable() {
           <TableHead>Email</TableHead>
           <TableHead>Class</TableHead>
           <TableHead>Gender</TableHead>
-          <TableHead>Approved</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead className="text-center">Approved</TableHead>
+          <TableHead className="text-center">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -84,7 +84,9 @@ export function StudentTable() {
             <TableCell>{s.email}</TableCell>
             <TableCell>{s.class}</TableCell>
             <TableCell>{s.gender}</TableCell>
-            <TableCell>{s.is_approved ? "✅" : "❌"}</TableCell>
+            <TableCell className="text-center">
+              {s.is_approved ? "✅" : "❌"}
+            </TableCell>
             <TableCell className="flex space-x-2">
               {s.is_approved ? (
                 <Button
