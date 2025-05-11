@@ -10,6 +10,7 @@ export interface DecodedToken {
   email: string;
   school_name: string;
   school_image: string;
+  is_school_active: boolean;
   iat: number;
   exp: number;
 }

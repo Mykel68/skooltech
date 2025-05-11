@@ -45,9 +45,14 @@ export function LoginForm() {
         schoolName: data.decoded.school_name,
         schoolCode: data.decoded.school_code,
         schoolImage: data.decoded.school_image,
+        is_school_active: data.decoded.is_school_active,
       });
       toast.success("Login successful!");
-      router.push("/dashboard");
+      if (data.decoded.is_school_active === true) {
+        router.push("/dashboard");
+      } else {
+        router.push("/code");
+      }
     },
     onError: (error: Error) => {
       console.error("[LoginForm] Login mutation error:", error); // Client-side log

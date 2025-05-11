@@ -5,14 +5,14 @@ import { DecodedToken } from "@/types/auth";
 import { useUserStore } from "@/stores/userStore";
 
 export function restoreUserFromCookie() {
-  console.log("Hi");
+  // console.log("Hi");
   const token = Cookies.get("user_id");
-  console.log(token);
+  // console.log(token);
   if (!token) return;
 
   try {
     const decoded = jwtDecode<DecodedToken>(token);
-    console.log("[restoreAuth] Decoded token:", decoded);
+    // console.log("[restoreAuth] Decoded token:", decoded);
 
     // If token expired, remove and bail
     if (decoded.exp * 1000 < Date.now()) {
@@ -32,6 +32,7 @@ export function restoreUserFromCookie() {
       schoolName: decoded.school_name,
       schoolImage: decoded.school_image,
       schoolCode: decoded.school_code,
+      is_school_active: decoded.is_school_active,
     });
   } catch (err) {
     console.error("[restoreAuth] Failed to decode token:", err);
