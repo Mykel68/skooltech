@@ -136,7 +136,7 @@ export function Sidebar() {
                         className={cn(
                           "block rounded px-3 py-1 text-sm text-white",
                           pathname === sub.href
-                            ? "bg-sky-700"
+                            ? "bg-emerald-600"
                             : "hover:bg-emerald-600"
                         )}
                       >
