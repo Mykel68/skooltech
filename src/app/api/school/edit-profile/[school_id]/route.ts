@@ -23,6 +23,7 @@ export async function PATCH(
     const { school_id } = await params;
 
     const body = await request.json();
+    console.log("[PATCH] Body:", body);
     const validated = partialSchoolProfileSchema.parse(body);
 
     const filteredData = Object.fromEntries(
