@@ -25,6 +25,7 @@ import { useUserStore } from "@/stores/userStore";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 // Zod Schema
 const classSchema = z.object({
@@ -76,6 +77,7 @@ export default function ClassTable() {
   const { mutate, isPending } = useMutation({
     mutationFn: createClass,
     onSuccess: () => {
+      toast.success("Class created successfully");
       queryClient.invalidateQueries({ queryKey: ["classes", schoolId] });
       reset();
       setOpen(false);
