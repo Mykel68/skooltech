@@ -33,6 +33,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useUserStore } from "@/stores/userStore";
 import { Badge } from "@/components/ui/badge";
+import { Trash2 } from "lucide-react";
 
 // --- Zod schema for creating a subject ---
 const subjectSchema = z.object({
@@ -66,6 +67,11 @@ async function fetchClasses(schoolId: string): Promise<SchoolClass[]> {
 
 async function fetchSubjects(schoolId: string): Promise<Subject[]> {
   const { data } = await axios.get(`/api/subject/get-all-subject/${schoolId}`);
+  return data.data;
+}
+
+async function approveSubjects(schoolId: string): Promise<Subject[]> {
+  const { data } = await axios.get(`/api/subject/approve/${schoolId}`);
   return data.data;
 }
 
@@ -120,6 +126,32 @@ export default function SubjectTable() {
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || "Failed to create subject");
+    },
+  });
+
+  const approveMutation = useMutation({
+    mutationFn: async (subjectId: string) => {
+      await axios.patch(`/api/subject/approve/${subjectId}`);
+    },
+    onSuccess: () => {
+      toast.success("Subject approved");
+      queryClient.invalidateQueries({ queryKey: ["subjects", schoolId] });
+    },
+    onError: () => {
+      toast.error("Failed to approve subject");
+    },
+  });
+
+  const disapproveMutation = useMutation({
+    mutationFn: async (subjectId: string) => {
+      await axios.patch(`/api/subject/disapprove/${subjectId}`);
+    },
+    onSuccess: () => {
+      toast.success("Subject disapproved");
+      queryClient.invalidateQueries({ queryKey: ["subjects", schoolId] });
+    },
+    onError: () => {
+      toast.error("Failed to disapprove subject");
     },
   });
 
@@ -218,7 +250,7 @@ export default function SubjectTable() {
                 <TableCell>{subj.name}</TableCell>
                 <TableCell>{subj.teacher_name}</TableCell>
                 <TableCell>{subj.teacher_email}</TableCell>
-                <TableCell>
+                <TableCell className="flex items-center gap-5">
                   <Badge
                     variant={subj.is_approved ? "default" : "secondary"}
                     className={
@@ -234,6 +266,34 @@ export default function SubjectTable() {
                     />
                     {subj.is_approved ? "Approved" : "Pending"}
                   </Badge>
+
+                  {subj.is_approved ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-24"
+                      onClick={() => disapproveMutation.mutate(subj.subject_id)}
+                    >
+                      Disapprove
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-24"
+                      onClick={() => approveMutation.mutate(subj.subject_id)}
+                    >
+                      Approve
+                    </Button>
+                  )}
+
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => deleteMutation.mutate(subj.subject_id)}
+                  >
+                    <Trash2 className="w-4 h-4 mr-1 text-red-500" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
