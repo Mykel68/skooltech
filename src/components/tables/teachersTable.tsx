@@ -107,6 +107,7 @@ export function TeacherTable() {
                     size="sm"
                     variant="destructive"
                     onClick={() => toggleApproval(t.user_id, false)}
+                    className="w-24"
                   >
                     Disapprove
                   </Button>
@@ -114,20 +115,20 @@ export function TeacherTable() {
                   <Button
                     size="sm"
                     onClick={() => toggleApproval(t.user_id, true)}
+                    className="w-24"
                   >
                     Approve
                   </Button>
                 )}
                 <Button
-                  size="sm"
-                  variant="destructive"
+                  size="icon"
+                  variant="ghost"
                   onClick={() => {
                     setDeleteId(t.user_id);
                     setOpen(true);
                   }}
                 >
-                  <Trash2 className="w-4 h-4 mr-1" />
-                  Delete
+                  <Trash2 className="w-4 h-4 mr-1 text-red-500" />
                 </Button>
               </TableCell>
             </TableRow>
