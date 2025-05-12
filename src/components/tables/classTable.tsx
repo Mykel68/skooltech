@@ -22,6 +22,17 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { useUserStore } from "@/stores/userStore";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+// Zod Schema
+const classSchema = z.object({
+  name: z.string().min(2, "Class name is required"),
+  grade_level: z.string().min(1, "Grade level is required"),
+});
+
+type ClassFormValues = z.infer<typeof classSchema>;
 
 type SchoolClass = {
   id: string;
@@ -36,19 +47,25 @@ async function fetchClasses(schoolId: string): Promise<SchoolClass[]> {
 
 async function createClass({
   name,
+  grade_level,
   schoolId,
-}: {
-  name: string;
-  schoolId: string;
-}) {
-  await axios.post(`/api/classes/${schoolId}`, { name });
+}: ClassFormValues & { schoolId: string }) {
+  await axios.post(`/api/class/create-new/${schoolId}`, { name, grade_level });
 }
 
 export default function ClassTable() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [className, setClassName] = useState("");
   const schoolId = useUserStore((s) => s.schoolId);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ClassFormValues>({
+    resolver: zodResolver(classSchema),
+  });
 
   const { data: classes, isLoading } = useQuery({
     queryKey: ["classes", schoolId],
@@ -60,10 +77,15 @@ export default function ClassTable() {
     mutationFn: createClass,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["classes", schoolId] });
-      setClassName("");
+      reset();
       setOpen(false);
     },
   });
+
+  const onSubmit = (values: ClassFormValues) => {
+    if (!schoolId) return;
+    mutate({ ...values, schoolId });
+  };
 
   return (
     <div className="w-full mx-auto p-4 space-y-6">
@@ -74,25 +96,38 @@ export default function ClassTable() {
             <Button>Create New Class</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create a Class</DialogTitle>
-            </DialogHeader>
-            <Input
-              placeholder="Enter class name"
-              value={className}
-              onChange={(e) => setClassName(e.target.value)}
-            />
-            <DialogFooter>
-              <Button variant="ghost" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
-              <Button
-                disabled={!className || isPending}
-                onClick={() => mutate({ name: className, schoolId })}
-              >
-                {isPending ? "Creating..." : "Create"}
-              </Button>
-            </DialogFooter>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <DialogHeader>
+                <DialogTitle>Create a Class</DialogTitle>
+              </DialogHeader>
+              <Input placeholder="Enter class name" {...register("name")} />
+              {errors.name && (
+                <p className="text-sm text-red-500">{errors.name.message}</p>
+              )}
+
+              <Input
+                placeholder="Enter grade level (e.g. JSS2A)"
+                {...register("grade_level")}
+              />
+              {errors.grade_level && (
+                <p className="text-sm text-red-500">
+                  {errors.grade_level.message}
+                </p>
+              )}
+
+              <DialogFooter>
+                <Button
+                  variant="ghost"
+                  onClick={() => setOpen(false)}
+                  type="button"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isPending}>
+                  {isPending ? "Creating..." : "Create"}
+                </Button>
+              </DialogFooter>
+            </form>
           </DialogContent>
         </Dialog>
       </div>
