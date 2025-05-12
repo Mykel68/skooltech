@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     const { token } = response.data.data;
 
     // Set the token as an HTTP-only cookie
-    const cookie = `user_id=${token}; Path=/; Max-Age=36000; SameSite=Strict; Secure`;
+    const cookie = `user_id=${token}; Path=/; Max-Age=28,800; SameSite=Strict; Secure`;
     return new NextResponse(
       JSON.stringify({ message: "Login successful", token }),
       {
