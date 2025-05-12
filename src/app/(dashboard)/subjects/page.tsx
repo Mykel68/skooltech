@@ -32,6 +32,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useUserStore } from "@/stores/userStore";
+import { Badge } from "@/components/ui/badge";
 
 // --- Zod schema for creating a subject ---
 const subjectSchema = z.object({
@@ -42,8 +43,20 @@ const subjectSchema = z.object({
 type SubjectFormValues = z.infer<typeof subjectSchema>;
 
 // --- Types ---
-type SchoolClass = { id: string; name: string; grade_level: string };
-type Subject = { id: string; class_id: string; name: string; code: string };
+type SchoolClass = {
+  class_id: string;
+  name: string;
+  grade_level: string;
+};
+
+type Subject = {
+  name: string;
+  class_name: string;
+  grade_level: string;
+  teacher_name: string;
+  teacher_email: string;
+  is_approved: boolean;
+};
 
 // --- Fetchers ---
 async function fetchClasses(schoolId: string): Promise<SchoolClass[]> {
@@ -52,8 +65,8 @@ async function fetchClasses(schoolId: string): Promise<SchoolClass[]> {
 }
 
 async function fetchSubjects(schoolId: string): Promise<Subject[]> {
-  const { data } = await axios.get(`/api/subject/get-all/${schoolId}`);
-  return data.data.subjects;
+  const { data } = await axios.get(`/api/subject/get-all-subject/${schoolId}`);
+  return data.data;
 }
 
 async function createSubject(
@@ -72,14 +85,14 @@ export default function SubjectTable() {
   const [open, setOpen] = useState(false);
 
   // Fetch classes
-  const { data: classes = [], isLoading: loadingClasses } = useQuery({
+  const { data: classes = [], isPending: loadingClasses } = useQuery({
     queryKey: ["classes", schoolId],
     queryFn: () => fetchClasses(schoolId),
     enabled: !!schoolId,
   });
 
   // Fetch subjects
-  const { data: subjects = [], isLoading: loadingSubjects } = useQuery({
+  const { data: subjects = [], isPending: loadingSubjects } = useQuery({
     queryKey: ["subjects", schoolId],
     queryFn: () => fetchSubjects(schoolId),
     enabled: !!schoolId,
@@ -89,6 +102,7 @@ export default function SubjectTable() {
   const {
     register,
     handleSubmit,
+    setValue,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<SubjectFormValues>({
@@ -129,17 +143,13 @@ export default function SubjectTable() {
               </DialogHeader>
 
               {/* Class Selector */}
-              <Select
-                onValueChange={(value) => {
-                  register("class_id").onChange({ target: { value } });
-                }}
-              >
+              <Select onValueChange={(value) => setValue("class_id", value)}>
                 <SelectTrigger className="w-full">
                   <span>Select class</span>
                 </SelectTrigger>
                 <SelectContent>
                   {classes.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
+                    <SelectItem key={c.class_id} value={c.class_id}>
                       {c.name} ({c.grade_level})
                     </SelectItem>
                   ))}
@@ -173,9 +183,9 @@ export default function SubjectTable() {
                 </Button>
                 <Button
                   type="submit"
-                  disabled={isSubmitting || createMutation.isLoading}
+                  disabled={isSubmitting || createMutation.isPending}
                 >
-                  {isSubmitting || createMutation.isLoading
+                  {isSubmitting || createMutation.isPending
                     ? "Creating..."
                     : "Create"}
                 </Button>
@@ -193,23 +203,40 @@ export default function SubjectTable() {
           <TableHeader>
             <TableRow>
               <TableHead>Class</TableHead>
+              <TableHead>Grade Level</TableHead>
               <TableHead>Subject Name</TableHead>
-              <TableHead>Subject Code</TableHead>
+              <TableHead>Teacher</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {subjects.map((subj) => {
-              const cls = classes.find((c) => c.id === subj.class_id);
-              return (
-                <TableRow key={subj.id}>
-                  <TableCell>
-                    {cls ? `${cls.name} (${cls.grade_level})` : subj.class_id}
-                  </TableCell>
-                  <TableCell>{subj.name}</TableCell>
-                  <TableCell>{subj.code}</TableCell>
-                </TableRow>
-              );
-            })}
+            {subjects.map((subj, idx) => (
+              <TableRow key={idx}>
+                <TableCell>{subj.class_name}</TableCell>
+                <TableCell>{subj.grade_level}</TableCell>
+                <TableCell>{subj.name}</TableCell>
+                <TableCell>{subj.teacher_name}</TableCell>
+                <TableCell>{subj.teacher_email}</TableCell>
+                <TableCell>
+                  <Badge
+                    variant={subj.is_approved ? "default" : "secondary"}
+                    className={
+                      subj.is_approved
+                        ? "bg-green-600 hover:bg-green-700 text-white gap-2"
+                        : "bg-red-300 border border-red-600 hover:bg-red-300 text-black/80 gap-2"
+                    }
+                  >
+                    <span
+                      className={`h-2 w-2 rounded-full ${
+                        subj.is_approved ? "bg-white" : "bg-red-600"
+                      }`}
+                    />
+                    {subj.is_approved ? "Approved" : "Pending"}
+                  </Badge>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       ) : (
