@@ -21,36 +21,45 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
+import { useUserStore } from "@/stores/userStore";
 
 type SchoolClass = {
   id: string;
   name: string;
-  created_at: string;
+  grade_level: string;
 };
 
-async function fetchClasses(): Promise<SchoolClass[]> {
-  const { data } = await axios.get("/api/classes");
-  return data.classes;
+async function fetchClasses(schoolId: string): Promise<SchoolClass[]> {
+  const { data } = await axios.get(`/api/class/get-all-classs/${schoolId}`);
+  return data.data.classes;
 }
 
-async function createClass(name: string): Promise<void> {
-  await axios.post("/api/classes", { name });
+async function createClass({
+  name,
+  schoolId,
+}: {
+  name: string;
+  schoolId: string;
+}) {
+  await axios.post(`/api/classes/${schoolId}`, { name });
 }
 
 export default function ClassTable() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [className, setClassName] = useState("");
+  const schoolId = useUserStore((s) => s.schoolId);
 
-  const { data: classes, isLoading } = useQuery<SchoolClass[]>({
-    queryKey: ["classes"],
-    queryFn: fetchClasses,
+  const { data: classes, isLoading } = useQuery({
+    queryKey: ["classes", schoolId],
+    queryFn: () => fetchClasses(schoolId!),
+    enabled: !!schoolId,
   });
 
   const { mutate, isPending } = useMutation({
     mutationFn: createClass,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["classes"] });
+      queryClient.invalidateQueries({ queryKey: ["classes", schoolId] });
       setClassName("");
       setOpen(false);
     },
@@ -79,7 +88,7 @@ export default function ClassTable() {
               </Button>
               <Button
                 disabled={!className || isPending}
-                onClick={() => mutate(className)}
+                onClick={() => mutate({ name: className, schoolId })}
               >
                 {isPending ? "Creating..." : "Create"}
               </Button>
@@ -95,16 +104,14 @@ export default function ClassTable() {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Created At</TableHead>
+              <TableHead>Grade Level</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {classes.map((cls) => (
               <TableRow key={cls.id}>
                 <TableCell>{cls.name}</TableCell>
-                <TableCell>
-                  {new Date(cls.created_at).toLocaleDateString()}
-                </TableCell>
+                <TableCell>{cls.grade_level}</TableCell>
               </TableRow>
             ))}
           </TableBody>
