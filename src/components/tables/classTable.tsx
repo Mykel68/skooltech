@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import {
@@ -26,8 +26,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
-// Zod Schema
 const classSchema = z.object({
   name: z.string().min(2, "Class name is required"),
   grade_level: z.string().min(1, "Grade level is required"),
@@ -57,6 +57,8 @@ async function createClass({
 export default function ClassTable() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [sortKey, setSortKey] = useState<"name" | "grade_level" | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const schoolId = useUserStore((s) => s.schoolId);
 
   const {
@@ -82,12 +84,37 @@ export default function ClassTable() {
       reset();
       setOpen(false);
     },
+    onError: (err: any) => {
+      const message = err?.response?.data?.error || "Failed to create class";
+      toast.error(message);
+    },
   });
 
   const onSubmit = (values: ClassFormValues) => {
     if (!schoolId) return;
     mutate({ ...values, schoolId });
   };
+
+  const toggleSort = (key: "name" | "grade_level") => {
+    if (sortKey === key) {
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDirection("asc");
+    }
+  };
+
+  const sortedClasses = useMemo(() => {
+    if (!classes) return [];
+    if (!sortKey) return classes;
+
+    return [...classes].sort((a, b) => {
+      const aValue = a[sortKey].toLowerCase();
+      const bValue = b[sortKey].toLowerCase();
+      const direction = sortDirection === "asc" ? 1 : -1;
+      return aValue.localeCompare(bValue) * direction;
+    });
+  }, [classes, sortKey, sortDirection]);
 
   return (
     <div className="w-full mx-auto p-4 space-y-6">
@@ -136,16 +163,38 @@ export default function ClassTable() {
 
       {isLoading ? (
         <p>Loading classes...</p>
-      ) : classes?.length ? (
+      ) : sortedClasses?.length ? (
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Grade Level</TableHead>
+              <TableHead
+                className="cursor-pointer"
+                onClick={() => toggleSort("name")}
+              >
+                Name{" "}
+                {sortKey === "name" &&
+                  (sortDirection === "asc" ? (
+                    <ArrowUp className="inline h-4 w-4" />
+                  ) : (
+                    <ArrowDown className="inline h-4 w-4" />
+                  ))}
+              </TableHead>
+              <TableHead
+                className="cursor-pointer"
+                onClick={() => toggleSort("grade_level")}
+              >
+                Grade Level{" "}
+                {sortKey === "grade_level" &&
+                  (sortDirection === "asc" ? (
+                    <ArrowUp className="inline h-4 w-4" />
+                  ) : (
+                    <ArrowDown className="inline h-4 w-4" />
+                  ))}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {classes.map((cls) => (
+            {sortedClasses.map((cls) => (
               <TableRow key={cls.id}>
                 <TableCell>{cls.name}</TableCell>
                 <TableCell>{cls.grade_level}</TableCell>
