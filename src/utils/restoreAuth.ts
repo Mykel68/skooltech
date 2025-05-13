@@ -33,6 +33,7 @@ export function restoreUserFromCookie() {
       schoolImage: decoded.school_image,
       schoolCode: decoded.school_code,
       is_school_active: decoded.is_school_active,
+      session_id: decoded.session_id,
     });
   } catch (err) {
     console.error("[restoreAuth] Failed to decode token:", err);

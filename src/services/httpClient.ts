@@ -18,6 +18,7 @@ interface DecodedToken {
   school_code: string;
   is_school_active: boolean;
   school_image: string;
+  session_id: string;
   iat: number;
   exp: number;
 }

@@ -75,7 +75,6 @@ const UpcomingEvents = ({
 );
 
 const AdminDashboard = ({
-  isSchoolSetupComplete = false,
   schoolName = "Bright Future High School",
 }: {
   isSchoolSetupComplete: boolean;
@@ -91,6 +90,9 @@ const AdminDashboard = ({
   });
 
   const schoolId = useUserStore((s) => s.schoolId);
+  const session_id = useUserStore((s) => s.session_id);
+
+  const isSchoolSetupComplete = !!session_id;
 
   const createSession = async (sessionData: SessionForm) => {
     const res = await axios.post(

@@ -11,6 +11,7 @@ export interface DecodedToken {
   school_name: string;
   school_image: string;
   is_school_active: boolean;
+  session_id: string;
   iat: number;
   exp: number;
 }

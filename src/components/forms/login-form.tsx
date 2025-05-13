@@ -46,6 +46,7 @@ export function LoginForm() {
         schoolCode: data.decoded.school_code,
         schoolImage: data.decoded.school_image,
         is_school_active: data.decoded.is_school_active,
+        session_id: data.decoded.session_id,
       });
       toast.success("Login successful!");
       if (data.decoded.is_school_active === true) {
