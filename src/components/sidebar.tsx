@@ -3,48 +3,47 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useSidebar } from "./sidebar-provider";
+import { Menu, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSidebar } from "./sidebar-provider";
 import { useUserStore } from "@/stores/userStore";
 import { footerItems, navItems } from "@/constants/sidebar";
 import { restoreUserFromCookie } from "@/utils/restoreAuth";
+
+const sessions = ["2022/2023", "2023/2024", "2024/2025"]; // You can fetch this from API
 
 export function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const { isOpen, toggle } = useSidebar();
 
-  // pull only what we need
   const userId = useUserStore((s) => s.userId);
   const schoolImage = useUserStore((s) => s.schoolImage);
   const schoolName = useUserStore((s) => s.schoolName);
 
-  // track that we've run restoreUserFromCookie once
   const [ready, setReady] = useState(false);
+  const [currentSession, setCurrentSession] = useState(sessions[1]); // Default session
 
-  // —————————————————————————————————————————————
-  // 1) Restore session once on mount
-  // —————————————————————————————————————————————
   useEffect(() => {
     restoreUserFromCookie();
     setReady(true);
   }, []);
 
-  // —————————————————————————————————————————————
-  // 2) After restore completes, redirect if no user
-  // —————————————————————————————————————————————
   useEffect(() => {
     if (ready && userId === null) {
       router.push("/login");
     }
   }, [ready, userId, router]);
 
-  // no more “return null” — static sidebar shows immediately
+  const handleSessionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selected = e.target.value;
+    setCurrentSession(selected);
+    // Optional: Persist to store or refetch data
+  };
+
   return (
     <>
-      {/* Mobile overlay */}
       <div
         className={cn(
           "fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm lg:hidden",
@@ -53,7 +52,6 @@ export function Sidebar() {
         onClick={toggle}
       />
 
-      {/* Sidebar panel */}
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 w-72 bg-green-700 border-r",
@@ -61,16 +59,29 @@ export function Sidebar() {
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        {/* Header */}
-        <div className="flex h-16 items-center border-b px-4">
+        {/* Header with session switcher */}
+        <div className="flex items-center gap-3 border-b px-4 h-16">
           <img
             src={schoolImage ?? "/images/default-logo.png"}
             alt="logo"
-            className="h-12 w-12 rounded-full object-cover"
+            className="h-10 w-10 rounded-full object-cover"
           />
-          <p className="ml-2 text-lg font-bold text-white uppercase  ">
-            {schoolName ?? "Loading school…"}
-          </p>
+          <div className="flex flex-col flex-1">
+            <p className="text-sm font-semibold text-white truncate">
+              {schoolName ?? "Loading…"}
+            </p>
+            <select
+              value={currentSession}
+              onChange={handleSessionChange}
+              className="text-xs mt-1 bg-green-800 text-white rounded px-2 py-1 outline-none focus:ring-1 ring-white"
+            >
+              {sessions.map((session) => (
+                <option key={session} value={session}>
+                  {session}
+                </option>
+              ))}
+            </select>
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -81,8 +92,8 @@ export function Sidebar() {
           </Button>
         </div>
 
+        {/* Content */}
         <div className="flex flex-col h-[calc(100vh-64px)] overflow-auto justify-between">
-          {/* Navigation */}
           <nav className="flex flex-col py-4 px-3 space-y-2">
             {navItems.map((item) => {
               const active = pathname === item.href;
@@ -109,7 +120,7 @@ export function Sidebar() {
             })}
           </nav>
 
-          {/* Footer / Settings */}
+          {/* Footer section */}
           <div className="border-t border-emerald-600 p-3">
             {footerItems.map((item) =>
               item.subItems ? (
@@ -124,9 +135,7 @@ export function Sidebar() {
                   >
                     <item.icon className="h-5 w-5" />
                     <span>{item.name}</span>
-                    <span className="ml-auto transition-transform group-open:rotate-180">
-                      ▼
-                    </span>
+                    <ChevronDown className="ml-auto h-4 w-4 group-open:rotate-180 transition-transform" />
                   </summary>
                   <div className="mt-1 space-y-1 pl-8">
                     {item.subItems.map((sub) => (
