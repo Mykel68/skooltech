@@ -74,9 +74,7 @@ const UpcomingEvents = ({
   </Card>
 );
 
-const AdminDashboard = ({
-  schoolName = "Bright Future High School",
-}: {
+const AdminDashboard = ({}: {
   isSchoolSetupComplete: boolean;
   schoolName?: string;
 }) => {
@@ -91,6 +89,9 @@ const AdminDashboard = ({
 
   const schoolId = useUserStore((s) => s.schoolId);
   const session_id = useUserStore((s) => s.session_id);
+  const schoolName = useUserStore((s) => s.schoolName);
+  const firstName = useUserStore((s) => s.firstName);
+  // const lastName = useUserStore((s) => s.lastName);
 
   const isSchoolSetupComplete = !!session_id;
 
@@ -166,7 +167,8 @@ const AdminDashboard = ({
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">
-        Welcome back, Admin of {schoolName}!
+        👋 Welcome back, {firstName}! Let&apos;s make things better at{" "}
+        {schoolName}.
       </h1>
 
       {/* KPI Cards */}
