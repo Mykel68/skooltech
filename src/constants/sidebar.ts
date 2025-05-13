@@ -1,37 +1,77 @@
 import {
-  BarChart3,
-  HelpCircle,
-  LayoutDashboard,
-  LogOut,
-  Settings,
+  Home,
   Users,
-  Wallet,
+  Calendar,
+  FileText,
+  Settings,
+  LogOut,
+  UserPlus,
+  UserCheck,
+  Shield,
 } from "lucide-react";
 
-// Navigation data
 export const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Teachers", href: "/teachers", icon: Users, badge: "7" },
-  { name: "Students", href: "/students", icon: Users, badge: "12" },
-  { name: "Classes", href: "/classes", icon: Users, badge: "5" },
-  { name: "Subjects", href: "/subjects", icon: Users, badge: "3" },
-  { name: "Fees", href: "/fees", icon: Wallet },
-  { name: "Reports", href: "/reports", icon: BarChart3 },
+  {
+    name: "Dashboard",
+    href: "/dashboard",
+    icon: Home,
+  },
+  {
+    name: "Students",
+    href: "/students",
+    icon: Users,
+    badge: 12, // Example count badge
+  },
+  {
+    name: "Teachers",
+    href: "/teachers",
+    icon: UserCheck,
+  },
+  {
+    name: "Subjects",
+    href: "/subjects",
+    icon: FileText,
+  },
+  {
+    name: "Sessions",
+    href: "/sessions",
+    icon: Calendar,
+  },
 ];
 
-// Footer and Settings items
 export const footerItems = [
+  {
+    name: "Manage Users",
+    href: "/users",
+    icon: UserPlus,
+    subItems: [
+      {
+        name: "Admins",
+        href: "/users/admins",
+      },
+      {
+        name: "Teachers",
+        href: "/users/teachers",
+      },
+      {
+        name: "Students",
+        href: "/users/students",
+      },
+    ],
+  },
   {
     name: "Settings",
     href: "/settings",
     icon: Settings,
-    subItems: [
-      { name: "Profile", href: "/settings/profile" },
-      { name: "Security", href: "/settings/security" },
-      { name: "Communication", href: "/settings/communication" },
-      { name: "Permissions", href: "/settings/permissions" },
-    ],
   },
-  { name: "Help", href: "/help", icon: HelpCircle },
-  { name: "Logout", href: "/logout", icon: LogOut },
+  {
+    name: "Admin Privileges",
+    href: "/admin/roles",
+    icon: Shield,
+  },
+  {
+    name: "Logout",
+    href: "/logout",
+    icon: LogOut,
+  },
 ];
