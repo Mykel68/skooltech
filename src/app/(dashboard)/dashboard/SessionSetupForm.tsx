@@ -31,19 +31,23 @@ const SessionSetupForm = () => {
   });
 
   const schoolId = useUserStore((s) => s.schoolId);
+  const setUser = useUserStore((state) => state.setUser);
 
   const createSession = async (sessionData: SessionForm) => {
     const res = await axios.post(
       `/api/session/create-new/${schoolId}`,
       sessionData
     );
+    console.log("Response from server: ", res.data);
     return res.data;
   };
 
   const { mutate, isPending } = useMutation({
     mutationFn: createSession,
     onSuccess: (data) => {
-      toast.success(`School session "${data.name}" has been set.`);
+      console.log("Data from here: ", data);
+      setUser({ session_id: data.data.session_id });
+      toast.success(`School session "${data.data.name}" has been set.`);
       reset();
     },
     onError: (error: any) => {
