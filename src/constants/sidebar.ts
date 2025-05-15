@@ -28,6 +28,11 @@ export const navItems = [
     icon: UserCheck,
   },
   {
+    name: "Classroom",
+    href: "/classes",
+    icon: Calendar,
+  },
+  {
     name: "Subjects",
     href: "/subjects",
     icon: FileText,
