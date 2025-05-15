@@ -10,8 +10,7 @@ import { useSidebar } from "./sidebar-provider";
 import { useUserStore } from "@/stores/userStore";
 import { footerItems, navItems } from "@/constants/sidebar";
 import { restoreUserFromCookie } from "@/utils/restoreAuth";
-
-const sessions = ["2022/2023", "2023/2024", "2024/2025"]; // You can fetch this from API
+import axios from "axios";
 
 export function Sidebar() {
   const router = useRouter();
@@ -21,9 +20,12 @@ export function Sidebar() {
   const userId = useUserStore((s) => s.userId);
   const schoolImage = useUserStore((s) => s.schoolImage);
   const schoolName = useUserStore((s) => s.schoolName);
+  const setUser = useUserStore((s) => s.setUser);
+  const schoolId = useUserStore((s) => s.schoolId);
 
   const [ready, setReady] = useState(false);
-  const [currentSession, setCurrentSession] = useState(sessions[1]); // Default session
+  const [sessions, setSessions] = useState<any[]>([]);
+  const [currentSession, setCurrentSession] = useState<any>(null);
 
   useEffect(() => {
     restoreUserFromCookie();
@@ -36,10 +38,34 @@ export function Sidebar() {
     }
   }, [ready, userId, router]);
 
+  const fetchSessions = async () => {
+    if (!schoolId) return;
+    const res = await axios.get(`/api/session/get-all-session/${schoolId}`);
+    if (!res.data?.data) throw new Error("Failed to fetch sessions");
+    console.log("fetched sessions", res.data.data);
+    return res.data.data;
+  };
+
+  useEffect(() => {
+    if (!schoolId) return;
+
+    fetchSessions()
+      .then((data) => {
+        setSessions(data);
+        const defaultSession = data[0];
+        setCurrentSession(defaultSession);
+        setUser({ session_id: defaultSession.session_id });
+      })
+      .catch((err) => console.error("Error fetching sessions:", err));
+  }, [schoolId, setUser]);
+
   const handleSessionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selected = e.target.value;
-    setCurrentSession(selected);
-    // Optional: Persist to store or refetch data
+    const selectedId = e.target.value;
+    const selectedSession = sessions.find((s) => s.session_id === selectedId);
+    if (selectedSession) {
+      setCurrentSession(selectedSession);
+      setUser({ session_id: selectedId });
+    }
   };
 
   return (
@@ -59,7 +85,7 @@ export function Sidebar() {
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        {/* Header with session switcher */}
+        {/* Header */}
         <div className="flex items-center gap-3 border-b px-4 h-16">
           <img
             src={schoolImage ?? "/images/default-logo.png"}
@@ -70,17 +96,22 @@ export function Sidebar() {
             <p className="text-sm font-semibold text-white truncate">
               {schoolName ?? "Loading…"}
             </p>
-            <select
-              value={currentSession}
-              onChange={handleSessionChange}
-              className="text-xs mt-1 bg-green-800 text-white rounded px-2 py-1 outline-none focus:ring-1 ring-white"
-            >
-              {sessions.map((session) => (
-                <option key={session} value={session}>
-                  {session}
-                </option>
-              ))}
-            </select>
+
+            {sessions.length <= 1 && currentSession ? (
+              <p className="text-xs text-white mt-1">{currentSession.name}</p>
+            ) : (
+              <select
+                value={currentSession?.session_id || ""}
+                onChange={handleSessionChange}
+                className="text-xs mt-1 bg-green-800 text-white rounded px-2 py-1 outline-none focus:ring-1 ring-white"
+              >
+                {sessions.map((session) => (
+                  <option key={session.session_id} value={session.session_id}>
+                    {session.name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
           <Button
             variant="ghost"
@@ -92,7 +123,7 @@ export function Sidebar() {
           </Button>
         </div>
 
-        {/* Content */}
+        {/* Main Nav */}
         <div className="flex flex-col h-[calc(100vh-64px)] overflow-auto justify-between">
           <nav className="flex flex-col py-4 px-3 space-y-2">
             {navItems.map((item) => {
@@ -120,7 +151,7 @@ export function Sidebar() {
             })}
           </nav>
 
-          {/* Footer section */}
+          {/* Footer */}
           <div className="border-t border-emerald-600 p-3">
             {footerItems.map((item) =>
               item.subItems ? (
