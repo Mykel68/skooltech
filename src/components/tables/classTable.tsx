@@ -59,6 +59,7 @@ export default function ClassTable() {
   const [open, setOpen] = useState(false);
   const [sortKey, setSortKey] = useState<"name" | "grade_level" | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [isGenerating, setIsGenerating] = useState(false);
   const schoolId = useUserStore((s) => s.schoolId);
 
   const {
@@ -115,6 +116,34 @@ export default function ClassTable() {
       return aValue.localeCompare(bValue) * direction;
     });
   }, [classes, sortKey, sortDirection]);
+
+  const generateDefaultClasses = async () => {
+    if (!schoolId) return;
+    setIsGenerating(true);
+
+    const defaultClasses: ClassFormValues[] = [
+      { name: "JSS 1", grade_level: "JSS1" },
+      { name: "JSS 2", grade_level: "JSS2" },
+      { name: "JSS 3", grade_level: "JSS3" },
+      { name: "SSS 1", grade_level: "SS1" },
+      { name: "SSS 2", grade_level: "SS2" },
+      { name: "SSS 3", grade_level: "SS3" },
+    ];
+
+    try {
+      await Promise.all(
+        defaultClasses.map((cls) =>
+          axios.post(`/api/class/create-new/${schoolId}`, cls)
+        )
+      );
+      toast.success("Default classes generated successfully");
+      queryClient.invalidateQueries({ queryKey: ["classes", schoolId] });
+    } catch (err: any) {
+      toast.error("Failed to generate classes");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <div className="w-full mx-auto p-4 space-y-6">
@@ -203,7 +232,12 @@ export default function ClassTable() {
           </TableBody>
         </Table>
       ) : (
-        <p>No classes available.</p>
+        <div className="text-center space-y-4">
+          <p>No classes available yet.</p>
+          <Button onClick={generateDefaultClasses} disabled={isGenerating}>
+            {isGenerating ? "Generating..." : "Generate Default Classes"}
+          </Button>
+        </div>
       )}
     </div>
   );
