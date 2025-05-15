@@ -42,7 +42,7 @@ type SchoolClass = {
 };
 
 async function fetchClasses(schoolId: string): Promise<SchoolClass[]> {
-  const { data } = await axios.get(`/api/class/get-all-classs/${schoolId}`);
+  const { data } = await axios.get(`/api/classq/get-all-classs/${schoolId}`);
   return data.data.classes;
 }
 

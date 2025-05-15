@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 const classSchemaa = z.object({
   name: z.string().min(2),
   grade_level: z.string().min(1),
+  short: z.string().min(1),
 });
 
 export async function POST(
@@ -39,6 +40,7 @@ export async function POST(
       return NextResponse.json({ errors: err.errors }, { status: 400 });
     }
     if (axios.isAxiosError(err)) {
+      console.log("Error:", err.message);
       return NextResponse.json(
         { error: err.response?.data?.message || "Update failed" },
         { status: err.response?.status || 500 }
