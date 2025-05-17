@@ -1,6 +1,12 @@
 "use client";
 
+import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { format } from "date-fns";
+import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -9,26 +15,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import toast from "react-hot-toast";
-import { useParams } from "next/navigation";
 import { useRef } from "react";
 
-export default function TermsPage() {
+export default function IndividualSessionPage() {
+  const { session_id: sessionId } = useParams();
   const queryClient = useQueryClient();
   const dialogCloseRef = useRef<HTMLButtonElement>(null);
-  const { session_id: sessionId } = useParams(); // assuming /session/[id]
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { isSubmitting },
-  } = useForm({
+  const { register, handleSubmit, reset, formState } = useForm({
     defaultValues: {
       name: "",
       start_date: "",
@@ -36,7 +33,15 @@ export default function TermsPage() {
     },
   });
 
-  const { data: terms, isLoading } = useQuery({
+  const { data: sessionDetails, isLoading: sessionLoading } = useQuery({
+    queryKey: ["session", sessionId],
+    queryFn: async () => {
+      const res = await axios.get(`/api/session/get-one-session/${sessionId}`);
+      return res.data?.data;
+    },
+  });
+
+  const { data: terms, isLoading: termsLoading } = useQuery({
     queryKey: ["terms", sessionId],
     queryFn: async () => {
       const res = await axios.get(`/api/term/list/${sessionId}`);
@@ -61,8 +66,24 @@ export default function TermsPage() {
 
   return (
     <div className="p-6">
+      {/* Session Header */}
+      {sessionLoading ? (
+        <p>Loading session details...</p>
+      ) : sessionDetails ? (
+        <div className="mb-6 border-b pb-4">
+          <h1 className="text-2xl font-bold">{sessionDetails.name}</h1>
+          <p className="text-muted-foreground">
+            {format(new Date(sessionDetails.start_date), "PPP")} –{" "}
+            {format(new Date(sessionDetails.end_date), "PPP")}
+          </p>
+        </div>
+      ) : (
+        <p className="text-red-500">Failed to load session details.</p>
+      )}
+
+      {/* Term Header and Create Button */}
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Terms</h1>
+        <h2 className="text-xl font-semibold">Terms</h2>
         <Dialog>
           <DialogTrigger asChild>
             <Button>Create New Term</Button>
@@ -94,8 +115,8 @@ export default function TermsPage() {
                 />
               </div>
               <DialogFooter className="mt-4">
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Creating..." : "Create"}
+                <Button type="submit" disabled={formState.isSubmitting}>
+                  {formState.isSubmitting ? "Creating..." : "Create"}
                 </Button>
                 <button
                   type="button"
@@ -108,7 +129,8 @@ export default function TermsPage() {
         </Dialog>
       </div>
 
-      {isLoading ? (
+      {/* Term List */}
+      {termsLoading ? (
         <p>Loading terms...</p>
       ) : (
         <ul className="space-y-2">
@@ -117,8 +139,8 @@ export default function TermsPage() {
               <li key={term.id} className="border p-4 rounded-md">
                 <p className="font-semibold">{term.name}</p>
                 <p className="text-sm text-muted-foreground">
-                  {new Date(term.startDate).toLocaleDateString()} -{" "}
-                  {new Date(term.endDate).toLocaleDateString()}
+                  {format(new Date(term.startDate), "PPP")} -{" "}
+                  {format(new Date(term.endDate), "PPP")}
                 </p>
               </li>
             ))
