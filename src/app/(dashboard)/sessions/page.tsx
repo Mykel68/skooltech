@@ -20,6 +20,7 @@ import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useRouter } from "next/navigation";
 
 const sessionSchema = z.object({
   name: z.string().min(1, "Session name is required"),
@@ -36,6 +37,7 @@ type Session = {
 };
 
 export default function SessionPage() {
+  const router = useRouter();
   const schoolId = useUserStore((s) => s.schoolId);
   const queryClient = useQueryClient();
   const [editSession, setEditSession] = useState<Session | null>(null);
@@ -129,12 +131,12 @@ export default function SessionPage() {
 
       {/* Create Session */}
       <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
-        <DialogTrigger asChild>
-          <Button>Create New Session</Button>
-        </DialogTrigger>
         <DialogContent>
-          <DialogHeader>
+          <DialogHeader className="flex justify-between items-center">
             <DialogTitle>New Session</DialogTitle>
+            <DialogTrigger asChild>
+              <Button>Create New Session</Button>
+            </DialogTrigger>
           </DialogHeader>
           <form
             onSubmit={createForm.handleSubmit((data) => {
@@ -172,7 +174,10 @@ export default function SessionPage() {
               key={session.session_id}
               className="border p-4 rounded-lg space-y-2"
             >
-              <div className="flex justify-between items-center">
+              <div
+                className="flex justify-between items-center cursor-pointer"
+                onClick={() => router.push(`/sessions/${session.session_id}`)}
+              >
                 <div>
                   <p className="font-semibold text-lg">{session.name}</p>
                   <p className="text-sm text-muted-foreground">
