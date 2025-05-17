@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import axios from "axios";
 import { cookies } from "next/headers";
 
-export async function POST(
+export async function GET(
   request: Request,
   context: { params: Promise<{ school_id: string; session_id: string }> }
 ) {
@@ -25,9 +25,8 @@ export async function POST(
   }
 
   try {
-    const response = await axios.post(
+    const response = await axios.get(
       `${backendUrl}/api/terms/${school_id}/${session_id}`,
-      body,
       {
         headers: {
           Authorization: `Bearer ${token}`,
