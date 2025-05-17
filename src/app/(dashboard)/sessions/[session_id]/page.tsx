@@ -1,12 +1,11 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -19,11 +18,13 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useRef } from "react";
+import { useUserStore } from "@/stores/userStore";
 
 export default function IndividualSessionPage() {
   const { session_id: sessionId } = useParams();
   const queryClient = useQueryClient();
   const dialogCloseRef = useRef<HTMLButtonElement>(null);
+  const schoolId = useUserStore((s) => s.schoolId)!;
 
   const { register, handleSubmit, reset, formState } = useForm({
     defaultValues: {
@@ -33,25 +34,33 @@ export default function IndividualSessionPage() {
     },
   });
 
+  // Fetch session details
   const { data: sessionDetails, isLoading: sessionLoading } = useQuery({
     queryKey: ["session", sessionId],
     queryFn: async () => {
-      const res = await axios.get(`/api/session/get-one-session/${sessionId}`);
-      return res.data?.data;
+      const res = await axios.get(
+        `/api/session/get-by-id/${schoolId}/${sessionId}`
+      );
+      return res.data.data;
     },
   });
 
-  const { data: terms, isLoading: termsLoading } = useQuery({
+  // Fetch terms for the session
+  const { data: termsData, isLoading: termsLoading } = useQuery({
     queryKey: ["terms", sessionId],
     queryFn: async () => {
       const res = await axios.get(`/api/term/list/${sessionId}`);
-      return res.data;
+      return res.data.data; // assuming terms are in res.data.data
     },
   });
 
+  // Create new term
   const createTerm = useMutation({
     mutationFn: async (data: any) => {
-      return await axios.post(`/api/term/create-new/${sessionId}`, data);
+      return await axios.post(
+        `/api/term/create-new/${schoolId}/${sessionId}`,
+        data
+      );
     },
     onSuccess: () => {
       toast.success("Term created successfully");
@@ -66,7 +75,7 @@ export default function IndividualSessionPage() {
 
   return (
     <div className="p-6">
-      {/* Session Header */}
+      {/* Session Info */}
       {sessionLoading ? (
         <p>Loading session details...</p>
       ) : sessionDetails ? (
@@ -81,7 +90,7 @@ export default function IndividualSessionPage() {
         <p className="text-red-500">Failed to load session details.</p>
       )}
 
-      {/* Term Header and Create Button */}
+      {/* Term Header and Dialog */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Terms</h2>
         <Dialog>
@@ -129,25 +138,23 @@ export default function IndividualSessionPage() {
         </Dialog>
       </div>
 
-      {/* Term List */}
+      {/* List of Terms */}
       {termsLoading ? (
         <p>Loading terms...</p>
-      ) : (
+      ) : termsData?.length > 0 ? (
         <ul className="space-y-2">
-          {terms?.length ? (
-            terms.map((term: any) => (
-              <li key={term.id} className="border p-4 rounded-md">
-                <p className="font-semibold">{term.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {format(new Date(term.startDate), "PPP")} -{" "}
-                  {format(new Date(term.endDate), "PPP")}
-                </p>
-              </li>
-            ))
-          ) : (
-            <p>No terms yet.</p>
-          )}
+          {termsData.map((term: any) => (
+            <li key={term.id} className="border p-4 rounded-md">
+              <p className="font-semibold">{term.name}</p>
+              <p className="text-sm text-muted-foreground">
+                {format(new Date(term.start_date), "PPP")} -{" "}
+                {format(new Date(term.end_date), "PPP")}
+              </p>
+            </li>
+          ))}
         </ul>
+      ) : (
+        <p>No terms yet.</p>
       )}
     </div>
   );
