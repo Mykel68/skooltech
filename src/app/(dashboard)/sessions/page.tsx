@@ -17,6 +17,15 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useUserStore } from "@/stores/userStore";
 import { format } from "date-fns";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+const sessionSchema = z.object({
+  name: z.string().min(1, "Session name is required"),
+  start_date: z.string().min(1, "Start date is required"),
+  end_date: z.string().min(1, "End date is required"),
+});
 
 type Session = {
   session_id: string;
@@ -30,10 +39,25 @@ export default function SessionPage() {
   const schoolId = useUserStore((s) => s.schoolId);
   const queryClient = useQueryClient();
   const [editSession, setEditSession] = useState<Session | null>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    start_date: "",
-    end_date: "",
+  const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+
+  const createForm = useForm({
+    resolver: zodResolver(sessionSchema),
+    defaultValues: {
+      name: "",
+      start_date: "",
+      end_date: "",
+    },
+  });
+
+  const editForm = useForm({
+    resolver: zodResolver(sessionSchema),
+    defaultValues: {
+      name: "",
+      start_date: "",
+      end_date: "",
+    },
   });
 
   const { data: sessions = [], isLoading } = useQuery({
@@ -58,6 +82,7 @@ export default function SessionPage() {
     onSuccess: () => {
       toast.success("Session updated");
       queryClient.invalidateQueries({ queryKey: ["sessions", schoolId] });
+      setOpenEditDialog(false);
       setEditSession(null);
     },
     onError: () => {
@@ -65,21 +90,30 @@ export default function SessionPage() {
     },
   });
 
+  const createMutation = useMutation({
+    mutationFn: async (data: z.infer<typeof sessionSchema>) => {
+      const res = await axios.post(`/api/session/create-new/${schoolId}`, data);
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success("Session created");
+      queryClient.invalidateQueries({ queryKey: ["sessions", schoolId] });
+      setOpenCreateDialog(false);
+      createForm.reset();
+    },
+    onError: () => {
+      toast.error("Failed to create session");
+    },
+  });
+
   const handleEdit = (session: Session) => {
     setEditSession(session);
-    setFormData({
+    editForm.reset({
       name: session.name,
       start_date: session.start_date.slice(0, 10),
       end_date: session.end_date.slice(0, 10),
     });
-  };
-
-  const handleSave = () => {
-    if (!editSession) return;
-    updateMutation.mutate({
-      session_id: editSession.session_id,
-      data: formData,
-    });
+    setOpenEditDialog(true);
   };
 
   const toggleActive = (session: Session) => {
@@ -92,6 +126,42 @@ export default function SessionPage() {
   return (
     <div className="p-6 space-y-6">
       <h2 className="text-xl font-bold">School Sessions</h2>
+
+      {/* Create Session */}
+      <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
+        <DialogTrigger asChild>
+          <Button>Create New Session</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>New Session</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={createForm.handleSubmit((data) => {
+              createMutation.mutate(data);
+            })}
+            className="space-y-4"
+          >
+            <div>
+              <Label>Session Name</Label>
+              <Input {...createForm.register("name")} />
+            </div>
+            <div>
+              <Label>Start Date</Label>
+              <Input type="date" {...createForm.register("start_date")} />
+            </div>
+            <div>
+              <Label>End Date</Label>
+              <Input type="date" {...createForm.register("end_date")} />
+            </div>
+            <DialogFooter className="mt-4">
+              <Button type="submit" disabled={createMutation.isPending}>
+                {createMutation.isPending ? "Creating..." : "Create"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {isLoading ? (
         <p>Loading...</p>
@@ -125,7 +195,10 @@ export default function SessionPage() {
                   >
                     {session.is_active ? "Deactivate" : "Activate"}
                   </Button>
-                  <Dialog>
+                  <Dialog
+                    open={openEditDialog}
+                    onOpenChange={setOpenEditDialog}
+                  >
                     <DialogTrigger asChild>
                       <Button onClick={() => handleEdit(session)}>Edit</Button>
                     </DialogTrigger>
@@ -133,54 +206,44 @@ export default function SessionPage() {
                       <DialogHeader>
                         <DialogTitle>Edit Session</DialogTitle>
                       </DialogHeader>
-                      <div className="space-y-4">
+                      <form
+                        onSubmit={editForm.handleSubmit((data) => {
+                          if (editSession) {
+                            updateMutation.mutate({
+                              session_id: editSession.session_id,
+                              data,
+                            });
+                          }
+                        })}
+                        className="space-y-4"
+                      >
                         <div>
                           <Label>Session Name</Label>
-                          <Input
-                            value={formData.name}
-                            onChange={(e) =>
-                              setFormData((f) => ({
-                                ...f,
-                                name: e.target.value,
-                              }))
-                            }
-                          />
+                          <Input {...editForm.register("name")} />
                         </div>
                         <div>
                           <Label>Start Date</Label>
                           <Input
                             type="date"
-                            value={formData.start_date}
-                            onChange={(e) =>
-                              setFormData((f) => ({
-                                ...f,
-                                start_date: e.target.value,
-                              }))
-                            }
+                            {...editForm.register("start_date")}
                           />
                         </div>
                         <div>
                           <Label>End Date</Label>
                           <Input
                             type="date"
-                            value={formData.end_date}
-                            onChange={(e) =>
-                              setFormData((f) => ({
-                                ...f,
-                                end_date: e.target.value,
-                              }))
-                            }
+                            {...editForm.register("end_date")}
                           />
                         </div>
-                      </div>
-                      <DialogFooter className="mt-4">
-                        <Button
-                          onClick={handleSave}
-                          disabled={updateMutation.isPending}
-                        >
-                          {updateMutation.isPending ? "Saving..." : "Save"}
-                        </Button>
-                      </DialogFooter>
+                        <DialogFooter className="mt-4">
+                          <Button
+                            type="submit"
+                            disabled={updateMutation.isPending}
+                          >
+                            {updateMutation.isPending ? "Saving..." : "Save"}
+                          </Button>
+                        </DialogFooter>
+                      </form>
                     </DialogContent>
                   </Dialog>
                 </div>
