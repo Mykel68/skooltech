@@ -127,7 +127,8 @@ export function Sidebar() {
         <div className="flex flex-col h-[calc(100vh-64px)] overflow-auto justify-between">
           <nav className="flex flex-col py-4 px-3 space-y-2">
             {navItems.map((item) => {
-              const active = pathname === item.href;
+              const active =
+                pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <Link
                   key={item.href}
