@@ -126,11 +126,13 @@ export default function SessionPage() {
 
   return (
     <Card className="space-y-6">
-      <CardHeader className="flex justify-between items-center">
-        <CardTitle className="text-xl font-bold">School Sessions</CardTitle>
-        <Button onClick={() => setOpenCreateDialog(true)}>
-          Create New Session
-        </Button>
+      <CardHeader>
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-xl font-bold">School Sessions</CardTitle>
+          <Button onClick={() => setOpenCreateDialog(true)}>
+            Create New Session
+          </Button>
+        </div>
       </CardHeader>
 
       <CardContent>
