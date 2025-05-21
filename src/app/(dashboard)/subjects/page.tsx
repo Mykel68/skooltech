@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectContent,
   SelectItem,
+  SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {
@@ -176,8 +177,8 @@ export default function SubjectTable() {
 
               {/* Class Selector */}
               <Select onValueChange={(value) => setValue("class_id", value)}>
-                <SelectTrigger className="w-full">
-                  <span>Select class</span>
+                <SelectTrigger className="w-full" disabled={!classes.length}>
+                  <SelectValue placeholder="Select Class" />
                 </SelectTrigger>
                 <SelectContent>
                   {classes.map((c) => (
