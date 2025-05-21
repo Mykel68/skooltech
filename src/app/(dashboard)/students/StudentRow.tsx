@@ -1,6 +1,6 @@
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Student } from "./StudentTable";
+import { Student } from "./page";
 
 type Props = {
   student: Student;
