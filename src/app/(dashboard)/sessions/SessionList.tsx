@@ -2,30 +2,21 @@
 
 import { Session } from "@/app/(dashboard)/sessions/page";
 import { SessionCard } from "./SessionCard";
-import { UseFormReturn } from "react-hook-form";
 
-interface Props {
+type Props = {
   sessions: Session[];
   isLoading: boolean;
-  setEditSession: (s: Session) => void;
-  editForm: UseFormReturn<any>;
-  openEditDialog: boolean;
-  setOpenEditDialog: (b: boolean) => void;
-  updateMutation: any;
+  onEditClick: (s: Session) => void;
   toggleActive: (s: Session) => void;
-}
+};
 
 export const SessionList = ({
   sessions,
   isLoading,
-  setEditSession,
-  editForm,
-  openEditDialog,
-  setOpenEditDialog,
-  updateMutation,
+  onEditClick,
   toggleActive,
 }: Props) => {
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <p>Loading sessions...</p>;
 
   return (
     <ul className="space-y-4">
@@ -33,11 +24,7 @@ export const SessionList = ({
         <SessionCard
           key={session.session_id}
           session={session}
-          setEditSession={setEditSession}
-          editForm={editForm}
-          openEditDialog={openEditDialog}
-          setOpenEditDialog={setOpenEditDialog}
-          updateMutation={updateMutation}
+          onEditClick={onEditClick}
           toggleActive={toggleActive}
         />
       ))}

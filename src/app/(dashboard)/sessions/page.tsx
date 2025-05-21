@@ -12,6 +12,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { SessionList } from "./SessionList";
 import { CreateSessionDialog } from "./dialog/CreateSessionDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export const sessionSchema = z.object({
   name: z.string().min(1, "Session name is required"),
@@ -52,7 +61,6 @@ export default function SessionPage() {
     },
   });
 
-  // Wait until schoolId is available before fetching
   const { data: sessions = [], isLoading } = useQuery({
     queryKey: ["sessions", schoolId],
     queryFn: async () => {
@@ -64,7 +72,6 @@ export default function SessionPage() {
 
   const createMutation = useMutation({
     mutationFn: async (data: z.infer<typeof sessionSchema>) => {
-      if (!schoolId) throw new Error("School ID is missing");
       const res = await axios.post(`/api/session/create-new/${schoolId}`, data);
       return res.data;
     },
@@ -78,16 +85,16 @@ export default function SessionPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (payload: {
+    mutationFn: async ({
+      session_id,
+      data,
+    }: {
       session_id: string;
       data: Partial<Session>;
     }) => {
-      if (!schoolId) throw new Error("School ID is missing");
       return axios.patch(
-        `/api/session/activate/${schoolId}/${payload.session_id}`,
-        {
-          ...payload.data,
-        }
+        `/api/session/activate/${schoolId}/${session_id}`,
+        data
       );
     },
     onSuccess: () => {
@@ -99,28 +106,29 @@ export default function SessionPage() {
     onError: () => toast.error("Failed to update session"),
   });
 
-  // Guard toggleActive to only run if schoolId exists
   const toggleActive = (session: Session) => {
-    if (!schoolId) {
-      toast.error("School ID missing, please try again later");
-      return;
-    }
+    if (!schoolId) return toast.error("School ID missing");
     updateMutation.mutate({
       session_id: session.session_id,
       data: { is_active: !session.is_active },
     });
   };
 
-  // If schoolId is not loaded yet, show loading or message
-  if (!schoolId) {
-    return <div>Loading school data...</div>;
-  }
+  const handleEdit = (session: Session) => {
+    setEditSession(session);
+    editForm.reset({
+      name: session.name,
+      start_date: session.start_date.slice(0, 10),
+      end_date: session.end_date.slice(0, 10),
+    });
+    setOpenEditDialog(true);
+  };
 
   return (
     <Card className="space-y-6">
-      <CardHeader className="flex flex-row justify-between items-center">
+      <CardHeader className="flex justify-between items-center">
         <CardTitle className="text-xl font-bold">School Sessions</CardTitle>
-        <Button onClick={() => setOpenCreateDialog(true)} disabled={!schoolId}>
+        <Button onClick={() => setOpenCreateDialog(true)}>
           Create New Session
         </Button>
       </CardHeader>
@@ -136,13 +144,45 @@ export default function SessionPage() {
         <SessionList
           sessions={sessions}
           isLoading={isLoading}
-          setEditSession={setEditSession}
-          editForm={editForm}
-          openEditDialog={openEditDialog}
-          setOpenEditDialog={setOpenEditDialog}
-          updateMutation={updateMutation}
+          onEditClick={handleEdit}
           toggleActive={toggleActive}
         />
+
+        <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Session</DialogTitle>
+            </DialogHeader>
+            <form
+              onSubmit={editForm.handleSubmit((data) => {
+                if (!editSession) return;
+                updateMutation.mutate({
+                  session_id: editSession.session_id,
+                  data,
+                });
+              })}
+              className="space-y-4"
+            >
+              <div>
+                <Label>Session Name</Label>
+                <Input {...editForm.register("name")} />
+              </div>
+              <div>
+                <Label>Start Date</Label>
+                <Input type="date" {...editForm.register("start_date")} />
+              </div>
+              <div>
+                <Label>End Date</Label>
+                <Input type="date" {...editForm.register("end_date")} />
+              </div>
+              <DialogFooter>
+                <Button type="submit" disabled={updateMutation.isPending}>
+                  {updateMutation.isPending ? "Saving..." : "Save"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );
