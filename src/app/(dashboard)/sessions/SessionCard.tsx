@@ -1,87 +1,58 @@
-// components/session/SessionCard.tsx
-"use client";
-
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { format } from "date-fns";
-import { useState } from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-
-const sessionSchema = z.object({
-  name: z.string().min(1, "Session name is required"),
-  start_date: z.string().min(1, "Start date is required"),
-  end_date: z.string().min(1, "End date is required"),
-});
+import { UseFormReturn } from "react-hook-form";
 
 type Session = {
   session_id: string;
   name: string;
-  start_date: string;
+  start_date: string; // ISO string like "2025-01-01"
   end_date: string;
   is_active: boolean;
 };
 
 type Props = {
   session: Session;
-  schoolId: string;
+  setEditSession: (session: Session) => void;
+  editForm: UseFormReturn<{
+    name: string;
+    start_date: string;
+    end_date: string;
+  }>;
+  openEditDialog: boolean;
+  setOpenEditDialog: (open: boolean) => void;
+  updateMutation: {
+    mutate: (params: {
+      session_id: string;
+      data: {
+        name: string;
+        start_date: string;
+        end_date: string;
+      };
+    }) => void;
+    isPending: boolean;
+  };
+  toggleActive: (session: Session) => void;
 };
 
-export function SessionCard({ session, schoolId }: Props) {
-  const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [editSession, setEditSession] = useState<Session | null>(null);
-  const queryClient = useQueryClient();
-
-  const editForm = useForm({
-    resolver: zodResolver(sessionSchema),
-    defaultValues: {
-      name: session.name,
-      start_date: session.start_date.slice(0, 10),
-      end_date: session.end_date.slice(0, 10),
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async (payload: {
-      session_id: string;
-      data: Partial<Session>;
-    }) => {
-      return axios.patch(
-        `/api/session/activate/${schoolId}/${payload.session_id}`,
-        payload.data
-      );
-    },
-    onSuccess: () => {
-      toast.success("Session updated");
-      queryClient.invalidateQueries({ queryKey: ["sessions", schoolId] });
-      setOpenEditDialog(false);
-      setEditSession(null);
-    },
-    onError: () => {
-      toast.error("Failed to update session");
-    },
-  });
-
-  const toggleActive = () => {
-    updateMutation.mutate({
-      session_id: session.session_id,
-      data: { is_active: !session.is_active },
-    });
-  };
-
+export function SessionCard({
+  session,
+  setEditSession,
+  editForm,
+  openEditDialog,
+  setOpenEditDialog,
+  updateMutation,
+  toggleActive,
+}: Props) {
   const handleEdit = () => {
     setEditSession(session);
     editForm.reset({
@@ -111,7 +82,7 @@ export function SessionCard({ session, schoolId }: Props) {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={toggleActive}>
+          <Button variant="outline" onClick={() => toggleActive(session)}>
             {session.is_active ? "Deactivate" : "Activate"}
           </Button>
           <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
@@ -124,12 +95,10 @@ export function SessionCard({ session, schoolId }: Props) {
               </DialogHeader>
               <form
                 onSubmit={editForm.handleSubmit((data) => {
-                  if (editSession) {
-                    updateMutation.mutate({
-                      session_id: editSession.session_id,
-                      data,
-                    });
-                  }
+                  updateMutation.mutate({
+                    session_id: session.session_id,
+                    data,
+                  });
                 })}
                 className="space-y-4"
               >

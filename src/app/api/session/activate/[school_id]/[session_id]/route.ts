@@ -8,6 +8,8 @@ export async function PATCH(
 ) {
   const { school_id } = await context.params;
   const { session_id } = await context.params;
+  console.log("school_id", school_id);
+  console.log("session_id", session_id);
   const backendUrl = process.env.MAIN_BACKEND_URL;
   if (!backendUrl) throw new Error("MAIN_BACKEND_URL is not set");
 

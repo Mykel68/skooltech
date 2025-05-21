@@ -52,6 +52,7 @@ export default function SessionPage() {
     },
   });
 
+  // Wait until schoolId is available before fetching
   const { data: sessions = [], isLoading } = useQuery({
     queryKey: ["sessions", schoolId],
     queryFn: async () => {
@@ -63,6 +64,7 @@ export default function SessionPage() {
 
   const createMutation = useMutation({
     mutationFn: async (data: z.infer<typeof sessionSchema>) => {
+      if (!schoolId) throw new Error("School ID is missing");
       const res = await axios.post(`/api/session/create-new/${schoolId}`, data);
       return res.data;
     },
@@ -80,9 +82,12 @@ export default function SessionPage() {
       session_id: string;
       data: Partial<Session>;
     }) => {
+      if (!schoolId) throw new Error("School ID is missing");
       return axios.patch(
         `/api/session/activate/${schoolId}/${payload.session_id}`,
-        payload.data
+        {
+          ...payload.data,
+        }
       );
     },
     onSuccess: () => {
@@ -94,11 +99,28 @@ export default function SessionPage() {
     onError: () => toast.error("Failed to update session"),
   });
 
+  // Guard toggleActive to only run if schoolId exists
+  const toggleActive = (session: Session) => {
+    if (!schoolId) {
+      toast.error("School ID missing, please try again later");
+      return;
+    }
+    updateMutation.mutate({
+      session_id: session.session_id,
+      data: { is_active: !session.is_active },
+    });
+  };
+
+  // If schoolId is not loaded yet, show loading or message
+  if (!schoolId) {
+    return <div>Loading school data...</div>;
+  }
+
   return (
-    <Card className=" space-y-6">
+    <Card className="space-y-6">
       <CardHeader className="flex flex-row justify-between items-center">
         <CardTitle className="text-xl font-bold">School Sessions</CardTitle>
-        <Button onClick={() => setOpenCreateDialog(true)}>
+        <Button onClick={() => setOpenCreateDialog(true)} disabled={!schoolId}>
           Create New Session
         </Button>
       </CardHeader>
@@ -119,12 +141,7 @@ export default function SessionPage() {
           openEditDialog={openEditDialog}
           setOpenEditDialog={setOpenEditDialog}
           updateMutation={updateMutation}
-          toggleActive={(session) =>
-            updateMutation.mutate({
-              session_id: session.session_id,
-              data: { is_active: !session.is_active },
-            })
-          }
+          toggleActive={toggleActive}
         />
       </CardContent>
     </Card>
