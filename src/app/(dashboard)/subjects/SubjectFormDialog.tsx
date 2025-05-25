@@ -29,7 +29,7 @@ import axios from "axios";
 const subjectSchema = z.object({
   class_id: z.string().min(1),
   name: z.string().min(2),
-  code: z.string().min(1),
+  short: z.string().min(1),
 });
 
 type Props = {
@@ -55,7 +55,7 @@ export function SubjectFormDialog({ schoolId, classes }: Props) {
     mutationFn: (data: any) =>
       axios.post(`/api/subject/create/${data.class_id}`, {
         name: data.name,
-        code: data.code,
+        short: data.short,
       }),
     onSuccess: () => {
       toast.success("Subject created");
@@ -103,9 +103,9 @@ export function SubjectFormDialog({ schoolId, classes }: Props) {
             <p className="text-sm text-red-500">{errors.name.message}</p>
           )}
 
-          <Input placeholder="Subject Code" {...register("code")} />
-          {errors.code && (
-            <p className="text-sm text-red-500">{errors.code.message}</p>
+          <Input placeholder="Subject short" {...register("short")} />
+          {errors.short && (
+            <p className="text-sm text-red-500">{errors.short.message}</p>
           )}
 
           <DialogFooter>
