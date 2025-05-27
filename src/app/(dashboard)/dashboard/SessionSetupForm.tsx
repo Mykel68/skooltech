@@ -45,6 +45,7 @@ export default function SetupSessionAndTerm() {
   const [loading, setLoading] = useState(false);
   const [session, setSession] = useState<SessionData | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const session_id = useUserStore((s) => s.session_id);
 
   const sessionForm = useForm<SessionData>({
     resolver: zodResolver(sessionSchema),
@@ -70,6 +71,7 @@ export default function SetupSessionAndTerm() {
 
       const id = res.data.data.session_id;
       setUser({ session_id: id });
+      console.log("session_id", id);
       setSessionId(id);
       setSession(values);
       setStep(2);
@@ -99,7 +101,7 @@ export default function SetupSessionAndTerm() {
 
     setLoading(true);
     try {
-      await axios.post(`/api/term/create-new/${schoolId}`, {
+      await axios.post(`/api/term/create-new/${schoolId}/${session_id}`, {
         name: values.name,
         start_date: values.start_date,
         end_date: values.end_date,

@@ -6,7 +6,9 @@ import AdminWelcomeDashboard from "./AdminWelcomeDashboard";
 
 const AdminDashboard = () => {
   const session_id = useUserStore((s) => s.session_id);
-  const isSchoolSetupComplete = !!session_id;
+  const term_id = useUserStore((s) => s.term_id);
+
+  const isSchoolSetupComplete = !!session_id && !!term_id;
 
   return isSchoolSetupComplete ? (
     <AdminWelcomeDashboard />
