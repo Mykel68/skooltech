@@ -11,8 +11,10 @@ import { PasswordField } from "@/components/PasswordField";
 import { schoolRegistrationFormSchema } from "@/schema/schoolRegistrationSchema";
 import { SchoolFormData } from "@/types/school";
 import { registerSchool } from "@/services/httpClient";
+import { useRouter } from "next/navigation";
 
 export default function SchoolRegistrationPage() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -36,6 +38,7 @@ export default function SchoolRegistrationPage() {
     mutationFn: registerSchool,
     onSuccess: () => {
       toast.success("School registered successfully!");
+      router.push("/login");
     },
     onError: (error: Error) => {
       toast.error(error.message || "Registration failed. Please try again.");
