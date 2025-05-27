@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUserStore } from "@/stores/userStore";
 
 // Validation Schemas
@@ -55,6 +55,31 @@ export default function SetupSessionAndTerm() {
     resolver: zodResolver(termSchema),
   });
 
+  const fetchSessions = async () => {
+    if (!schoolId) return;
+    const res = await axios.get(`/api/session/get-all-session/${schoolId}`);
+    if (!res.data?.data) throw new Error("Failed to fetch sessions");
+    return res.data.data;
+  };
+
+  useEffect(() => {
+    if (!schoolId) return;
+
+    fetchSessions()
+      .then((data) => {
+        const latestSession = data[0]; // assuming the first one is the current session
+        setUser({ session_id: latestSession.session_id });
+        setSessionId(latestSession.session_id);
+        setSession({
+          name: latestSession.name,
+          start_date: latestSession.start_date,
+          end_date: latestSession.end_date,
+        });
+        setStep(2);
+      })
+      .catch((err) => console.error("Error fetching sessions:", err));
+  }, [schoolId, setUser]);
+
   // Handle Session Creation
   const handleCreateSession = async () => {
     const valid = await sessionForm.trigger();
@@ -89,10 +114,10 @@ export default function SetupSessionAndTerm() {
     if (!valid || !sessionId || !session) return;
 
     const values = termForm.getValues();
-    const termStart = new Date(values.start_date);
-    const termEnd = new Date(values.end_date);
-    const sessionStart = new Date(session.start_date);
-    const sessionEnd = new Date(session.end_date);
+    const termStart = new Date(values.start_date).setHours(0, 0, 0, 0);
+    const termEnd = new Date(values.end_date).setHours(0, 0, 0, 0);
+    const sessionStart = new Date(session.start_date).setHours(0, 0, 0, 0);
+    const sessionEnd = new Date(session.end_date).setHours(0, 0, 0, 0);
 
     if (termStart < sessionStart || termEnd > sessionEnd) {
       toast.error("Term dates must fall within the session's dates.");
@@ -101,12 +126,17 @@ export default function SetupSessionAndTerm() {
 
     setLoading(true);
     try {
-      await axios.post(`/api/term/create-new/${schoolId}/${session_id}`, {
-        name: values.name,
-        start_date: values.start_date,
-        end_date: values.end_date,
-        session_id: sessionId,
-      });
+      const res = await axios.post(
+        `/api/term/create-new/${schoolId}/${session_id}`,
+        {
+          name: values.name,
+          start_date: values.start_date,
+          end_date: values.end_date,
+        }
+      );
+      const id = res.data.data.term_id;
+      setUser({ term_id: id });
+      console.log("term_id", id);
 
       toast.success("Term created successfully!");
     } catch (err: any) {
@@ -201,8 +231,9 @@ export default function SetupSessionAndTerm() {
             <CardTitle>Create Term</CardTitle>
             {session && (
               <p className="text-sm text-gray-600">
-                Session: {session.name} ({session.start_date} to{" "}
-                {session.end_date})
+                Session: {session.name} (
+                {new Date(session.start_date).toLocaleDateString()} to{" "}
+                {new Date(session.end_date).toLocaleDateString()})
               </p>
             )}
           </CardHeader>
@@ -221,12 +252,17 @@ export default function SetupSessionAndTerm() {
             </div>
             <div>
               <Label>Start Date</Label>
-              <Input
-                type="date"
-                {...termForm.register("start_date")}
-                min={session?.start_date}
-                max={session?.end_date}
-              />
+              {session ? (
+                <Input
+                  type="date"
+                  {...termForm.register("start_date")}
+                  min={new Date(session.start_date).toISOString().split("T")[0]}
+                  max={new Date(session.end_date).toISOString().split("T")[0]}
+                />
+              ) : (
+                <Input type="date" disabled />
+              )}
+
               {termForm.formState.errors.start_date && (
                 <p className="text-red-500 text-sm">
                   {termForm.formState.errors.start_date.message}
@@ -235,12 +271,17 @@ export default function SetupSessionAndTerm() {
             </div>
             <div>
               <Label>End Date</Label>
-              <Input
-                type="date"
-                {...termForm.register("end_date")}
-                min={session?.start_date}
-                max={session?.end_date}
-              />
+              {session ? (
+                <Input
+                  type="date"
+                  {...termForm.register("end_date")}
+                  min={new Date(session.start_date).toISOString().split("T")[0]}
+                  max={new Date(session.end_date).toISOString().split("T")[0]}
+                />
+              ) : (
+                <Input type="date" disabled />
+              )}
+
               {termForm.formState.errors.end_date && (
                 <p className="text-red-500 text-sm">
                   {termForm.formState.errors.end_date.message}
