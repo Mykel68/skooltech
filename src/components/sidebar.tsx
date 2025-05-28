@@ -41,9 +41,16 @@ export function Sidebar() {
 
   const fetchSessions = async () => {
     if (!schoolId) return;
-    const res = await axios.get(`/api/session/get-all-session/${schoolId}`);
-    if (!res.data?.data) throw new Error("Failed to fetch sessions");
-    return res.data.data;
+    const res = await axios.get(`/api/term/get-all-terms/${schoolId}`);
+    const sessionData = res.data?.data?.data?.sessions;
+
+    if (!sessionData) throw new Error("Failed to fetch sessions");
+
+    // Convert object of sessions into an array for easy mapping
+    return Object.entries(sessionData).map(([id, session]) => ({
+      ...session,
+      session_id: id,
+    }));
   };
 
   useEffect(() => {
