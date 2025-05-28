@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useUserStore } from "@/stores/userStore";
+import { useRouter } from "next/navigation";
 
 // Validation Schemas
 const sessionSchema = z
@@ -39,6 +40,7 @@ type SessionData = z.infer<typeof sessionSchema>;
 type TermData = z.infer<typeof termSchema>;
 
 export default function SetupSessionAndTerm() {
+  const router = useRouter();
   const schoolId = useUserStore((s) => s.schoolId);
   const setUser = useUserStore((s) => s.setUser);
   const [step, setStep] = useState(1);
@@ -136,7 +138,7 @@ export default function SetupSessionAndTerm() {
       );
       const id = res.data.data.term_id;
       setUser({ term_id: id });
-      console.log("term_id", id);
+      router.push(`/classes`);
 
       toast.success("Term created successfully!");
     } catch (err: any) {
