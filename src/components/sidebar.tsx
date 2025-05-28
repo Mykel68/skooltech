@@ -126,40 +126,44 @@ export function Sidebar() {
             <p className="text-sm font-semibold text-white truncate">
               {schoolName ?? "Loading…"}
             </p>
-
-            {sessions.length <= 1 && currentSession ? (
-              <p className="text-xs text-white mt-1">
-                {currentSession.name} - {currentTerm?.name}
-              </p>
-            ) : (
-              <>
-                <select
-                  value={currentSession?.session_id || ""}
-                  onChange={handleSessionChange}
-                  className="text-xs mt-1 bg-green-800 text-white rounded px-2 py-1 outline-none focus:ring-1 ring-white"
-                >
-                  {sessions.map((session) => (
-                    <option key={session.session_id} value={session.session_id}>
-                      {session.name}
-                    </option>
-                  ))}
-                </select>
-
-                {currentSession?.terms?.length > 0 && (
+            <div className="grid grid-cols-2 gap-2">
+              {sessions.length <= 1 && currentSession ? (
+                <p className="text-xs text-white mt-1">
+                  {currentSession.name} - {currentTerm?.name}
+                </p>
+              ) : (
+                <>
                   <select
-                    value={currentTerm?.term_id || ""}
-                    onChange={handleTermChange}
+                    value={currentSession?.session_id || ""}
+                    onChange={handleSessionChange}
                     className="text-xs mt-1 bg-green-800 text-white rounded px-2 py-1 outline-none focus:ring-1 ring-white"
                   >
-                    {currentSession.terms.map((term: any) => (
-                      <option key={term.term_id} value={term.term_id}>
-                        {term.name}
+                    {sessions.map((session) => (
+                      <option
+                        key={session.session_id}
+                        value={session.session_id}
+                      >
+                        {session.name}
                       </option>
                     ))}
                   </select>
-                )}
-              </>
-            )}
+
+                  {currentSession?.terms?.length > 0 && (
+                    <select
+                      value={currentTerm?.term_id || ""}
+                      onChange={handleTermChange}
+                      className="text-xs mt-1 bg-green-800 text-white rounded px-2 py-1 outline-none focus:ring-1 ring-white"
+                    >
+                      {currentSession.terms.map((term: any) => (
+                        <option key={term.term_id} value={term.term_id}>
+                          {term.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </>
+              )}
+            </div>
           </div>
           <Button
             variant="ghost"
