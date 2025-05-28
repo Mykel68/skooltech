@@ -26,6 +26,7 @@ export function Sidebar() {
   const [ready, setReady] = useState(false);
   const [sessions, setSessions] = useState<any[]>([]);
   const [currentSession, setCurrentSession] = useState<any>(null);
+  const [currentTerm, setCurrentTerm] = useState<any>(null);
 
   useEffect(() => {
     restoreUserFromCookie();
@@ -42,7 +43,6 @@ export function Sidebar() {
     if (!schoolId) return;
     const res = await axios.get(`/api/session/get-all-session/${schoolId}`);
     if (!res.data?.data) throw new Error("Failed to fetch sessions");
-    console.log("fetched sessions", res.data.data);
     return res.data.data;
   };
 
@@ -53,8 +53,15 @@ export function Sidebar() {
       .then((data) => {
         setSessions(data);
         const defaultSession = data[0];
+        const defaultTerm = defaultSession.terms?.[0] ?? null;
+
         setCurrentSession(defaultSession);
-        setUser({ session_id: defaultSession.session_id });
+        setCurrentTerm(defaultTerm);
+
+        setUser({
+          session_id: defaultSession.session_id,
+          term_id: defaultTerm?.term_id || null,
+        });
       })
       .catch((err) => console.error("Error fetching sessions:", err));
   }, [schoolId, setUser]);
@@ -63,8 +70,24 @@ export function Sidebar() {
     const selectedId = e.target.value;
     const selectedSession = sessions.find((s) => s.session_id === selectedId);
     if (selectedSession) {
+      const firstTerm = selectedSession.terms?.[0] || null;
       setCurrentSession(selectedSession);
-      setUser({ session_id: selectedId });
+      setCurrentTerm(firstTerm);
+      setUser({
+        session_id: selectedSession.session_id,
+        term_id: firstTerm?.term_id || null,
+      });
+    }
+  };
+
+  const handleTermChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedTermId = e.target.value;
+    const selectedTerm = currentSession?.terms?.find(
+      (t: any) => t.term_id === selectedTermId
+    );
+    if (selectedTerm) {
+      setCurrentTerm(selectedTerm);
+      setUser({ term_id: selectedTerm.term_id });
     }
   };
 
@@ -98,19 +121,37 @@ export function Sidebar() {
             </p>
 
             {sessions.length <= 1 && currentSession ? (
-              <p className="text-xs text-white mt-1">{currentSession.name}</p>
+              <p className="text-xs text-white mt-1">
+                {currentSession.name} - {currentTerm?.name}
+              </p>
             ) : (
-              <select
-                value={currentSession?.session_id || ""}
-                onChange={handleSessionChange}
-                className="text-xs mt-1 bg-green-800 text-white rounded px-2 py-1 outline-none focus:ring-1 ring-white"
-              >
-                {sessions.map((session) => (
-                  <option key={session.session_id} value={session.session_id}>
-                    {session.name}
-                  </option>
-                ))}
-              </select>
+              <>
+                <select
+                  value={currentSession?.session_id || ""}
+                  onChange={handleSessionChange}
+                  className="text-xs mt-1 bg-green-800 text-white rounded px-2 py-1 outline-none focus:ring-1 ring-white"
+                >
+                  {sessions.map((session) => (
+                    <option key={session.session_id} value={session.session_id}>
+                      {session.name}
+                    </option>
+                  ))}
+                </select>
+
+                {currentSession?.terms?.length > 0 && (
+                  <select
+                    value={currentTerm?.term_id || ""}
+                    onChange={handleTermChange}
+                    className="text-xs mt-1 bg-green-800 text-white rounded px-2 py-1 outline-none focus:ring-1 ring-white"
+                  >
+                    {currentSession.terms.map((term: any) => (
+                      <option key={term.term_id} value={term.term_id}>
+                        {term.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </>
             )}
           </div>
           <Button
