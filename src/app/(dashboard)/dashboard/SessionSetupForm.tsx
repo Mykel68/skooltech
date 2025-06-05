@@ -195,6 +195,7 @@ export default function SetupSessionAndTerm() {
 
       // Delay to show success state before redirecting
       setTimeout(() => {
+        router.refresh();
         router.push(`/classes`);
       }, 1000);
     } catch (err: any) {
