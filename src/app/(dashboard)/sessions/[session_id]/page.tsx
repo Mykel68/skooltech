@@ -3,9 +3,9 @@
 import { useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { format, parseISO, isBefore, isAfter } from "date-fns";
+import { format, isBefore, isAfter } from "date-fns";
 import toast from "react-hot-toast";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +25,7 @@ export default function IndividualSessionPage() {
   const queryClient = useQueryClient();
   const schoolId = useUserStore((s) => s.schoolId)!;
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingTerm, setEditingTerm] = useState<any>(null);
 
   const {
     register,
@@ -42,11 +43,9 @@ export default function IndividualSessionPage() {
     },
   });
 
-  // Watch start and end dates
   const startDate = watch("start_date");
   const endDate = watch("end_date");
 
-  // Fetch session details
   const { data: sessionDetails, isLoading: sessionLoading } = useQuery({
     queryKey: ["session", sessionId],
     queryFn: async () => {
@@ -57,7 +56,6 @@ export default function IndividualSessionPage() {
     },
   });
 
-  // Fetch terms for the session
   const { data: termsData, isLoading: termsLoading } = useQuery({
     queryKey: ["terms", sessionId],
     queryFn: async () => {
@@ -66,7 +64,6 @@ export default function IndividualSessionPage() {
     },
   });
 
-  // Create new term
   const createTerm = useMutation({
     mutationFn: async (data: any) => {
       return await axios.post(
@@ -78,11 +75,34 @@ export default function IndividualSessionPage() {
       toast.success("Term created successfully");
       queryClient.invalidateQueries({ queryKey: ["terms", sessionId] });
       reset();
-      setDialogOpen(false); // ✅ Close dialog
+      setDialogOpen(false);
     },
-    onError: () => {
-      toast.error("Error creating term");
+    onError: () => toast.error("Error creating term"),
+  });
+
+  const updateTerm = useMutation({
+    mutationFn: async (data: any) => {
+      return await axios.put(`/api/term/update/${editingTerm.id}`, data);
     },
+    onSuccess: () => {
+      toast.success("Term updated");
+      queryClient.invalidateQueries({ queryKey: ["terms", sessionId] });
+      reset();
+      setEditingTerm(null);
+      setDialogOpen(false);
+    },
+    onError: () => toast.error("Error updating term"),
+  });
+
+  const toggleActive = useMutation({
+    mutationFn: async (term: any) => {
+      return await axios.patch(`/api/term/toggle-active/${term.id}`);
+    },
+    onSuccess: () => {
+      toast.success("Term status updated");
+      queryClient.invalidateQueries({ queryKey: ["terms", sessionId] });
+    },
+    onError: () => toast.error("Failed to update status"),
   });
 
   const onSubmit = (data: any) => {
@@ -117,13 +137,33 @@ export default function IndividualSessionPage() {
       return;
     }
 
-    clearErrors(); // Clear errors if valid
-    createTerm.mutate(data);
+    clearErrors();
+
+    if (editingTerm) {
+      updateTerm.mutate(data);
+    } else {
+      createTerm.mutate(data);
+    }
+  };
+
+  const handleEditClick = (term: any) => {
+    setEditingTerm(term);
+    setDialogOpen(true);
+    reset({
+      name: term.name,
+      start_date: term.start_date,
+      end_date: term.end_date,
+    });
+  };
+
+  const handleDialogClose = () => {
+    setEditingTerm(null);
+    reset();
+    setDialogOpen(false);
   };
 
   return (
     <div className="p-6">
-      {/* Session Info */}
       {sessionLoading ? (
         <p>Loading session details...</p>
       ) : sessionDetails ? (
@@ -138,16 +178,17 @@ export default function IndividualSessionPage() {
         <p className="text-red-500">Failed to load session details.</p>
       )}
 
-      {/* Term Header and Dialog */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Terms</h2>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <Dialog open={dialogOpen} onOpenChange={handleDialogClose}>
           <DialogTrigger asChild>
             <Button onClick={() => setDialogOpen(true)}>Create New Term</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create Term</DialogTitle>
+              <DialogTitle>
+                {editingTerm ? "Edit Term" : "Create Term"}
+              </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
@@ -189,7 +230,13 @@ export default function IndividualSessionPage() {
               </div>
               <DialogFooter className="mt-4">
                 <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Creating..." : "Create"}
+                  {isSubmitting
+                    ? editingTerm
+                      ? "Updating..."
+                      : "Creating..."
+                    : editingTerm
+                    ? "Update"
+                    : "Create"}
                 </Button>
               </DialogFooter>
             </form>
@@ -197,18 +244,43 @@ export default function IndividualSessionPage() {
         </Dialog>
       </div>
 
-      {/* List of Terms */}
       {termsLoading ? (
         <p>Loading terms...</p>
       ) : termsData?.length > 0 ? (
         <ul className="space-y-2">
           {termsData.map((term: any) => (
             <li key={term.id} className="border p-4 rounded-md">
-              <p className="font-semibold">{term.name}</p>
-              <p className="text-sm text-muted-foreground">
-                {format(new Date(term.start_date), "PPP")} -{" "}
-                {format(new Date(term.end_date), "PPP")}
-              </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-semibold">{term.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {format(new Date(term.start_date), "PPP")} –{" "}
+                    {format(new Date(term.end_date), "PPP")}
+                  </p>
+                  <p
+                    className={`text-sm ${
+                      term.is_active ? "text-green-600" : "text-gray-500"
+                    }`}
+                  >
+                    {term.is_active ? "Active" : "Inactive"}
+                  </p>
+                </div>
+                <div className="space-x-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleEditClick(term)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => toggleActive.mutate(term)}
+                    disabled={toggleActive.isPending}
+                  >
+                    {term.is_active ? "Deactivate" : "Activate"}
+                  </Button>
+                </div>
+              </div>
             </li>
           ))}
         </ul>
