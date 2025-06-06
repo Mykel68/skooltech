@@ -139,23 +139,18 @@ export function Sidebar() {
                 ))}
               </select>
 
-              {currentSession?.terms?.length > 1 ? (
-                <select
-                  value={currentTerm?.term_id || ""}
-                  onChange={handleTermChange}
-                  className="text-xs bg-green-800 text-white rounded px-2 py-1 outline-none focus:ring-1 ring-white"
-                >
-                  {currentSession.terms.map((term: any) => (
-                    <option key={term.term_id} value={term.term_id}>
-                      {term.name}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <p className="text-xs text-white mt-1 col-span-1">
-                  {currentSession?.terms?.[0]?.name ?? "No Term"}
-                </p>
-              )}
+              <select
+                value={currentTerm?.term_id || ""}
+                onChange={handleTermChange}
+                className="text-xs bg-green-800 text-white rounded px-2 py-1 outline-none focus:ring-1 ring-white"
+                disabled={currentSession?.terms?.length <= 1}
+              >
+                {currentSession?.terms?.map((term: any) => (
+                  <option key={term.term_id} value={term.term_id}>
+                    {term.name}
+                  </option>
+                )) ?? <option disabled>No Term</option>}
+              </select>
             </div>
           </div>
           <Button
