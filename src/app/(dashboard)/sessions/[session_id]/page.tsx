@@ -88,7 +88,6 @@ export default function IndividualSessionPage() {
   // Update term mutation (also used for toggling is_active)
   const updateTerm = useMutation({
     mutationFn: async (payload: any) => {
-      console.log("→ payload:", payload);
       // Use payload.term_id here, not payload.id
       return await axios.patch(
         `/api/term/update/${schoolId}/${sessionId}/${payload.term_id}`,
