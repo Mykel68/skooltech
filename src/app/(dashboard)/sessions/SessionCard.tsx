@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 type Session = {
   session_id: string;
@@ -18,8 +19,12 @@ type Props = {
 };
 
 export function SessionCard({ session, onEditClick, toggleActive }: Props) {
+  const router = useRouter();
   return (
-    <li className="border p-4 rounded-2xl shadow-sm">
+    <li
+      className="border p-4 rounded-2xl shadow-sm cursor-pointer"
+      onClick={() => router.push(`/sessions/${session.session_id}`)}
+    >
       <div className="flex justify-between items-center">
         <div>
           <p className="font-semibold text-lg">{session.name}</p>
