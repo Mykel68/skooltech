@@ -15,8 +15,10 @@ import { useSubjects } from "./useSubjects";
 
 export default function SubjectTable() {
   const schoolId = useUserStore((s) => s.schoolId)!;
+  const sessionId = useUserStore((s) => s.session_id)!;
+  const termId = useUserStore((s) => s.term_id)!;
   const { classes, subjects, loadingSubjects, approve, disapprove, remove } =
-    useSubjects(schoolId);
+    useSubjects(schoolId, sessionId, termId);
 
   return (
     <div className="p-0.5 w-full mx-auto">

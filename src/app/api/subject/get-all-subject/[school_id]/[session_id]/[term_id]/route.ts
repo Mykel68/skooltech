@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
-import axios from "axios";
 import { cookies } from "next/headers";
+import axios from "axios";
 import { backendClient } from "@/lib/backendClient";
 
-// ✅ GET school profile
 export async function GET(
   _request: Request,
-  context: { params: Promise<{ school_id: string }> }
+  context: {
+    params: Promise<{ school_id: string; session_id: string; term_id: string }>;
+  }
 ) {
   try {
+    // ✅ Await the parameters correctly
     const { params } = await context;
+
     const backendUrl = process.env.MAIN_BACKEND_URL;
     if (!backendUrl) {
       throw new Error("MAIN_BACKEND_URL is not set");
@@ -24,20 +26,31 @@ export async function GET(
     }
 
     const response = await backendClient.get(
-      `${backendUrl}/api/subjects/school/${(await params).school_id}`,
+      `${backendUrl}/api/subjects/school/${
+        (
+          await params
+        ).school_id
+      }?session_id=${(await params).session_id}&term_id=${
+        (
+          await params
+        ).term_id
+      }`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }
     );
+
     return NextResponse.json(response.data, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
+    console.error("GET subject error:", error.message);
+
     if (axios.isAxiosError(error)) {
       return NextResponse.json(
         {
           error:
-            error.response?.data?.message || "Failed to fetch school profile",
+            error.response?.data?.message || "Failed to fetch school subjects",
         },
         { status: error.response?.status || 500 }
       );
