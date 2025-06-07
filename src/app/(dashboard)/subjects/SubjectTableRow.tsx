@@ -19,11 +19,11 @@ export function SubjectTableRow({
 }: Props) {
   return (
     <TableRow>
-      <TableCell>{subject.class_name}</TableCell>
-      <TableCell>{subject.grade_level}</TableCell>
+      <TableCell>{subject.class.name}</TableCell>
+      <TableCell>{subject.class.grade_level}</TableCell>
       <TableCell>{subject.name}</TableCell>
-      <TableCell>{subject.teacher_name}</TableCell>
-      <TableCell>{subject.teacher_email}</TableCell>
+      <TableCell>{subject.teacher.username}</TableCell>
+      <TableCell>{subject.teacher.email}</TableCell>
       <TableCell>
         <div className="flex items-center gap-3 flex-wrap">
           <Badge
