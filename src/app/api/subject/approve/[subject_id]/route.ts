@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 import { cookies } from "next/headers";
+import { backendClient } from "@/lib/backendClient";
 
 export async function PATCH(
   request: Request,
@@ -24,7 +25,7 @@ export async function PATCH(
   }
 
   try {
-    const response = await axios.patch(
+    const response = await backendClient.patch(
       `${backendUrl}/api/subjects/${subject_id}/approve`,
       body,
       {

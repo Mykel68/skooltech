@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import axios from "axios";
 import { cookies } from "next/headers";
+import { backendClient } from "@/lib/backendClient";
 
 // ✅ GET school profile
 export async function DELETE(
@@ -22,7 +23,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const response = await axios.delete(
+    const response = await backendClient.delete(
       `${backendUrl}/api/subjects/${(await params).subject_id}`,
       {
         headers: {
