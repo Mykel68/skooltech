@@ -18,8 +18,10 @@
 	--muted-foreground: oklch(0.5822 0.0355 135.1418);
 	--accent: oklch(0.9577 0.0171 187.8946);
 	--accent-foreground: oklch(0.4134 0.0464 133.7966);
-	--destructive: oklch(0.5103 0.2465 273.3704);
-	--destructive-foreground: oklch(1 0 0);
+	--destructive: oklch(0.65 0.22 27); /* Vivid red, high enough contrast */
+	--destructive-foreground: oklch(
+		0.98 0.02 25
+	); /* Soft off-white, readable on red */
 	--border: oklch(0.8637 0.0071 304.2265);
 	--input: oklch(0.8637 0.0071 304.2265);
 	--ring: oklch(0.8518 0.2199 143.0082);
