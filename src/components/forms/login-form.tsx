@@ -75,10 +75,7 @@ export function LoginForm() {
 
 	return (
 		<Card className='p-3'>
-			<CardHeader>
-				<CardTitle className='text-center'>Login</CardTitle>
-			</CardHeader>
-			<CardContent className='p-6'>
+			<CardContent className='p-6 pt-10'>
 				<form
 					onSubmit={handleSubmit(onSubmit)}
 					className='space-y-6'
@@ -114,7 +111,7 @@ export function LoginForm() {
 						<div className='flex-grow border-t border-gray-300'></div>
 					</div>
 
-					<div className='space-y-4'>
+					<div className='gap-4 flex flex-col'>
 						<FormField
 							id='username'
 							label='Username'

@@ -9,12 +9,12 @@ export default function LoginPage() {
 				<div className='flex justify-center gap-2 md:justify-start'>
 					<a
 						href='#'
-						className='flex items-center gap-2 font-medium'
+						className='flex items-center gap-2 font-semibold text-3xl'
 					>
-						<div className='bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md'>
+						{/* <div className='bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md'>
 							<GalleryVerticalEnd className='size-4' />
-						</div>
-						Acme Inc.
+						</div> */}
+						Login
 					</a>
 				</div>
 				<div className='flex flex-1 items-center justify-center'>
