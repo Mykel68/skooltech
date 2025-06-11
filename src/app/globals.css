@@ -14,8 +14,9 @@
 	--primary-foreground: oklch(1 0 0);
 	--secondary: oklch(0.8637 0.0071 304.2265);
 	--secondary-foreground: oklch(0.4807 0.0411 132.4645);
-	--muted: oklch(0.9205 0.0042 301.4203);
-	--muted-foreground: oklch(0.5822 0.0355 135.1418);
+	--muted: oklch(0.9205 0.01 270); /* soft lavender-blue */
+	--muted-foreground: oklch(0.38 0.04 270); /* deeper version of same hue */
+
 	--accent: oklch(0.9577 0.0171 187.8946);
 	--accent-foreground: oklch(0.4134 0.0464 133.7966);
 	--destructive: oklch(0.65 0.22 27); /* Vivid red, high enough contrast */
