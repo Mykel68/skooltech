@@ -104,15 +104,15 @@ export default function NigerianReportCard({
 				>
 					{/* School Header */}
 					<div className='text-center border-b-2 border-black pb-4 mb-6'>
-						<div className='flex items-center justify-center gap-4 mb-2'>
-							{/* <div className='w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center'>
-								<span className='text-xs'>LOGO</span>
-							</div> */}
+						<div className='flex items-center justify-between gap-4 mb-2 p-4'>
 							<img
 								src={schoolInfo.school_image}
-								className='w-16 aspect-square rounded-full'
+								className='w-24 aspect-square rounded-full'
 							/>
 							<div>
+								<p className='text-3xl font-semibold uppercase'>
+									{schoolInfo.name}
+								</p>
 								<p className='text-sm'>{schoolInfo.address}</p>
 								<p className='text-sm'>
 									Tel: {schoolInfo.phone_number} | Email:{' '}
