@@ -78,6 +78,16 @@ export const footerItems = [
 		name: 'Settings',
 		href: '/settings',
 		icon: Settings,
+		subItems: [
+			{
+				name: 'School',
+				href: '/settings/profile/school',
+			},
+			{
+				name: 'Admin',
+				href: '/settings/profile/admin',
+			},
+		],
 	},
 	{
 		name: 'Admin Privileges',
