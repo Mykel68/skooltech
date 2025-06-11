@@ -110,6 +110,12 @@ export default function NigerianReportCard({
 								className='w-24 aspect-square rounded-full'
 							/>
 							<div>
+								{/* <div className='flex item-center justify-center w-full'>
+									<img
+										src={schoolInfo.school_image}
+										className='w-24 aspect-square rounded-full'
+									/>
+								</div> */}
 								<p className='text-3xl font-semibold uppercase'>
 									{schoolInfo.name}
 								</p>
@@ -122,9 +128,10 @@ export default function NigerianReportCard({
 									" {schoolInfo.motto} "
 								</p>
 							</div>
-							<div className='w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center'>
+							<div className=''></div>
+							{/* <div className='w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center'>
 								<span className='text-xs'>COAT OF ARMS</span>
-							</div>
+							</div> */}
 						</div>
 						<h2 className='text-xl font-bold mt-2'>
 							STUDENT'S REPORT CARD
