@@ -13,16 +13,6 @@ const StudentReports = ({
 }) => {
 	return (
 		<>
-			<div className='flex justify-between items-center'>
-				<h2 className='text-2xl font-semibold'>Student Report Cards</h2>
-				<Badge
-					variant='outline'
-					className='text-sm'
-				>
-					{!schoolLoading && schoolInfo.name}
-				</Badge>
-			</div>
-
 			<div className='grid gap-4'>
 				{studentsLoading ? (
 					<div className='text-center py-8'>Loading students...</div>

@@ -65,8 +65,8 @@ const SchoolInformationTab = ({ schoolInfo, email, schoolId }) => {
 	// Update school info mutation
 	const updateSchoolInfoMutation = useMutation({
 		mutationFn: async (data) => {
-			const response = await axios.put(
-				`/api/school/update-profile/${schoolId}`,
+			const response = await axios.patch(
+				`/api/school/edit-profile/${schoolId}`,
 				data
 			);
 			return response.data;

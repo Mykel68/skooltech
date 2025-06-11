@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { useUserStore } from '@/stores/userStore';
 import { Printer } from 'lucide-react';
 import React, { useRef } from 'react';
 
@@ -34,9 +35,10 @@ type Student = {
 type SchoolInfo = {
 	name: string;
 	address: string;
-	phone: string;
+	phone_number: string;
 	email: string;
 	motto: string;
+	school_image: string;
 };
 
 type NigerianReportCardProps = {
@@ -51,6 +53,7 @@ export default function NigerianReportCard({
 	onClose,
 }: NigerianReportCardProps) {
 	const reportRef = useRef<HTMLDivElement>(null);
+	const email = useUserStore((s) => s.email);
 
 	const handlePrint = () => {
 		window.print();
@@ -102,17 +105,18 @@ export default function NigerianReportCard({
 					{/* School Header */}
 					<div className='text-center border-b-2 border-black pb-4 mb-6'>
 						<div className='flex items-center justify-center gap-4 mb-2'>
-							<div className='w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center'>
+							{/* <div className='w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center'>
 								<span className='text-xs'>LOGO</span>
-							</div>
+							</div> */}
+							<img
+								src={schoolInfo.school_image}
+								className='w-16 aspect-square rounded-full'
+							/>
 							<div>
-								<h1 className='text-2xl font-bold text-blue-900'>
-									{schoolInfo.name}
-								</h1>
 								<p className='text-sm'>{schoolInfo.address}</p>
 								<p className='text-sm'>
-									Tel: {schoolInfo.phone} | Email:{' '}
-									{schoolInfo.email}
+									Tel: {schoolInfo.phone_number} | Email:{' '}
+									{email}
 								</p>
 								<p className='text-sm italic'>
 									" {schoolInfo.motto} "
@@ -123,7 +127,7 @@ export default function NigerianReportCard({
 							</div>
 						</div>
 						<h2 className='text-xl font-bold mt-2'>
-							STUDENT'S TERMINAL REPORT CARD
+							STUDENT'S REPORT CARD
 						</h2>
 					</div>
 
