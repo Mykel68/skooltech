@@ -61,12 +61,6 @@ type StudentReportsProps = {
 	classesLoading: boolean;
 };
 
-// --- Fetch Function
-async function fetchClasses(schoolId: string): Promise<SchoolClass[]> {
-	const { data } = await axios.get(`/api/classq/get-all-classs/${schoolId}`);
-	return data.data.classes;
-}
-
 // --- Component
 const StudentReports: React.FC<StudentReportsProps> = ({
 	students,

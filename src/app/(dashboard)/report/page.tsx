@@ -8,6 +8,68 @@ import { useUserStore } from '@/stores/userStore';
 import NigerianReportCard from './ReportCard';
 import TabsSection from './TabsSection';
 
+type APIResponse = {
+	user_id: string;
+	first_name: string;
+	last_name: string;
+	class_students: {
+		class_id: string;
+		session_name: string;
+		term_name: string;
+		Class: { name: string };
+	}[];
+	student_scores: {
+		total_score: number;
+		scores: { score: number; component_name: string }[];
+		subject: { name: string };
+	}[];
+}[];
+
+const transformToStudents = (apiData: APIResponse): Student[] => {
+	return apiData.map((studentData) => {
+		const fullName = `${studentData.first_name} ${studentData.last_name}`;
+		const classInfo = studentData.class_students[0];
+
+		const subjectScores = studentData.student_scores.map((scoreObj) => {
+			const total = scoreObj.total_score;
+			const grade = getGradeFromScore(total);
+			return {
+				name: scoreObj.subject.name,
+				total,
+				grade,
+			};
+		});
+
+		const average =
+			subjectScores.reduce((acc, s) => acc + s.total, 0) /
+			subjectScores.length;
+
+		return {
+			id: studentData.user_id,
+			name: fullName,
+			class: classInfo?.Class?.name || 'N/A',
+			session: classInfo?.Session?.name || 'N/A',
+			term: classInfo?.Term?.name || 'N/A',
+			position: 1, // Placeholder – update based on logic
+			average,
+			admissionNumber: studentData.user_id.slice(0, 6),
+			subjects: subjectScores,
+		};
+	});
+};
+
+function getGradeFromScore(score: number): string {
+	if (score >= 75) return 'A1';
+	if (score >= 70) return 'B2';
+	if (score >= 65) return 'B3';
+	if (score >= 60) return 'C4';
+	if (score >= 55) return 'C5';
+	if (score >= 50) return 'C6';
+	if (score >= 45) return 'D7';
+	if (score >= 40) return 'E8';
+	return 'F9';
+}
+
 const ExamReportBuilder = () => {
 	const [activeTab, setActiveTab] = useState('reports');
 	const [selectedStudent, setSelectedStudent] = useState(null);
@@ -46,7 +108,7 @@ const ExamReportBuilder = () => {
 			const res = await axios.get(
 				`/api/result/${schoolId}/${sessionId}/${termId}/${selectedClassId}`
 			);
-			return res.data.data.data;
+			return transformToStudents(res.data.data.data);
 		},
 		enabled: !!schoolId && !!sessionId && !!termId && !!selectedClassId,
 	});
