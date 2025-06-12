@@ -1,5 +1,3 @@
-// src/utils/transform.ts
-
 import { APIStudent, Student } from '@/app/(dashboard)/report/page';
 
 function getGradeFromScore(score: number): string {
@@ -27,7 +25,9 @@ export function transformToStudents(apiData: APIStudent[]): Student[] {
 			position: s.position || 1,
 		}));
 		const totalScore = subjectEntries.reduce((acc, s) => acc + s.total, 0);
-		const average = totalScore / subjectEntries.length;
+		const average = subjectEntries.length
+			? totalScore / subjectEntries.length
+			: 0;
 
 		return {
 			id: stu.user_id,
@@ -39,6 +39,7 @@ export function transformToStudents(apiData: APIStudent[]): Student[] {
 			average,
 			totalScore,
 			subjects: subjectEntries,
+			position: 1, // placeholder or use actual if available
 		};
 	});
 }

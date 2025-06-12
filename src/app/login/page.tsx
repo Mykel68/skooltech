@@ -43,9 +43,9 @@ export default function LoginPage() {
 				{/* Content */}
 				<div className='relative z-10 flex flex-col justify-end p-16 text-white'>
 					<div
-						initial={{ opacity: 0, y: 30 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.4, duration: 0.8 }}
+						// initial={{ opacity: 0, y: 30 }}
+						// animate={{ opacity: 1, y: 0 }}
+						// transition={{ delay: 0.4, duration: 0.8 }}
 						className='space-y-6'
 					>
 						<div className='space-y-2'>

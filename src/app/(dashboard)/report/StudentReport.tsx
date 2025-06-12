@@ -16,24 +16,13 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import { Student } from './page';
 
 // --- Types
 type Subject = {
 	name: string;
 	total: number;
 	grade: string;
-};
-
-type Student = {
-	id: string;
-	name: string;
-	class: string;
-	session: string;
-	term: string;
-	position: number;
-	average: number;
-	admissionNumber: string;
-	subjects: Subject[];
 };
 
 type SchoolInfo = {
@@ -46,6 +35,7 @@ type SchoolClass = {
 	id: string;
 	name: string;
 	grade_level: string;
+	class_id: string;
 };
 
 type StudentReportsProps = {
@@ -86,7 +76,14 @@ const StudentReports: React.FC<StudentReportsProps> = ({
 						onValueChange={(value) => setSelectedClassId(value)}
 					>
 						<SelectTrigger className='w-full md:w-[300px]'>
-							<SelectValue placeholder='Select a class' />
+							<SelectValue>
+								{selectedClassId
+									? classes.find(
+											(cls) =>
+												cls.class_id === selectedClassId
+									  )?.name
+									: 'Select a class'}
+							</SelectValue>
 						</SelectTrigger>
 						<SelectContent>
 							{classes.map((cls) => (

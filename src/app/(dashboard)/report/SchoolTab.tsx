@@ -35,12 +35,22 @@ const schoolInfoSchema = z.object({
 	motto: z.string().optional(),
 });
 
-const SchoolInformationTab = ({ schoolInfo, email, schoolId }) => {
+interface Props {
+	schoolInfo: any;
+	email: string;
+	schoolId: string;
+}
+
+const SchoolInformationTab = ({ schoolInfo, email, schoolId }: Props) => {
 	const [isEditing, setIsEditing] = useState(false);
-	const [selectedImage, setSelectedImage] = useState(null);
-	const [imagePreview, setImagePreview] = useState(null);
+	const [selectedImage, setSelectedImage] = useState<File | null>(null);
+	const [imagePreview, setImagePreview] = useState<
+		string | ArrayBuffer | null
+	>(null);
+
 	const [isImageUploading, setIsImageUploading] = useState(false);
-	const fileInputRef = useRef(null);
+	const fileInputRef = useRef<HTMLInputElement | null>(null);
+
 	const queryClient = useQueryClient();
 
 	// Form setup
@@ -67,9 +77,9 @@ const SchoolInformationTab = ({ schoolInfo, email, schoolId }) => {
 		onSuccess: () => {
 			toast.success('School information updated successfully!');
 			setIsEditing(false);
-			queryClient.invalidateQueries(['schoolInfo']);
+			queryClient.invalidateQueries({ queryKey: ['schoolInfo'] });
 		},
-		onError: (error) => {
+		onError: (error: any) => {
 			toast.error(
 				error.response?.data?.message ||
 					'Failed to update school information'
@@ -77,7 +87,7 @@ const SchoolInformationTab = ({ schoolInfo, email, schoolId }) => {
 		},
 	});
 
-	const onSubmit = (data) => {
+	const onSubmit = (data: any) => {
 		updateSchoolInfoMutation.mutate(data);
 	};
 
@@ -85,8 +95,8 @@ const SchoolInformationTab = ({ schoolInfo, email, schoolId }) => {
 		fileInputRef.current?.click();
 	};
 
-	const handleImageSelect = (event) => {
-		const file = event.target.files[0];
+	const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const file = event.target.files?.[0];
 		if (file) {
 			setSelectedImage(file);
 			const reader = new FileReader();
@@ -113,8 +123,8 @@ const SchoolInformationTab = ({ schoolInfo, email, schoolId }) => {
 			toast.success('School image updated successfully!');
 			setSelectedImage(null);
 			setImagePreview(null);
-			queryClient.invalidateQueries(['schoolInfo']);
-		} catch (error) {
+			queryClient.invalidateQueries({ queryKey: ['schoolInfo'] });
+		} catch (error: any) {
 			console.error(error);
 			toast.error(
 				error?.response?.data?.message ||

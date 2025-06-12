@@ -254,5 +254,5 @@ export const api = {
 			},
 		]),
 
-	generateReport: (studentId) => Promise.resolve({ success: true }),
+	generateReport: (studentId: string) => Promise.resolve({ success: true }),
 };

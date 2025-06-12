@@ -30,7 +30,7 @@ async function fetchStudents(schoolId: string): Promise<Student[]> {
 	return data.data;
 }
 
-export function StudentTable() {
+export default function StudentTable() {
 	const schoolId = useUserStore((s) => s.schoolId)!;
 	const queryClient = useQueryClient();
 
@@ -99,5 +99,3 @@ export function StudentTable() {
 		</Card>
 	);
 }
-
-export default StudentTable;

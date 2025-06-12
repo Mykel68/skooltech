@@ -42,6 +42,7 @@ export type Student = {
 	admissionNumber: string;
 	average: number;
 	totalScore: number;
+	position: number;
 	subjects: {
 		name: string;
 		components: ComponentScore[];
@@ -54,7 +55,9 @@ export type Student = {
 
 const ExamReportBuilder = () => {
 	const [activeTab, setActiveTab] = useState('reports');
-	const [selectedStudent, setSelectedStudent] = useState(null);
+	const [selectedStudent, setSelectedStudent] = useState<Student | null>(
+		null
+	);
 	const [showReportCard, setShowReportCard] = useState(false);
 	const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
 
@@ -101,7 +104,7 @@ const ExamReportBuilder = () => {
 		onSuccess: () => setShowReportCard(true),
 	});
 
-	const handleViewReport = (student) => {
+	const handleViewReport = (student: Student) => {
 		setSelectedStudent(student);
 		generateReportMutation.mutate(student.id);
 	};
@@ -122,8 +125,8 @@ const ExamReportBuilder = () => {
 				studentsLoading={studentsLoading}
 				schoolInfo={schoolInfo}
 				schoolLoading={schoolLoading}
-				email={email}
-				schoolId={schoolId}
+				email={email!} // <-- non-null assertion
+				schoolId={schoolId!} // <-- non-null assertion
 				handleViewReport={handleViewReport}
 				generateReportPending={generateReportMutation.isPending}
 				selectedClassId={selectedClassId}

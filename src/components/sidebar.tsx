@@ -25,9 +25,20 @@ export function Sidebar() {
 	const schoolId = useUserStore((s) => s.schoolId);
 
 	const [ready, setReady] = useState(false);
-	const [sessions, setSessions] = useState<any[]>([]);
 	const [currentSession, setCurrentSession] = useState<any>(null);
 	const [currentTerm, setCurrentTerm] = useState<any>(null);
+	const [sessions, setSessions] = useState<Session[]>([]);
+
+	type Term = {
+		term_id: string;
+		name: string;
+	};
+
+	type Session = {
+		session_id: string;
+		terms: Term[];
+		name: string;
+	};
 
 	useEffect(() => {
 		restoreUserFromCookie();
@@ -47,14 +58,17 @@ export function Sidebar() {
 
 	const fetchSessions = async () => {
 		if (!schoolId) return;
+
 		const res = await axios.get(`/api/term/get-all-terms/${schoolId}`);
 		const sessionData = res.data?.data?.data?.sessions;
 
-		if (!sessionData) throw new Error('Failed to fetch sessions');
+		if (!sessionData || typeof sessionData !== 'object') {
+			throw new Error('Failed to fetch sessions');
+		}
 
-		// Convert object of sessions into an array for easy mapping
+		// Safely convert object to array
 		return Object.entries(sessionData).map(([id, session]) => ({
-			...session,
+			...(session as Record<string, any>), // Explicitly assert the type
 			session_id: id,
 		}));
 	};
@@ -64,8 +78,9 @@ export function Sidebar() {
 
 		fetchSessions()
 			.then((data) => {
-				setSessions(data);
-				const defaultSession = data[0];
+				if (!data) return;
+				setSessions(data as any);
+				const defaultSession = data[0] as Session;
 				const defaultTerm = defaultSession.terms?.[0] ?? null;
 
 				setCurrentSession(defaultSession);
@@ -73,7 +88,7 @@ export function Sidebar() {
 
 				setUser({
 					session_id: defaultSession.session_id,
-					term_id: defaultTerm?.term_id || null,
+					term_id: defaultTerm?.term_id!,
 				});
 			})
 			.catch((err) => console.error('Error fetching sessions:', err));
@@ -90,7 +105,7 @@ export function Sidebar() {
 			setCurrentTerm(firstTerm);
 			setUser({
 				session_id: selectedSession.session_id,
-				term_id: firstTerm?.term_id || null,
+				term_id: firstTerm?.term_id,
 			});
 		}
 	};
@@ -254,11 +269,6 @@ export function Sidebar() {
 											? 'bg-green-400'
 											: 'hover:bg-emerald-600'
 									)}
-									onClick={
-										item.href === '/logout'
-											? handleLogout
-											: ''
-									}
 								>
 									<item.icon className='h-5 w-5' />
 									<span>{item.name}</span>

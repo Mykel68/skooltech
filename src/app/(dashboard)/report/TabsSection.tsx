@@ -4,6 +4,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Settings } from 'lucide-react';
 import SchoolInformationTab from './SchoolTab';
 import StudentReports from './StudentReport';
+import { Student } from './page';
+
+type TabsSectionProps = {
+	activeTab: string;
+	setActiveTab: (tab: string) => void;
+	students: Student[];
+	studentsLoading: boolean;
+	schoolInfo: any;
+	schoolLoading: boolean;
+	email: string | null; // <-- updated type
+	schoolId: string | null; // <-- updated type
+	handleViewReport: (student: Student) => void;
+	generateReportPending: boolean;
+	selectedClassId: string | null;
+	setSelectedClassId: (id: string | null) => void;
+	classes: any[];
+	classesLoading: boolean;
+};
 
 const TabsSection = ({
 	activeTab,
@@ -20,7 +38,7 @@ const TabsSection = ({
 	setSelectedClassId,
 	classes,
 	classesLoading,
-}) => {
+}: TabsSectionProps) => {
 	return (
 		<Tabs
 			value={activeTab}
@@ -62,8 +80,8 @@ const TabsSection = ({
 			<TabsContent value='admin'>
 				<SchoolInformationTab
 					schoolInfo={schoolInfo}
-					schoolId={schoolId}
-					email={email}
+					schoolId={schoolId!}
+					email={email!}
 				/>
 			</TabsContent>
 		</Tabs>
