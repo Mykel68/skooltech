@@ -41,12 +41,12 @@ const ExamReportBuilder = () => {
 	});
 
 	const { data: students = [], isLoading: studentsLoading } = useQuery({
-		queryKey: ['students'],
+		queryKey: ['students', selectedClassId],
 		queryFn: async () => {
 			const res = await axios.get(
 				`/api/result/${schoolId}/${sessionId}/${termId}/${selectedClassId}`
 			);
-			return res.data.data;
+			return res.data.data.data;
 		},
 		enabled: !!schoolId && !!sessionId && !!termId && !!selectedClassId,
 	});
@@ -70,19 +70,6 @@ const ExamReportBuilder = () => {
 				</h1>
 				<p className='text-gray-600 mt-2'>Generate report cards</p>
 			</div>
-
-			{/* <TabsSection
-				activeTab={activeTab}
-				setActiveTab={setActiveTab}
-				students={students}
-				studentsLoading={studentsLoading}
-				schoolInfo={schoolInfo}
-				schoolLoading={schoolLoading}
-				email={email}
-				schoolId={schoolId}
-				handleViewReport={handleViewReport}
-				generateReportPending={generateReportMutation.isPending}
-			/> */}
 
 			<TabsSection
 				activeTab={activeTab}

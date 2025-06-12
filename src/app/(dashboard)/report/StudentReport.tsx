@@ -88,8 +88,8 @@ const StudentReports: React.FC<StudentReportsProps> = ({
 					<p>Loading classes...</p>
 				) : (
 					<Select
-						value={selectedClassId ?? ''}
-						onValueChange={setSelectedClassId}
+						value={selectedClassId || undefined}
+						onValueChange={(value) => setSelectedClassId(value)}
 					>
 						<SelectTrigger className='w-full md:w-[300px]'>
 							<SelectValue placeholder='Select a class' />
