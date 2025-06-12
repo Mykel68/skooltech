@@ -116,15 +116,17 @@ export default function NigerianReportCard({
 										className='w-24 aspect-square rounded-full'
 									/>
 								</div> */}
-								<p className='text-3xl font-semibold uppercase'>
+								<p className='text-3xl font-semibold uppercase text-balance'>
 									{schoolInfo.name}
 								</p>
-								<p className='text-sm'>{schoolInfo.address}</p>
-								<p className='text-sm'>
+								<p className='text-sm text-balance'>
+									{schoolInfo.address}
+								</p>
+								<p className='text-sm text-balance'>
 									Tel: {schoolInfo.phone_number} | Email:{' '}
 									{email}
 								</p>
-								<p className='text-sm italic'>
+								<p className='text-sm italic text-balance'>
 									" {schoolInfo.motto} "
 								</p>
 							</div>

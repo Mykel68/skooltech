@@ -18,16 +18,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from '@/components/ui/dialog';
 import { Camera, Edit3, Save, X, Upload } from 'lucide-react';
 import axios from 'axios';
+import { uploadSchoolImage } from '@/utils/vercelBlob';
 
 // Schema for form validation
 const schoolInfoSchema = z.object({
@@ -44,9 +37,9 @@ const schoolInfoSchema = z.object({
 
 const SchoolInformationTab = ({ schoolInfo, email, schoolId }) => {
 	const [isEditing, setIsEditing] = useState(false);
-	const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
 	const [selectedImage, setSelectedImage] = useState(null);
 	const [imagePreview, setImagePreview] = useState(null);
+	const [isImageUploading, setIsImageUploading] = useState(false);
 	const fileInputRef = useRef(null);
 	const queryClient = useQueryClient();
 
@@ -84,36 +77,12 @@ const SchoolInformationTab = ({ schoolInfo, email, schoolId }) => {
 		},
 	});
 
-	// Upload image mutation
-	const uploadImageMutation = useMutation({
-		mutationFn: async (formData) => {
-			const response = await axios.post(
-				`/api/school/upload-image/${schoolId}`,
-				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				}
-			);
-			return response.data;
-		},
-		onSuccess: () => {
-			toast.success('School image updated successfully!');
-			setIsImageDialogOpen(false);
-			setSelectedImage(null);
-			setImagePreview(null);
-			queryClient.invalidateQueries(['schoolInfo']);
-		},
-		onError: (error) => {
-			toast.error(
-				error.response?.data?.message || 'Failed to upload image'
-			);
-		},
-	});
-
 	const onSubmit = (data) => {
 		updateSchoolInfoMutation.mutate(data);
+	};
+
+	const handleImageClick = () => {
+		fileInputRef.current?.click();
 	};
 
 	const handleImageSelect = (event) => {
@@ -128,11 +97,44 @@ const SchoolInformationTab = ({ schoolInfo, email, schoolId }) => {
 		}
 	};
 
-	const handleImageUpload = () => {
-		if (selectedImage) {
-			const formData = new FormData();
-			formData.append('image', selectedImage);
-			uploadImageMutation.mutate(formData);
+	const handleImageSave = async () => {
+		if (!selectedImage) return;
+
+		setIsImageUploading(true);
+		try {
+			console.log('hello');
+
+			// Upload to Vercel Blob
+			const url = await uploadSchoolImage(selectedImage);
+			console.log('hi');
+
+			// Update backend with image URL using the same endpoint
+			await axios.patch(`/api/school/edit-profile/${schoolId}`, {
+				school_image: url,
+			});
+			console.log('jj');
+
+			toast.success('School image updated successfully!');
+			setSelectedImage(null);
+			setImagePreview(null);
+			queryClient.invalidateQueries(['schoolInfo']);
+		} catch (error) {
+			console.error(error);
+			toast.error(
+				error?.response?.data?.message ||
+					'Failed to upload school image'
+			);
+		} finally {
+			setIsImageUploading(false);
+		}
+	};
+
+	const handleImageCancel = () => {
+		setSelectedImage(null);
+		setImagePreview(null);
+		// Reset file input
+		if (fileInputRef.current) {
+			fileInputRef.current.value = '';
 		}
 	};
 
@@ -183,104 +185,70 @@ const SchoolInformationTab = ({ schoolInfo, email, schoolId }) => {
 						{/* School Image Section */}
 						<div className='flex flex-col items-center space-y-4'>
 							<div className='relative'>
-								<Avatar className='w-32 h-32'>
-									<AvatarImage
-										src={schoolInfo?.school_image}
-										alt={schoolInfo?.name || 'School'}
-									/>
-									<AvatarFallback className='text-2xl font-bold bg-primary/10'>
-										{schoolInfo?.name?.charAt(0) || 'S'}
-									</AvatarFallback>
-								</Avatar>
-								<Dialog
-									open={isImageDialogOpen}
-									onOpenChange={setIsImageDialogOpen}
+								<div
+									className='cursor-pointer group'
+									onClick={handleImageClick}
 								>
-									<DialogTrigger asChild>
-										<Button
-											size='sm'
-											className='absolute -bottom-2 -right-2 rounded-full w-10 h-10 p-0'
-										>
-											<Camera className='w-4 h-4' />
-										</Button>
-									</DialogTrigger>
-									<DialogContent>
-										<DialogHeader>
-											<DialogTitle>
-												Update School Image
-											</DialogTitle>
-											<DialogDescription>
-												Choose a new image for your
-												school profile
-											</DialogDescription>
-										</DialogHeader>
-										<div className='space-y-4'>
-											<div className='flex flex-col items-center space-y-4'>
-												{imagePreview && (
-													<Avatar className='w-32 h-32'>
-														<AvatarImage
-															src={imagePreview}
-															alt='Preview'
-														/>
-													</Avatar>
-												)}
-												<Button
-													variant='outline'
-													onClick={() =>
-														fileInputRef.current?.click()
-													}
-													className='flex items-center gap-2'
-												>
-													<Upload className='w-4 h-4' />
-													Select Image
-												</Button>
-												<input
-													ref={fileInputRef}
-													type='file'
-													accept='image/*'
-													onChange={handleImageSelect}
-													className='hidden'
-												/>
-											</div>
-											{selectedImage && (
-												<div className='flex gap-2 justify-end'>
-													<Button
-														variant='outline'
-														onClick={() => {
-															setSelectedImage(
-																null
-															);
-															setImagePreview(
-																null
-															);
-														}}
-													>
-														Cancel
-													</Button>
-													<Button
-														onClick={
-															handleImageUpload
-														}
-														disabled={
-															uploadImageMutation.isPending
-														}
-													>
-														{uploadImageMutation.isPending
-															? 'Uploading...'
-															: 'Upload Image'}
-													</Button>
-												</div>
-											)}
-										</div>
-									</DialogContent>
-								</Dialog>
+									<Avatar className='w-32 h-32 transition-opacity group-hover:opacity-80'>
+										<AvatarImage
+											src={
+												imagePreview ||
+												schoolInfo?.school_image
+											}
+											alt={schoolInfo?.name || 'School'}
+										/>
+										<AvatarFallback className='text-2xl font-bold bg-primary/10'>
+											{schoolInfo?.name?.charAt(0) || 'S'}
+										</AvatarFallback>
+									</Avatar>
+									<div className='absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 rounded-full'>
+										<Camera className='w-6 h-6 text-white' />
+									</div>
+								</div>
+								<input
+									ref={fileInputRef}
+									type='file'
+									accept='image/*'
+									onChange={handleImageSelect}
+									className='hidden'
+								/>
 							</div>
+
+							{/* Image action buttons */}
+							{selectedImage && (
+								<div className='flex gap-2'>
+									<Button
+										variant='outline'
+										size='sm'
+										onClick={handleImageCancel}
+										disabled={isImageUploading}
+									>
+										<X className='w-4 h-4 mr-2' />
+										Cancel
+									</Button>
+									<Button
+										size='sm'
+										onClick={handleImageSave}
+										disabled={isImageUploading}
+									>
+										{isImageUploading ? (
+											'Saving...'
+										) : (
+											<>
+												<Save className='w-4 h-4 mr-2' />
+												Save Image
+											</>
+										)}
+									</Button>
+								</div>
+							)}
+
 							<div className='text-center'>
 								<p className='text-sm text-muted-foreground'>
 									School Logo
 								</p>
 								<p className='text-xs text-muted-foreground mt-1'>
-									Click the camera icon to update
+									Click the image to update
 								</p>
 							</div>
 						</div>
@@ -345,23 +313,23 @@ const SchoolInformationTab = ({ schoolInfo, email, schoolId }) => {
 										)}
 									</div>
 
-									<div className='space-y-2'>
-										<Label htmlFor='address'>Address</Label>
-										<Textarea
-											id='address'
-											disabled={!isEditing}
-											placeholder='Enter school address'
-											{...form.register('address')}
-										/>
-									</div>
-
-									<div className='space-y-2 md:col-span-2'>
+									<div className='space-y-2 '>
 										<Label htmlFor='motto'>Motto</Label>
 										<Input
 											id='motto'
 											disabled={!isEditing}
 											placeholder='Enter school motto'
 											{...form.register('motto')}
+										/>
+									</div>
+
+									<div className='space-y-2 md:col-span-2'>
+										<Label htmlFor='address'>Address</Label>
+										<Textarea
+											id='address'
+											disabled={!isEditing}
+											placeholder='Enter school address'
+											{...form.register('address')}
 										/>
 									</div>
 								</div>
