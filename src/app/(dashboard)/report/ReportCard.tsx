@@ -1,51 +1,39 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { useUserStore } from '@/stores/userStore';
-import { Printer } from 'lucide-react';
 import React, { useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Printer } from 'lucide-react';
+import { useUserStore } from '@/stores/userStore';
 
 type Subject = {
 	name: string;
-	ca1: number;
-	ca2: number;
-	exam: number;
 	total: number;
 	grade: string;
-	remark: string;
-	position: number;
 };
 
 type Student = {
 	name: string;
 	class: string;
-	term: string;
 	session: string;
-	age: number;
+	term: string;
 	admissionNumber: string;
-	sex: 'Male' | 'Female' | string;
-	height: string;
-	weight: string;
-	dateOfBirth: string;
-	subjects: Subject[];
-	totalScore: number;
 	average: number;
+	subjects: Subject[];
 };
 
 type SchoolInfo = {
 	name: string;
 	address: string;
 	phone_number: string;
-	email: string;
 	motto: string;
 	school_image: string;
 };
 
-type NigerianReportCardProps = {
+interface NigerianReportCardProps {
 	student: Student;
 	schoolInfo: SchoolInfo;
 	onClose: () => void;
-};
+}
 
 export default function NigerianReportCard({
 	student,
@@ -53,29 +41,23 @@ export default function NigerianReportCard({
 	onClose,
 }: NigerianReportCardProps) {
 	const reportRef = useRef<HTMLDivElement>(null);
-	const email = useUserStore((s) => s.email);
+	const userEmail = useUserStore((s) => s.email);
 
-	const handlePrint = () => {
-		window.print();
-	};
+	const handlePrint = () => window.print();
 
-	const getGradeColor = (grade: string) => {
-		if (grade === 'A1') return 'text-green-700';
-		if (grade === 'B2' || grade === 'B3') return 'text-blue-700';
-		if (['C4', 'C5', 'C6'].includes(grade)) return 'text-yellow-700';
-		return 'text-red-700';
-	};
-
-	const getPositionSuffix = (position: number) => {
-		if (position === 1) return 'st';
-		if (position === 2) return 'nd';
-		if (position === 3) return 'rd';
-		return 'th';
-	};
+	const getGradeColor = (g: string) =>
+		g === 'A1'
+			? 'text-green-700'
+			: ['B2', 'B3'].includes(g)
+			? 'text-blue-700'
+			: ['C4', 'C5', 'C6'].includes(g)
+			? 'text-yellow-700'
+			: 'text-red-700';
 
 	return (
 		<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'>
 			<div className='bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto'>
+				{/* Modal Header */}
 				<div className='p-4 border-b flex justify-between items-center print:hidden'>
 					<h3 className='text-lg font-semibold'>
 						Student Report Card
@@ -85,8 +67,7 @@ export default function NigerianReportCard({
 							onClick={handlePrint}
 							size='sm'
 						>
-							<Printer className='w-4 h-4 mr-2' />
-							Print
+							<Printer className='w-4 h-4 mr-2' /> Print
 						</Button>
 						<Button
 							onClick={onClose}
@@ -98,177 +79,96 @@ export default function NigerianReportCard({
 					</div>
 				</div>
 
+				{/* Content */}
 				<div
 					ref={reportRef}
-					className='p-8 bg-white print:p-4'
+					className='p-8 print:p-4'
 				>
 					{/* School Header */}
 					<div className='text-center border-b-2 border-black pb-4 mb-6'>
-						<div className='flex items-center justify-between gap-4 mb-2 p-4'>
+						<div className='flex items-center justify-center gap-4 mb-2 p-4'>
 							<img
 								src={schoolInfo.school_image}
-								className='w-24 aspect-square rounded-full'
+								alt='Logo'
+								className='w-20 h-20 rounded-full object-cover'
 							/>
-							<div>
-								{/* <div className='flex item-center justify-center w-full'>
-									<img
-										src={schoolInfo.school_image}
-										className='w-24 aspect-square rounded-full'
-									/>
-								</div> */}
-								<p className='text-3xl font-semibold uppercase text-balance'>
-									{schoolInfo.name}
-								</p>
-								<p className='text-sm text-balance'>
-									{schoolInfo.address}
-								</p>
-								<p className='text-sm text-balance'>
-									Tel: {schoolInfo.phone_number} | Email:{' '}
-									{email}
-								</p>
-								<p className='text-sm italic text-balance'>
-									" {schoolInfo.motto} "
-								</p>
-							</div>
-							<div className=''></div>
-							{/* <div className='w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center'>
-								<span className='text-xs'>COAT OF ARMS</span>
-							</div> */}
 						</div>
-						<h2 className='text-xl font-bold mt-2'>
-							STUDENT'S REPORT CARD
-						</h2>
+						<p className='text-3xl font-bold uppercase'>
+							{schoolInfo.name}
+						</p>
+						<p className='text-sm'>{schoolInfo.address}</p>
+						<p className='text-sm'>
+							Tel: {schoolInfo.phone_number} | Email: {userEmail}
+						</p>
+						<p className='text-sm italic mt-1'>
+							"{schoolInfo.motto}"
+						</p>
 					</div>
 
 					{/* Student Info */}
-					<div className='grid grid-cols-2 gap-8 mb-6'>
-						<div className='space-y-2'>
-							{[
-								['NAME:', student.name],
-								['CLASS:', student.class],
-								['TERM:', student.term],
-								['SESSION:', student.session],
-								['AGE:', `${student.age} years`],
-							].map(([label, value]) => (
-								<div
-									className='flex'
-									key={label}
-								>
-									<span className='font-semibold w-32'>
-										{label}
-									</span>
-									<span className='border-b border-black flex-1 px-2'>
-										{value}
-									</span>
-								</div>
-							))}
+					<div className='grid grid-cols-2 gap-6 mb-6 text-sm'>
+						<div className='space-y-1'>
+							<div>
+								<strong>NAME:</strong> {student.name}
+							</div>
+							<div>
+								<strong>CLASS:</strong> {student.class}
+							</div>
+							<div>
+								<strong>SESSION:</strong> {student.session}
+							</div>
+							<div>
+								<strong>TERM:</strong> {student.term}
+							</div>
 						</div>
-						<div className='space-y-2'>
-							{[
-								['ADM. NO:', student.admissionNumber],
-								['SEX:', student.sex],
-								['HEIGHT:', student.height],
-								['WEIGHT:', student.weight],
-								['D.O.B:', student.dateOfBirth],
-							].map(([label, value]) => (
-								<div
-									className='flex'
-									key={label}
-								>
-									<span className='font-semibold w-32'>
-										{label}
-									</span>
-									<span className='border-b border-black flex-1 px-2'>
-										{value}
-									</span>
-								</div>
-							))}
+						<div className='space-y-1'>
+							<div>
+								<strong>ADM. NO:</strong>{' '}
+								{student.admissionNumber}
+							</div>
+							<div>
+								<strong>AVERAGE:</strong>{' '}
+								{student.average.toFixed(1)}%
+							</div>
 						</div>
 					</div>
 
-					{/* Table */}
-					<div className='mb-6'>
-						<table className='w-full border-2 border-black text-sm'>
-							<thead>
-								<tr className='bg-gray-100'>
-									{[
-										'SUBJECTS',
-										'1ST C.A (20)',
-										'2ND C.A (20)',
-										'EXAM (60)',
-										'TOTAL (100)',
-										'GRADE',
-										'REMARK',
-										'POSITION',
-									].map((header) => (
+					{/* Subjects Table */}
+					<table className='w-full border-collapse border border-black text-sm mb-6'>
+						<thead>
+							<tr className='bg-gray-100'>
+								{['SUBJECT', 'TOTAL (100)', 'GRADE'].map(
+									(hdr) => (
 										<th
-											key={header}
-											className='border border-black p-2 text-left text-center first:text-left'
+											key={hdr}
+											className='border border-black p-2 text-center font-medium'
 										>
-											{header}
+											{hdr}
 										</th>
-									))}
-								</tr>
-							</thead>
-							<tbody>
-								{student.subjects.map((subject, index) => (
-									<tr key={index}>
-										<td className='border border-black p-2 font-medium'>
-											{subject.name}
-										</td>
-										<td className='border border-black p-2 text-center'>
-											{subject.ca1}
-										</td>
-										<td className='border border-black p-2 text-center'>
-											{subject.ca2}
-										</td>
-										<td className='border border-black p-2 text-center'>
-											{subject.exam}
-										</td>
-										<td className='border border-black p-2 text-center font-bold'>
-											{subject.total}
-										</td>
-										<td
-											className={`border border-black p-2 text-center font-bold ${getGradeColor(
-												subject.grade
-											)}`}
-										>
-											{subject.grade}
-										</td>
-										<td className='border border-black p-2 text-center'>
-											{subject.remark}
-										</td>
-										<td className='border border-black p-2 text-center'>
-											{subject.position}
-											{getPositionSuffix(
-												subject.position
-											)}
-										</td>
-									</tr>
-								))}
-								<tr className='bg-gray-100 font-bold'>
+									)
+								)}
+							</tr>
+						</thead>
+						<tbody>
+							{student.subjects.map((subj) => (
+								<tr key={subj.name}>
 									<td className='border border-black p-2'>
-										TOTAL
+										{subj.name}
 									</td>
-									<td
-										colSpan={3}
-										className='border border-black p-2 text-center'
-									></td>
 									<td className='border border-black p-2 text-center'>
-										{student.totalScore}
+										{subj.total}
 									</td>
 									<td
-										colSpan={3}
-										className='border border-black p-2 text-center'
+										className={`border border-black p-2 text-center font-bold ${getGradeColor(
+											subj.grade
+										)}`}
 									>
-										AVERAGE: {student.average.toFixed(2)}%
+										{subj.grade}
 									</td>
 								</tr>
-							</tbody>
-						</table>
-					</div>
-
-					{/* More sections like grading system, comments, etc. can go here */}
+							))}
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>

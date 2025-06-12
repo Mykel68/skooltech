@@ -12,52 +12,56 @@ type APIResponse = {
 	user_id: string;
 	first_name: string;
 	last_name: string;
-	class_students: {
-		class_id: string;
-		session_name: string;
-		term_name: string;
+	class_students: Array<{
 		Class: { name: string };
-	}[];
-	student_scores: {
+		Session: { name: string };
+		Term: { name: string };
+	}>;
+	student_scores: Array<{
 		total_score: number;
 		scores: { score: number; component_name: string }[];
 		subject: { name: string };
-	}[];
+	}>;
 }[];
 
 const transformToStudents = (apiData: APIResponse): Student[] => {
-	return apiData.map((studentData) => {
-		const fullName = `${studentData.first_name} ${studentData.last_name}`;
-		const classInfo = studentData.class_students[0];
+	return apiData.map((s) => {
+		// full name
+		const name = `${s.first_name} ${s.last_name}`;
 
-		const subjectScores = studentData.student_scores.map((scoreObj) => {
-			const total = scoreObj.total_score;
-			const grade = getGradeFromScore(total);
+		// the first-and-only class_students entry
+		const cls = s.class_students[0];
+		const className = cls.Class.name;
+		const sessionName = cls.Session.name;
+		const termName = cls.Term.name;
+
+		// build out your per-subject array
+		const subjects = s.student_scores.map((row) => {
+			const total = row.total_score;
 			return {
-				name: scoreObj.subject.name,
+				name: row.subject.name,
 				total,
-				grade,
+				grade: getGradeFromScore(total),
 			};
 		});
 
+		// average across all subjects
 		const average =
-			subjectScores.reduce((acc, s) => acc + s.total, 0) /
-			subjectScores.length;
+			subjects.reduce((sum, x) => sum + x.total, 0) / subjects.length;
 
 		return {
-			id: studentData.user_id,
-			name: fullName,
-			class: classInfo?.Class?.name || 'N/A',
-			session: classInfo?.Session?.name || 'N/A',
-			term: classInfo?.Term?.name || 'N/A',
-			position: 1, // Placeholder – update based on logic
+			id: s.user_id,
+			name,
+			class: className,
+			session: sessionName,
+			term: termName,
+			position: 1, // replace with real logic
 			average,
-			admissionNumber: studentData.user_id.slice(0, 6),
-			subjects: subjectScores,
+			admissionNumber: s.user_id.slice(0, 6), // or however you want it
+			subjects,
 		};
 	});
 };
-
 function getGradeFromScore(score: number): string {
 	if (score >= 75) return 'A1';
 	if (score >= 70) return 'B2';
