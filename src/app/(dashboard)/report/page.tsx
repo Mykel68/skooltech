@@ -8,60 +8,49 @@ import { useUserStore } from '@/stores/userStore';
 import NigerianReportCard from './ReportCard';
 import TabsSection from './TabsSection';
 
-type APIResponse = {
+export type ComponentScore = {
+	component_name: string;
+	score: number;
+};
+
+export type APIStudent = {
 	user_id: string;
 	first_name: string;
 	last_name: string;
-	class_students: Array<{
-		Class: { name: string };
+	class_students: {
 		Session: { name: string };
 		Term: { name: string };
-	}>;
-	student_scores: Array<{
-		total_score: number;
-		scores: { score: number; component_name: string }[];
+		Class: { name: string };
+	}[];
+	student_scores: {
 		subject: { name: string };
-	}>;
-}[];
-
-const transformToStudents = (apiData: APIResponse): Student[] => {
-	return apiData.map((s) => {
-		// full name
-		const name = `${s.first_name} ${s.last_name}`;
-
-		// the first-and-only class_students entry
-		const cls = s.class_students[0];
-		const className = cls.Class.name;
-		const sessionName = cls.Session.name;
-		const termName = cls.Term.name;
-
-		// build out your per-subject array
-		const subjects = s.student_scores.map((row) => {
-			const total = row.total_score;
-			return {
-				name: row.subject.name,
-				total,
-				grade: getGradeFromScore(total),
-			};
-		});
-
-		// average across all subjects
-		const average =
-			subjects.reduce((sum, x) => sum + x.total, 0) / subjects.length;
-
-		return {
-			id: s.user_id,
-			name,
-			class: className,
-			session: sessionName,
-			term: termName,
-			position: 1, // replace with real logic
-			average,
-			admissionNumber: s.user_id.slice(0, 6), // or however you want it
-			subjects,
-		};
-	});
+		total_score: number;
+		grade: string;
+		remark: string;
+		position: number;
+		scores: ComponentScore[];
+	}[];
 };
+
+export type Student = {
+	id: string;
+	name: string;
+	class: string;
+	session: string;
+	term: string;
+	admissionNumber: string;
+	average: number;
+	totalScore: number;
+	subjects: {
+		name: string;
+		components: ComponentScore[];
+		total: number;
+		grade: string;
+		remark: string;
+		position: number;
+	}[];
+};
+
 function getGradeFromScore(score: number): string {
 	if (score >= 75) return 'A1';
 	if (score >= 70) return 'B2';
@@ -72,6 +61,35 @@ function getGradeFromScore(score: number): string {
 	if (score >= 45) return 'D7';
 	if (score >= 40) return 'E8';
 	return 'F9';
+}
+
+export function transformToStudents(apiData: APIStudent[]): Student[] {
+	return apiData.map((stu) => {
+		const fullName = `${stu.first_name} ${stu.last_name}`;
+		const cs = stu.class_students[0];
+		const subjectEntries = stu.student_scores.map((s) => ({
+			name: s.subject.name,
+			components: s.scores,
+			total: s.total_score,
+			grade: s.grade ?? getGradeFromScore(s.total_score),
+			remark: s.remark,
+			position: s.position,
+		}));
+		const totalScore = subjectEntries.reduce((acc, s) => acc + s.total, 0);
+		const average = totalScore / subjectEntries.length;
+
+		return {
+			id: stu.user_id,
+			name: fullName,
+			class: cs.Class.name,
+			session: cs.Session.name,
+			term: cs.Term.name,
+			admissionNumber: stu.user_id.slice(0, 6),
+			average,
+			totalScore,
+			subjects: subjectEntries,
+		};
+	});
 }
 
 const ExamReportBuilder = () => {

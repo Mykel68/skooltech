@@ -1,37 +1,22 @@
+// NigerianReportCard.tsx
 'use client';
 
 import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Printer } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
+import { Student } from './page';
 
-type Subject = {
-	name: string;
-	total: number;
-	grade: string;
-};
-
-type Student = {
-	name: string;
-	class: string;
-	session: string;
-	term: string;
-	admissionNumber: string;
-	average: number;
-	subjects: Subject[];
-};
-
-type SchoolInfo = {
-	name: string;
-	address: string;
-	phone_number: string;
-	motto: string;
-	school_image: string;
-};
-
-interface NigerianReportCardProps {
+interface Props {
 	student: Student;
-	schoolInfo: SchoolInfo;
+	schoolInfo: {
+		name: string;
+		address: string;
+		phone_number: string;
+		email: string;
+		motto: string;
+		school_image: string;
+	};
 	onClose: () => void;
 }
 
@@ -39,12 +24,15 @@ export default function NigerianReportCard({
 	student,
 	schoolInfo,
 	onClose,
-}: NigerianReportCardProps) {
+}: Props) {
 	const reportRef = useRef<HTMLDivElement>(null);
 	const userEmail = useUserStore((s) => s.email);
 
-	const handlePrint = () => window.print();
+	// get all unique component names from first subject
+	const componentNames =
+		student.subjects[0]?.components.map((c) => c.component_name) || [];
 
+	const handlePrint = () => window.print();
 	const getGradeColor = (g: string) =>
 		g === 'A1'
 			? 'text-green-700'
@@ -54,10 +42,13 @@ export default function NigerianReportCard({
 			? 'text-yellow-700'
 			: 'text-red-700';
 
+	const suffix = (p: number) =>
+		p === 1 ? 'st' : p === 2 ? 'nd' : p === 3 ? 'rd' : 'th';
+
 	return (
 		<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'>
 			<div className='bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto'>
-				{/* Modal Header */}
+				{/* Header */}
 				<div className='p-4 border-b flex justify-between items-center print:hidden'>
 					<h3 className='text-lg font-semibold'>
 						Student Report Card
@@ -86,13 +77,11 @@ export default function NigerianReportCard({
 				>
 					{/* School Header */}
 					<div className='text-center border-b-2 border-black pb-4 mb-6'>
-						<div className='flex items-center justify-center gap-4 mb-2 p-4'>
-							<img
-								src={schoolInfo.school_image}
-								alt='Logo'
-								className='w-20 h-20 rounded-full object-cover'
-							/>
-						</div>
+						<img
+							src={schoolInfo.school_image}
+							alt='Logo'
+							className='mx-auto w-20 h-20 rounded-full object-cover mb-2'
+						/>
 						<p className='text-3xl font-bold uppercase'>
 							{schoolInfo.name}
 						</p>
@@ -130,45 +119,77 @@ export default function NigerianReportCard({
 								<strong>AVERAGE:</strong>{' '}
 								{student.average.toFixed(1)}%
 							</div>
+							<div>
+								<strong>TOTAL:</strong> {student.totalScore}
+							</div>
 						</div>
 					</div>
 
-					{/* Subjects Table */}
-					<table className='w-full border-collapse border border-black text-sm mb-6'>
-						<thead>
-							<tr className='bg-gray-100'>
-								{['SUBJECT', 'TOTAL (100)', 'GRADE'].map(
-									(hdr) => (
+					{/* Scores Table */}
+					<div className='overflow-x-auto'>
+						<table className='w-full border-collapse border border-black text-sm'>
+							<thead>
+								<tr className='bg-gray-100'>
+									{[
+										'SUBJECT',
+										...componentNames.map((n) =>
+											n.toUpperCase()
+										),
+										'TOTAL (100)',
+										'GRADE',
+										'REMARK',
+										'POSITION',
+									].map((hdr) => (
 										<th
 											key={hdr}
 											className='border border-black p-2 text-center font-medium'
 										>
 											{hdr}
 										</th>
-									)
-								)}
-							</tr>
-						</thead>
-						<tbody>
-							{student.subjects.map((subj) => (
-								<tr key={subj.name}>
-									<td className='border border-black p-2'>
-										{subj.name}
-									</td>
-									<td className='border border-black p-2 text-center'>
-										{subj.total}
-									</td>
-									<td
-										className={`border border-black p-2 text-center font-bold ${getGradeColor(
-											subj.grade
-										)}`}
-									>
-										{subj.grade}
-									</td>
+									))}
 								</tr>
-							))}
-						</tbody>
-					</table>
+							</thead>
+							<tbody>
+								{student.subjects.map((subj) => (
+									<tr key={subj.name}>
+										<td className='border border-black p-2'>
+											{subj.name}
+										</td>
+										{componentNames.map((cn) => {
+											const comp = subj.components.find(
+												(c) => c.component_name === cn
+											);
+											return (
+												<td
+													key={cn}
+													className='border border-black p-2 text-center'
+												>
+													{comp?.score ?? '—'}
+												</td>
+											);
+										})}
+										<td className='border border-black p-2 text-center font-bold'>
+											{subj.total}
+										</td>
+										<td
+											className={`border border-black p-2 text-center font-bold ${getGradeColor(
+												subj.grade
+											)}`}
+										>
+											{subj.grade}
+										</td>
+										<td className='border border-black p-2 text-center'>
+											{subj.remark}
+										</td>
+										<td className='border border-black p-2 text-center'>
+											{subj.position}
+											{suffix(subj.position)}
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>
