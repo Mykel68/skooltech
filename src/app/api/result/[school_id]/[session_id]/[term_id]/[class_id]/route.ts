@@ -12,11 +12,15 @@ export async function GET(
 			school_id: string;
 			session_id: string;
 			term_id: string;
+			class_id: string;
 		}>;
 	}
 ) {
 	try {
-		const { params } = await context;
+		const { school_id } = await context.params;
+		const { session_id } = await context.params;
+		const { term_id } = await context.params;
+		const { class_id } = await context.params;
 		const backendUrl = process.env.MAIN_BACKEND_URL;
 		if (!backendUrl) {
 			throw new Error('MAIN_BACKEND_URL is not set');
@@ -33,15 +37,7 @@ export async function GET(
 		}
 
 		const response = await backendClient.get(
-			`${backendUrl}/api/student-scores/schools/${
-				(
-					await params
-				).school_id
-			}/students/results?session_id=${
-				(
-					await params
-				).session_id
-			}&term_id=${(await params).term_id}`,
+			`${backendUrl}/api/student-scores/${school_id}/students/${class_id}/results?session_id=${session_id}&term_id=${term_id}`,
 			{
 				headers: {
 					Authorization: `Bearer ${token}`,

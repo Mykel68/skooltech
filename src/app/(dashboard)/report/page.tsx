@@ -12,6 +12,7 @@ const ExamReportBuilder = () => {
 	const [activeTab, setActiveTab] = useState('reports');
 	const [selectedStudent, setSelectedStudent] = useState(null);
 	const [showReportCard, setShowReportCard] = useState(false);
+	const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
 
 	const schoolId = useUserStore((s) => s.schoolId);
 	const email = useUserStore((s) => s.email);
@@ -28,15 +29,26 @@ const ExamReportBuilder = () => {
 		enabled: !!schoolId,
 	});
 
+	const { data: classes = [], isLoading: classesLoading } = useQuery({
+		queryKey: ['classes', schoolId],
+		queryFn: async () => {
+			const res = await axios.get(
+				`/api/class/get-all-classs/${schoolId}`
+			);
+			return res.data.data.classes;
+		},
+		enabled: !!schoolId,
+	});
+
 	const { data: students = [], isLoading: studentsLoading } = useQuery({
 		queryKey: ['students'],
 		queryFn: async () => {
 			const res = await axios.get(
-				`/api/result/${schoolId}/${sessionId}/${termId}`
+				`/api/result/${schoolId}/${sessionId}/${termId}/${selectedClassId}`
 			);
 			return res.data.data;
 		},
-		enabled: !!schoolId,
+		enabled: !!schoolId && !!sessionId && !!termId && !!selectedClassId,
 	});
 
 	// Mutations
@@ -59,6 +71,19 @@ const ExamReportBuilder = () => {
 				<p className='text-gray-600 mt-2'>Generate report cards</p>
 			</div>
 
+			{/* <TabsSection
+				activeTab={activeTab}
+				setActiveTab={setActiveTab}
+				students={students}
+				studentsLoading={studentsLoading}
+				schoolInfo={schoolInfo}
+				schoolLoading={schoolLoading}
+				email={email}
+				schoolId={schoolId}
+				handleViewReport={handleViewReport}
+				generateReportPending={generateReportMutation.isPending}
+			/> */}
+
 			<TabsSection
 				activeTab={activeTab}
 				setActiveTab={setActiveTab}
@@ -70,6 +95,10 @@ const ExamReportBuilder = () => {
 				schoolId={schoolId}
 				handleViewReport={handleViewReport}
 				generateReportPending={generateReportMutation.isPending}
+				selectedClassId={selectedClassId}
+				setSelectedClassId={setSelectedClassId}
+				classes={classes}
+				classesLoading={classesLoading}
 			/>
 
 			{showReportCard && selectedStudent && (

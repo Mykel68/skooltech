@@ -16,6 +16,10 @@ const TabsSection = ({
 	schoolId,
 	handleViewReport,
 	generateReportPending,
+	selectedClassId,
+	setSelectedClassId,
+	classes,
+	classesLoading,
 }) => {
 	return (
 		<Tabs
@@ -48,6 +52,10 @@ const TabsSection = ({
 					schoolLoading={schoolLoading}
 					handleViewReport={handleViewReport}
 					generateReportPending={generateReportPending}
+					selectedClassId={selectedClassId}
+					setSelectedClassId={setSelectedClassId}
+					classes={classes}
+					classesLoading={classesLoading}
 				/>
 			</TabsContent>
 
