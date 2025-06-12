@@ -73,7 +73,7 @@ export function transformToStudents(apiData: APIStudent[]): Student[] {
 			total: s.total_score,
 			grade: s.grade ?? getGradeFromScore(s.total_score),
 			remark: s.remark,
-			position: s.position,
+			position: s.position || 1,
 		}));
 		const totalScore = subjectEntries.reduce((acc, s) => acc + s.total, 0);
 		const average = totalScore / subjectEntries.length;
