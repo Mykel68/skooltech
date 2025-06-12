@@ -14,8 +14,9 @@ const ExamReportBuilder = () => {
 	const [showReportCard, setShowReportCard] = useState(false);
 
 	const schoolId = useUserStore((s) => s.schoolId);
-	const schoolName = useUserStore((s) => s.schoolName);
 	const email = useUserStore((s) => s.email);
+	const termId = useUserStore((s) => s.term_id);
+	const sessionId = useUserStore((s) => s.session_id);
 
 	// Queries
 	const { data: schoolInfo = {}, isLoading: schoolLoading } = useQuery({
@@ -29,7 +30,13 @@ const ExamReportBuilder = () => {
 
 	const { data: students = [], isLoading: studentsLoading } = useQuery({
 		queryKey: ['students'],
-		queryFn: api.getStudents,
+		queryFn: async () => {
+			const res = await axios.get(
+				`/api/result/${schoolId}/${sessionId}/${termId}`
+			);
+			return res.data.data;
+		},
+		enabled: !!schoolId,
 	});
 
 	// Mutations

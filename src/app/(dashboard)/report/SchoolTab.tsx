@@ -102,17 +102,13 @@ const SchoolInformationTab = ({ schoolInfo, email, schoolId }) => {
 
 		setIsImageUploading(true);
 		try {
-			console.log('hello');
-
 			// Upload to Vercel Blob
 			const url = await uploadSchoolImage(selectedImage);
-			console.log('hi');
 
 			// Update backend with image URL using the same endpoint
 			await axios.patch(`/api/school/edit-profile/${schoolId}`, {
 				school_image: url,
 			});
-			console.log('jj');
 
 			toast.success('School image updated successfully!');
 			setSelectedImage(null);
