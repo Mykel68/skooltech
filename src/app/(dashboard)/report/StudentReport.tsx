@@ -73,17 +73,12 @@ const StudentReports: React.FC<StudentReportsProps> = ({
 				) : (
 					<Select
 						value={selectedClassId || undefined}
-						onValueChange={(value) => setSelectedClassId(value)}
+						onValueChange={(value) => {
+							setSelectedClassId(value);
+						}}
 					>
 						<SelectTrigger className='w-full md:w-[300px]'>
-							<SelectValue>
-								{selectedClassId
-									? classes.find(
-											(cls) =>
-												cls.class_id === selectedClassId
-									  )?.name
-									: 'Select a class'}
-							</SelectValue>
+							<SelectValue placeholder='Select a class' />
 						</SelectTrigger>
 						<SelectContent>
 							{classes.map((cls) => (
