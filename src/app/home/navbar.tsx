@@ -1,0 +1,251 @@
+'use client';
+
+import * as React from 'react';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import {
+	NavigationMenu,
+	NavigationMenuContent,
+	NavigationMenuItem,
+	NavigationMenuLink,
+	NavigationMenuList,
+	NavigationMenuTrigger,
+	navigationMenuTriggerStyle,
+} from '@/components/ui/navigation-menu';
+import { Button } from '@/components/ui/button';
+import { Menu, X } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ModeToggle } from './mode-toggle';
+
+export default function Navbar() {
+	const [isOpen, setIsOpen] = React.useState(false);
+
+	return (
+		<motion.header
+			className='sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md w-full '
+			initial={{ y: -100 }}
+			animate={{ y: 0 }}
+			transition={{ duration: 0.5 }}
+		>
+			<div className='container flex h-18 items-center justify-between'>
+				<Link
+					href='/'
+					className='flex items-center space-x-2'
+				>
+					<motion.div
+						className='bg-primary rounded-md p-1'
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
+					>
+						<svg
+							xmlns='http://www.w3.org/2000/svg'
+							viewBox='0 0 24 24'
+							fill='none'
+							stroke='currentColor'
+							strokeWidth='2'
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							className='h-6 w-6 text-primary-foreground'
+						>
+							<path d='M22 10v6M2 10l10-5 10 5-10 5z' />
+							<path d='M6 12v5c0 2 2 3 6 3s6-1 6-3v-5' />
+						</svg>
+					</motion.div>
+					<span className='font-bold text-2xl'>SkoolTech</span>
+				</Link>
+
+				{/* Desktop Navigation */}
+				<div className='hidden md:flex md:items-center md:space-x-32'>
+					<NavigationMenu>
+						<NavigationMenuList>
+							<NavigationMenuItem>
+								<Link
+									href='#about'
+									legacyBehavior
+									passHref
+								>
+									<NavigationMenuLink
+										className={navigationMenuTriggerStyle()}
+									>
+										About
+									</NavigationMenuLink>
+								</Link>
+							</NavigationMenuItem>
+							<NavigationMenuItem>
+								<NavigationMenuTrigger>
+									Services
+								</NavigationMenuTrigger>
+								<NavigationMenuContent>
+									<ul className='grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]'>
+										<ListItem
+											href='#services'
+											title='Exam Management'
+										>
+											Comprehensive exam creation,
+											scheduling, and grading system
+										</ListItem>
+										<ListItem
+											href='#services'
+											title='Result Processing'
+										>
+											Automated result calculation and
+											report card generation
+										</ListItem>
+										<ListItem
+											href='#services'
+											title='Fee Management'
+										>
+											Streamlined school fee payment and
+											tracking
+										</ListItem>
+										<ListItem
+											href='#services'
+											title='Student Portal'
+										>
+											Personalized access for students to
+											view results and resources
+										</ListItem>
+									</ul>
+								</NavigationMenuContent>
+							</NavigationMenuItem>
+							<NavigationMenuItem>
+								<Link
+									href='#features'
+									legacyBehavior
+									passHref
+								>
+									<NavigationMenuLink
+										className={navigationMenuTriggerStyle()}
+									>
+										Features
+									</NavigationMenuLink>
+								</Link>
+							</NavigationMenuItem>
+							<NavigationMenuItem>
+								<Link
+									href='#faq'
+									legacyBehavior
+									passHref
+								>
+									<NavigationMenuLink
+										className={navigationMenuTriggerStyle()}
+									>
+										FAQ
+									</NavigationMenuLink>
+								</Link>
+							</NavigationMenuItem>
+						</NavigationMenuList>
+					</NavigationMenu>
+					<div className='flex items-center space-x-2'>
+						<ModeToggle />
+						<Button asChild>
+							<Link
+								href='#contact'
+								className='text-xl'
+							>
+								Get Started
+							</Link>
+						</Button>
+					</div>
+				</div>
+
+				{/* Mobile Navigation */}
+				<div className='flex items-center md:hidden space-x-2'>
+					<ModeToggle />
+					<Button
+						variant='ghost'
+						size='icon'
+						onClick={() => setIsOpen(!isOpen)}
+					>
+						{isOpen ? (
+							<X className='h-6 w-6' />
+						) : (
+							<Menu className='h-6 w-6' />
+						)}
+					</Button>
+				</div>
+			</div>
+
+			{/* Mobile Menu */}
+			{isOpen && (
+				<motion.div
+					className='container py-4 md:hidden'
+					initial={{ opacity: 0, height: 0 }}
+					animate={{ opacity: 1, height: 'auto' }}
+					exit={{ opacity: 0, height: 0 }}
+					transition={{ duration: 0.3 }}
+				>
+					<nav className='flex flex-col space-y-4'>
+						<Link
+							href='#about'
+							className='px-2 py-1 text-lg font-medium hover:text-primary'
+							onClick={() => setIsOpen(false)}
+						>
+							About
+						</Link>
+						<Link
+							href='#services'
+							className='px-2 py-1 text-lg font-medium hover:text-primary'
+							onClick={() => setIsOpen(false)}
+						>
+							Services
+						</Link>
+						<Link
+							href='#features'
+							className='px-2 py-1 text-lg font-medium hover:text-primary'
+							onClick={() => setIsOpen(false)}
+						>
+							Features
+						</Link>
+						<Link
+							href='#faq'
+							className='px-2 py-1 text-lg font-medium hover:text-primary'
+							onClick={() => setIsOpen(false)}
+						>
+							FAQ
+						</Link>
+						<Button
+							className='w-full'
+							asChild
+						>
+							<Link
+								href='#contact'
+								onClick={() => setIsOpen(false)}
+							>
+								Get Started
+							</Link>
+						</Button>
+					</nav>
+				</motion.div>
+			)}
+		</motion.header>
+	);
+}
+
+const ListItem = React.forwardRef<
+	React.ElementRef<'a'>,
+	React.ComponentPropsWithoutRef<'a'> & { title: string }
+>(({ className, title, children, ...props }, ref) => {
+	return (
+		<li>
+			<NavigationMenuLink asChild>
+				<a
+					ref={ref}
+					className={cn(
+						'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+						className
+					)}
+					{...props}
+				>
+					<div className='text-sm font-medium leading-none'>
+						{title}
+					</div>
+					<p className='line-clamp-2 text-sm leading-snug text-muted-foreground'>
+						{children}
+					</p>
+				</a>
+			</NavigationMenuLink>
+		</li>
+	);
+});
+ListItem.displayName = 'ListItem';
