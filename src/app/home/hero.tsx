@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Dashboard from '/images/dashboard.png';
 
 export default function Hero() {
 	return (
@@ -18,12 +17,12 @@ export default function Hero() {
 			<div className='container px-4 md:px-6'>
 				<div className='grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]'>
 					<motion.div
-						className='flex flex-col justify-center space-y-4'
+						className='flex flex-col justify-center space-y-6'
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.5 }}
 					>
-						<div className='space-y-2'>
+						<div className='space-y-4'>
 							<motion.h1
 								className='text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none'
 								initial={{ opacity: 0 }}
@@ -34,7 +33,7 @@ export default function Hero() {
 								Technology
 							</motion.h1>
 							<motion.p
-								className='max-w-[600px] text-muted-foreground md:text-xl'
+								className='max-w-[600px] text-muted-foreground md:text-xl '
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
 								transition={{ delay: 0.4, duration: 0.5 }}

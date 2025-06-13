@@ -13,21 +13,20 @@ import {
 	navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ModeToggle } from './mode-toggle';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 export default function Navbar() {
-	const [isOpen, setIsOpen] = React.useState(false);
-
 	return (
 		<motion.header
-			className='sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md w-full '
+			className='sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md'
 			initial={{ y: -100 }}
 			animate={{ y: 0 }}
 			transition={{ duration: 0.5 }}
 		>
-			<div className='container flex h-18 items-center justify-between'>
+			<div className='container flex h-20 items-center justify-between'>
 				<Link
 					href='/'
 					className='flex items-center space-x-2'
@@ -138,86 +137,64 @@ export default function Navbar() {
 					</NavigationMenu>
 					<div className='flex items-center space-x-2'>
 						<ModeToggle />
-						<Button asChild>
-							<Link
-								href='#contact'
-								className='text-xl'
-							>
-								Get Started
-							</Link>
-						</Button>
+						<button className='shadow-[inset_0_0_0_2px_#1ED760] text-black px-8 py-3 rounded-full tracking-widest uppercase font-bold bg-transparent hover:bg-[#1ED760] hover:text-white dark:text-neutral-200 transition duration-200'>
+							Get Started
+						</button>
 					</div>
 				</div>
 
 				{/* Mobile Navigation */}
 				<div className='flex items-center md:hidden space-x-2'>
 					<ModeToggle />
-					<Button
-						variant='ghost'
-						size='icon'
-						onClick={() => setIsOpen(!isOpen)}
-					>
-						{isOpen ? (
-							<X className='h-6 w-6' />
-						) : (
-							<Menu className='h-6 w-6' />
-						)}
-					</Button>
+					<Sheet>
+						<SheetTrigger asChild>
+							<Button
+								variant='ghost'
+								size='icon'
+							>
+								<Menu className='h-6 w-6' />
+							</Button>
+						</SheetTrigger>
+						<SheetContent
+							side='right'
+							className='p-6'
+						>
+							<nav className='flex flex-col space-y-4 mt-10'>
+								<Link
+									href='#about'
+									className='text-lg font-medium hover:text-primary'
+								>
+									About
+								</Link>
+								<Link
+									href='#services'
+									className='text-lg font-medium hover:text-primary'
+								>
+									Services
+								</Link>
+								<Link
+									href='#features'
+									className='text-lg font-medium hover:text-primary'
+								>
+									Features
+								</Link>
+								<Link
+									href='#faq'
+									className='text-lg font-medium hover:text-primary'
+								>
+									FAQ
+								</Link>
+								<Button
+									className='mt-4'
+									asChild
+								>
+									<Link href='#contact'>Get Started</Link>
+								</Button>
+							</nav>
+						</SheetContent>
+					</Sheet>
 				</div>
 			</div>
-
-			{/* Mobile Menu */}
-			{isOpen && (
-				<motion.div
-					className='container py-4 md:hidden'
-					initial={{ opacity: 0, height: 0 }}
-					animate={{ opacity: 1, height: 'auto' }}
-					exit={{ opacity: 0, height: 0 }}
-					transition={{ duration: 0.3 }}
-				>
-					<nav className='flex flex-col space-y-4'>
-						<Link
-							href='#about'
-							className='px-2 py-1 text-lg font-medium hover:text-primary'
-							onClick={() => setIsOpen(false)}
-						>
-							About
-						</Link>
-						<Link
-							href='#services'
-							className='px-2 py-1 text-lg font-medium hover:text-primary'
-							onClick={() => setIsOpen(false)}
-						>
-							Services
-						</Link>
-						<Link
-							href='#features'
-							className='px-2 py-1 text-lg font-medium hover:text-primary'
-							onClick={() => setIsOpen(false)}
-						>
-							Features
-						</Link>
-						<Link
-							href='#faq'
-							className='px-2 py-1 text-lg font-medium hover:text-primary'
-							onClick={() => setIsOpen(false)}
-						>
-							FAQ
-						</Link>
-						<Button
-							className='w-full'
-							asChild
-						>
-							<Link
-								href='#contact'
-								onClick={() => setIsOpen(false)}
-							>
-								Get Started
-							</Link>
-						</Button>
-					</nav>
-				</motion.div>
-			)}
 		</motion.header>
 	);
 }
