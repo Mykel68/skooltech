@@ -75,12 +75,16 @@ export function LoginForm() {
 
 	return (
 		<Card className='p-3'>
-			<CardContent className='p-6 pt-10'>
+			<CardHeader>
+				<CardTitle>Login</CardTitle>
+				<CardDescription>Provide your credentials </CardDescription>
+			</CardHeader>
+			<CardContent className='p-4 pt-1'>
 				<form
 					onSubmit={handleSubmit(onSubmit)}
 					className='space-y-6'
 				>
-					<div className='grid grid-cols-1 gap-4'>
+					{/* <div className='grid grid-cols-1 gap-4'>
 						<Button
 							variant='outline'
 							type='button'
@@ -103,13 +107,13 @@ export function LoginForm() {
 							<FaApple className='h-4 w-4' />
 							Continue with Apple
 						</Button>
-					</div>
+					</div> */}
 
-					<div className='relative flex items-center'>
+					{/* <div className='relative flex items-center'>
 						<div className='flex-grow border-t border-gray-300'></div>
 						<span className='mx-4 text-sm text-gray-500'>or</span>
 						<div className='flex-grow border-t border-gray-300'></div>
-					</div>
+					</div> */}
 
 					<div className='gap-4 flex flex-col'>
 						<FormField
