@@ -56,7 +56,7 @@ export default function Footer() {
 	return (
 		<footer className='bg-muted/50 border-t'>
 			<div className='container px-4 md:px-6 py-12'>
-				<div className='grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5'>
+				<div className='grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6'>
 					<motion.div
 						className='col-span-1 sm:col-span-2 md:col-span-1 lg:col-span-2'
 						initial={{ opacity: 0, y: 20 }}
