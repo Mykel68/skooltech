@@ -1,22 +1,32 @@
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+const PUBLIC_PATHS = [
+	'/',
+	'/login',
+	'/page',
+	'/register',
+	'/forgot',
+	'/reset-password',
+	'/check-mail',
+];
 
 export function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname;
-  const publicPaths = ["/", "/page", "/login"];
-  const isPublicPath = publicPaths.includes(path);
-  const token = request.cookies.get("user_id")?.value || undefined;
+	const token = request.cookies.get('user_id')?.value;
 
-  if (isPublicPath && token) {
-    return NextResponse.redirect(new URL("/dashboard", request.nextUrl));
-  }
+	const isPublicPath = PUBLIC_PATHS.some(
+		(path) =>
+			request.nextUrl.pathname === path ||
+			request.nextUrl.pathname.startsWith(`${path}/`)
+	);
 
-  const isProtectedPath = !isPublicPath && path.startsWith("/dashboard");
-  if (isProtectedPath && !token) {
-    return NextResponse.redirect(new URL("/login", request.nextUrl));
-  }
+	if (!isPublicPath && !token) {
+		return NextResponse.redirect(new URL('/', request.url));
+	}
+
+	return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/", "/page", "/login", "/dashboard/:path*", "/teachers/:path*"],
+	matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
