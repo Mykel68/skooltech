@@ -41,7 +41,7 @@ export default function Faq() {
 	return (
 		<section
 			id='faq'
-			className='py-20 bg-muted/50'
+			className='py-20 bg-muted/50 px-4 md:px-6 lg:px-12'
 		>
 			<div className='container px-4 md:px-6'>
 				<motion.div

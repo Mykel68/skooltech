@@ -12,7 +12,7 @@ export default function Cta() {
 	return (
 		<section
 			id='contact'
-			className='py-20'
+			className='py-20 px-4 md:px-6 lg:px-12'
 		>
 			<div className='container px-4 md:px-6'>
 				<div className='grid gap-6 lg:grid-cols-2 lg:gap-12'>

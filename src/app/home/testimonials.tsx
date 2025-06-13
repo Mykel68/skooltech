@@ -34,7 +34,7 @@ export default function Testimonials() {
 	];
 
 	return (
-		<section className='py-20'>
+		<section className='py-20 px-4 md:px-6 lg:px-12'>
 			<div className='container px-4 md:px-6'>
 				<motion.div
 					className='flex flex-col items-center justify-center space-y-4 text-center'

@@ -88,7 +88,7 @@ export default function Features() {
 	return (
 		<section
 			id='features'
-			className='py-20'
+			className='py-20 px-4 md:px-6 lg:px-12'
 		>
 			<div className='container px-4 md:px-6'>
 				<motion.div
