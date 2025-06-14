@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileText, Settings } from 'lucide-react';
+import { UserPen, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 import { TeacherRow } from './TeacherRow';
@@ -152,14 +152,14 @@ export default function TeacherTable() {
 						value='all-teachers'
 						className='flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-semibold transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-white data-[state=active]:text-foreground '
 					>
-						<FileText className='w-4 h-4' />
+						<UserPen className='w-4 h-4' />
 						All Teachers
 					</TabsTrigger>
 					<TabsTrigger
 						value='class-teachers'
 						className='flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-semibold transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-white data-[state=active]:text-foreground '
 					>
-						<Settings className='w-4 h-4' />
+						<UserPlus className='w-4 h-4' />
 						Class Teachers
 					</TabsTrigger>
 				</TabsList>
