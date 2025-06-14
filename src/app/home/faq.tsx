@@ -78,7 +78,10 @@ export default function ModernFAQUI() {
 	};
 
 	return (
-		<div className='min-h-screen px-4 md:px-6 lg:px-12 bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 relative overflow-hidden'>
+		<div
+			id='faq'
+			className='min-h-screen px-4 md:px-6 lg:px-12 bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 relative overflow-hidden'
+		>
 			{/* Animated background elements */}
 			<div className='absolute inset-0'>
 				<div className='absolute top-32 left-16 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse'></div>

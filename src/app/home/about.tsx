@@ -91,7 +91,10 @@ export default function About() {
 	};
 
 	return (
-		<section className='relative py-24 px-4 md:px-6 lg:px-12 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/20'>
+		<section
+			id='about'
+			className='relative py-24 px-4 md:px-6 lg:px-12 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/20'
+		>
 			{/* Background decorative elements */}
 			<div className='absolute inset-0 bg-grid-slate-100 dark:bg-grid-slate-800 bg-[size:60px_60px] opacity-30' />
 			<div className='absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-400/10 to-purple-600/10 rounded-full blur-3xl' />
