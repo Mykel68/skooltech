@@ -167,7 +167,7 @@ export default function TeacherTable() {
 				<TabsContent value='all-teachers'>
 					<Card className='rounded-2xl'>
 						<CardHeader>
-							<CardTitle className='text-xl font-bold'>
+							<CardTitle className='flex items-center justify-betwee'>
 								All Teachers
 							</CardTitle>
 						</CardHeader>
