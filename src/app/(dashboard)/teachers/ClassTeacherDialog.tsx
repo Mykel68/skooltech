@@ -52,7 +52,6 @@ export function CreateTeacherDialog({ mutateAsync, classes, teachers }: Props) {
 		try {
 			await mutateAsync(data);
 			toast.success('Class teacher assigned successfully');
-			setOpen(false);
 		} catch (err) {
 			toast.error('Error assigning class teacher');
 		}

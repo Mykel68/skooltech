@@ -41,6 +41,8 @@ async function fetchTeachers(schoolId: string): Promise<Teacher[]> {
 
 export default function TeacherTable() {
 	const schoolId = useUserStore((s) => s.schoolId)!;
+	const sessionId = useUserStore((s) => s.session_id);
+	const termId = useUserStore((s) => s.term_id);
 	const queryClient = useQueryClient();
 	const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -164,7 +166,7 @@ export default function TeacherTable() {
 										teacher_id,
 									}) => {
 										await axios.post(
-											'/api/class-teacher/assign',
+											`/api/class-teacher/assign/${schoolId}/${sessionId}/${termId}`,
 											{ class_id, teacher_id }
 										);
 										queryClient.invalidateQueries({
