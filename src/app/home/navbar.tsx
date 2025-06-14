@@ -32,7 +32,7 @@ export default function Navbar() {
 					className='flex items-center space-x-2'
 				>
 					<motion.div
-						className='bg-primary rounded-md p-1'
+						className='bg-[#7A2CF9] rounded-md p-1'
 						whileHover={{ scale: 1.05 }}
 						whileTap={{ scale: 0.95 }}
 					>
@@ -136,8 +136,8 @@ export default function Navbar() {
 						</NavigationMenuList>
 					</NavigationMenu>
 					<div className='flex items-center space-x-2'>
-						<ModeToggle />
-						<button className='shadow-[inset_0_0_0_2px_#1ED760] text-black px-8 py-3 rounded-full tracking-widest uppercase font-bold bg-transparent hover:bg-[#1ED760] hover:text-white dark:text-neutral-200 transition duration-200'>
+						{/* <ModeToggle /> */}
+						<button className='shadow-[inset_0_0_0_2px_#7A2CF9] text-black px-8 py-3 rounded-full tracking-widest uppercase font-bold bg-transparent hover:bg-[#7A2CF9] hover:text-white dark:text-neutral-200 transition duration-200'>
 							Get Started
 						</button>
 					</div>
