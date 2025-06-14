@@ -34,7 +34,7 @@ export type Teacher = {
 };
 
 type ClassTeacher = {
-	id: string;
+	class_teacher_id: string;
 	class_id: string;
 	class: {
 		name: string;
@@ -275,7 +275,7 @@ export default function TeacherTable() {
 										</TableRow>
 									) : (
 										classTeachers.map((ct) => (
-											<TableRow key={ct.id}>
+											<TableRow key={ct.class_teacher_id}>
 												<TableCell>
 													{ct.class.name}
 												</TableCell>
@@ -292,7 +292,7 @@ export default function TeacherTable() {
 														size='sm'
 														onClick={async () => {
 															await axios.delete(
-																`/api/class-teacher/remove/${ct.id}`
+																`/api/class-teacher/delete/${ct.class_teacher_id}`
 															);
 															queryClient.invalidateQueries(
 																{
