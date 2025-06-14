@@ -27,14 +27,14 @@ export default function ModernCTAUI() {
 	});
 	const [isSubmitted, setIsSubmitted] = useState(false);
 
-	const handleInputChange = (e) => {
+	const handleInputChange = (e: any) => {
 		setFormData({
 			...formData,
 			[e.target.name]: e.target.value,
 		});
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = (e: any) => {
 		e.preventDefault();
 		// Simulate form submission
 		setIsSubmitted(true);
@@ -322,7 +322,7 @@ export default function ModernCTAUI() {
 											placeholder='Tell us about your school and requirements...'
 											value={formData.message}
 											onChange={handleInputChange}
-											rows='4'
+											rows={4}
 											className='w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300 resize-none'
 										/>
 

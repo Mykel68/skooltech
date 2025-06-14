@@ -218,7 +218,7 @@ export default function ModernTestimonialsUI() {
 									? 'scale-105'
 									: 'hover:scale-105'
 							}`}
-							onMouseEnter={() => setHoveredCard(index)}
+							onMouseEnter={() => setHoveredCard(null)}
 							onMouseLeave={() => setHoveredCard(null)}
 							onClick={() => setActiveIndex(index)}
 						>

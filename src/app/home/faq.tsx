@@ -73,7 +73,7 @@ export default function ModernFAQUI() {
 
 	const categories = [...new Set(faqs.map((faq) => faq.category))];
 
-	const toggleAccordion = (index) => {
+	const toggleAccordion = (index: any) => {
 		setActiveIndex(activeIndex === index ? null : index);
 	};
 

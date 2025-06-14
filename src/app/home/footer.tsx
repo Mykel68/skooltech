@@ -18,7 +18,7 @@ export default function Footer() {
 	const [isSubscribed, setIsSubscribed] = useState(false);
 	const currentYear = new Date().getFullYear();
 
-	const handleSubscribe = (e) => {
+	const handleSubscribe = (e: any) => {
 		e.preventDefault();
 		if (email) {
 			setIsSubscribed(true);
