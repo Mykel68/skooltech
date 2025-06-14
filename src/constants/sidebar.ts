@@ -94,9 +94,4 @@ export const footerItems = [
 		href: '/admin/roles',
 		icon: Shield,
 	},
-	{
-		name: 'Logout',
-		href: '/logout',
-		icon: LogOut,
-	},
 ];
