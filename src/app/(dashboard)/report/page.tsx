@@ -88,7 +88,7 @@ const ExamReportBuilder = () => {
 	});
 
 	const { data: students = [], isLoading: studentsLoading } = useQuery({
-		queryKey: ['students', selectedClassId],
+		queryKey: ['students', sessionId, termId, selectedClassId],
 		queryFn: async () => {
 			const res = await axios.get(
 				`/api/result/${schoolId}/${sessionId}/${termId}/${selectedClassId}`
