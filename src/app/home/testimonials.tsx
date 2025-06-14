@@ -1,98 +1,295 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Quote } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import {
+	Quote,
+	Star,
+	ChevronLeft,
+	ChevronRight,
+	Play,
+	Pause,
+} from 'lucide-react';
 
-export default function Testimonials() {
+export default function ModernTestimonialsUI() {
+	const [activeIndex, setActiveIndex] = useState(0);
+	const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+	const [hoveredCard, setHoveredCard] = useState(null);
+
 	const testimonials = [
 		{
 			quote: 'SkoolTech has completely transformed how we manage exams and process results. What used to take weeks now takes hours.',
 			author: 'Sarah Johnson',
 			role: 'Principal, Greenfield Academy',
 			avatar: 'SJ',
+			rating: 5,
+			color: 'from-purple-500 to-pink-500',
 		},
 		{
 			quote: 'The analytics provided by SkoolTech have given us valuable insights into student performance trends that we never had before.',
 			author: 'Michael Chen',
 			role: 'Academic Director, Westlake High School',
 			avatar: 'MC',
+			rating: 5,
+			color: 'from-blue-500 to-cyan-500',
 		},
 		{
 			quote: "Parents love the transparency and immediate access to their children's academic progress. Communication has never been better.",
 			author: 'Priya Patel',
 			role: 'Vice Principal, Sunshine Elementary',
 			avatar: 'PP',
+			rating: 5,
+			color: 'from-green-500 to-emerald-500',
 		},
 		{
 			quote: "The customer support team is exceptional. They're always available to help and have made our transition to digital seamless.",
 			author: 'David Okonkwo',
 			role: 'IT Administrator, Heritage College',
 			avatar: 'DO',
+			rating: 5,
+			color: 'from-orange-500 to-red-500',
 		},
 	];
 
-	return (
-		<section className='py-20 px-4 md:px-6 lg:px-12'>
-			<div className='container px-4 md:px-6'>
-				<motion.div
-					className='flex flex-col items-center justify-center space-y-4 text-center'
-					initial={{ opacity: 0, y: 20 }}
-					whileInView={{ opacity: 1, y: 0 }}
-					viewport={{ once: true }}
-					transition={{ duration: 0.5 }}
-				>
-					<div className='space-y-2'>
-						<div className='inline-block rounded-lg bg-primary px-3 py-1 text-sm text-primary-foreground'>
-							Testimonials
-						</div>
-						<h2 className='text-3xl font-bold tracking-tighter sm:text-5xl'>
-							Trusted by Educators Worldwide
-						</h2>
-						<p className='max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed'>
-							Hear what school administrators and teachers have to
-							say about their experience with SkoolTech.
-						</p>
-					</div>
-				</motion.div>
+	useEffect(() => {
+		if (!isAutoPlaying) return;
 
-				<div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mt-12'>
-					{testimonials.map((testimonial, i) => (
-						<motion.div
-							key={i}
-							initial={{ opacity: 0, y: 20 }}
-							whileInView={{ opacity: 1, y: 0 }}
-							viewport={{ once: true }}
-							transition={{ delay: i * 0.1, duration: 0.5 }}
+		const interval = setInterval(() => {
+			setActiveIndex((prev) => (prev + 1) % testimonials.length);
+		}, 4000);
+
+		return () => clearInterval(interval);
+	}, [isAutoPlaying, testimonials.length]);
+
+	const nextTestimonial = () => {
+		setActiveIndex((prev) => (prev + 1) % testimonials.length);
+	};
+
+	const prevTestimonial = () => {
+		setActiveIndex(
+			(prev) => (prev - 1 + testimonials.length) % testimonials.length
+		);
+	};
+
+	return (
+		<div className='min-h-screen px-4 md:px-6 lg:px-12 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden'>
+			{/* Animated background elements */}
+			<div className='absolute inset-0'>
+				<div className='absolute top-20 left-20 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse'></div>
+				<div className='absolute top-40 right-20 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000'></div>
+				<div className='absolute -bottom-20 left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-2000'></div>
+			</div>
+
+			{/* Floating particles */}
+			<div className='absolute inset-0 overflow-hidden'>
+				{[...Array(20)].map((_, i) => (
+					<div
+						key={i}
+						className='absolute w-2 h-2 bg-white rounded-full opacity-20 animate-pulse'
+						style={{
+							left: `${Math.random() * 100}%`,
+							top: `${Math.random() * 100}%`,
+							animationDelay: `${Math.random() * 3}s`,
+							animationDuration: `${2 + Math.random() * 2}s`,
+						}}
+					/>
+				))}
+			</div>
+
+			<div className='relative z-10 px-6 py-20'>
+				{/* Header */}
+				<div className='text-center mb-16'>
+					<div className='inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 mb-4'>
+						<Star className='w-4 h-4 text-yellow-400 fill-current' />
+						<span className='text-sm font-medium text-white'>
+							5-Star Reviews
+						</span>
+					</div>
+
+					<h1 className='text-5xl md:text-7xl font-bold text-white mb-6'>
+						<span className='bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent'>
+							Trusted by
+						</span>
+						<br />
+						<span className='text-white'>Educators Worldwide</span>
+					</h1>
+
+					<p className='text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed'>
+						Discover why thousands of schools trust SkoolTech to
+						revolutionize their educational experience
+					</p>
+				</div>
+
+				{/* Main testimonial showcase */}
+				<div className='max-w-6xl mx-auto mb-16'>
+					<div className='relative'>
+						{/* Featured testimonial */}
+						<div className='bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 p-8 md:p-12 shadow-2xl'>
+							<div className='flex items-start gap-6'>
+								<div
+									className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${testimonials[activeIndex].color} flex items-center justify-center text-white font-bold text-xl shadow-lg`}
+								>
+									{testimonials[activeIndex].avatar}
+								</div>
+
+								<div className='flex-1'>
+									<div className='flex items-center gap-2 mb-4'>
+										{[...Array(5)].map((_, i) => (
+											<Star
+												key={i}
+												className='w-5 h-5 text-yellow-400 fill-current'
+											/>
+										))}
+									</div>
+
+									<Quote className='w-8 h-8 text-purple-400 mb-4 opacity-60' />
+
+									<blockquote className='text-2xl md:text-3xl text-white leading-relaxed mb-6 font-light'>
+										"{testimonials[activeIndex].quote}"
+									</blockquote>
+
+									<div>
+										<p className='text-lg font-semibold text-white mb-1'>
+											{testimonials[activeIndex].author}
+										</p>
+										<p className='text-gray-400'>
+											{testimonials[activeIndex].role}
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						{/* Navigation controls */}
+						<div className='flex items-center justify-between mt-8'>
+							<div className='flex items-center gap-4'>
+								<button
+									onClick={prevTestimonial}
+									className='w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110'
+								>
+									<ChevronLeft className='w-5 h-5' />
+								</button>
+
+								<button
+									onClick={nextTestimonial}
+									className='w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110'
+								>
+									<ChevronRight className='w-5 h-5' />
+								</button>
+
+								<button
+									onClick={() =>
+										setIsAutoPlaying(!isAutoPlaying)
+									}
+									className='w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110'
+								>
+									{isAutoPlaying ? (
+										<Pause className='w-5 h-5' />
+									) : (
+										<Play className='w-5 h-5' />
+									)}
+								</button>
+							</div>
+
+							{/* Dots indicator */}
+							<div className='flex items-center gap-2'>
+								{testimonials.map((_, index) => (
+									<button
+										key={index}
+										onClick={() => setActiveIndex(index)}
+										className={`w-3 h-3 rounded-full transition-all duration-300 ${
+											index === activeIndex
+												? 'bg-white w-8'
+												: 'bg-white/30 hover:bg-white/50'
+										}`}
+									/>
+								))}
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{/* Testimonial grid */}
+				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto'>
+					{testimonials.map((testimonial, index) => (
+						<div
+							key={index}
+							className={`group cursor-pointer transition-all duration-500 ${
+								index === activeIndex
+									? 'scale-105'
+									: 'hover:scale-105'
+							}`}
+							onMouseEnter={() => setHoveredCard(index)}
+							onMouseLeave={() => setHoveredCard(null)}
+							onClick={() => setActiveIndex(index)}
 						>
-							<Card className='h-full'>
-								<CardContent className='p-6 flex flex-col h-full'>
-									<Quote className='h-8 w-8 text-primary/40 mb-4' />
-									<p className='flex-grow text-sm italic mb-4'>
-										"{testimonial.quote}"
-									</p>
-									<div className='flex items-center gap-4'>
-										<Avatar>
-											<AvatarFallback>
-												{testimonial.avatar}
-											</AvatarFallback>
-										</Avatar>
-										<div>
-											<p className='text-sm font-medium'>
+							<div
+								className={`relative overflow-hidden rounded-2xl border transition-all duration-500 ${
+									index === activeIndex
+										? 'bg-white/10 border-white/30 shadow-xl'
+										: 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+								}`}
+							>
+								{/* Gradient overlay */}
+								<div
+									className={`absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 bg-gradient-to-br ${testimonial.color}`}
+								/>
+
+								<div className='relative p-6 backdrop-blur-sm'>
+									<div className='flex items-center gap-3 mb-4'>
+										<div
+											className={`w-10 h-10 rounded-xl bg-gradient-to-br ${testimonial.color} flex items-center justify-center text-white font-semibold text-sm shadow-lg`}
+										>
+											{testimonial.avatar}
+										</div>
+										<div className='flex-1'>
+											<p className='text-white font-medium text-sm'>
 												{testimonial.author}
 											</p>
-											<p className='text-xs text-muted-foreground'>
+											<p className='text-gray-400 text-xs'>
 												{testimonial.role}
 											</p>
 										</div>
 									</div>
-								</CardContent>
-							</Card>
-						</motion.div>
+
+									<div className='flex items-center gap-1 mb-3'>
+										{[...Array(5)].map((_, i) => (
+											<Star
+												key={i}
+												className='w-3 h-3 text-yellow-400 fill-current'
+											/>
+										))}
+									</div>
+
+									<p className='text-gray-300 text-sm leading-relaxed line-clamp-4'>
+										"{testimonial.quote}"
+									</p>
+
+									{/* Hover effect indicator */}
+									<div
+										className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r ${
+											testimonial.color
+										} transition-all duration-500 ${
+											hoveredCard === index
+												? 'w-full'
+												: 'w-0'
+										}`}
+									/>
+								</div>
+							</div>
+						</div>
 					))}
 				</div>
+
+				{/* Call to action */}
+				<div className='text-center mt-20'>
+					<div className='inline-flex items-center gap-4 px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer'>
+						<span>Join 10,000+ Schools</span>
+						<div className='w-6 h-6 rounded-full bg-white/20 flex items-center justify-center'>
+							<ChevronRight className='w-4 h-4' />
+						</div>
+					</div>
+				</div>
 			</div>
-		</section>
+		</div>
 	);
 }
