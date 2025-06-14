@@ -60,7 +60,7 @@ export default function Hero() {
 	};
 
 	return (
-		<section className='relative min-h-screen flex py-14 items-center px-4 md:px-6 lg:px-12 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/30 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/30'>
+		<section className='relative min-h-screen flex py-16 items-center px-4 md:px-6 lg:px-12 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/30 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/30'>
 			{/* Enhanced Background Elements */}
 			<div className='absolute inset-0 bg-grid-slate-100 dark:bg-grid-slate-800/50 bg-[size:60px_60px] opacity-30' />
 
