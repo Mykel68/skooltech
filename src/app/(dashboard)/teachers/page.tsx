@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import axios from 'axios';
-import { useUserStore } from '@/stores/userStore';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useUserStore } from '@/stores/userStore';
+
 import {
 	Table,
 	TableHeader,
@@ -12,12 +13,13 @@ import {
 	TableHead,
 	TableCell,
 } from '@/components/ui/table';
-import { TeacherRow } from './TeacherRow';
-import { DeleteTeacherDialog } from './dialogs/DeleteTeacherDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+import { TeacherRow } from './TeacherRow';
+import { DeleteTeacherDialog } from './dialogs/DeleteTeacherDialog';
 import { CreateTeacherDialog } from './ClassTeacherDialog';
 
 export type Teacher = {
@@ -31,32 +33,58 @@ export type Teacher = {
 	is_approved: boolean;
 };
 
-async function fetchTeachers(schoolId: string): Promise<Teacher[]> {
-	const { data } = await axios.get<{ success: boolean; data: Teacher[] }>(
-		`/api/user/get-teachers/${schoolId}`
-	);
-	if (!data.success) throw new Error('API returned success=false');
+type ClassTeacher = {
+	id: string;
+	class_id: string;
+	class: {
+		name: string;
+		grade_level: string;
+	};
+	teacher: {
+		user_id: string;
+		first_name: string;
+		last_name: string;
+	};
+};
+
+const fetchTeachers = async (schoolId: string): Promise<Teacher[]> => {
+	const { data } = await axios.get(`/api/user/get-teachers/${schoolId}`);
+	if (!data.success) throw new Error('Failed to fetch teachers');
 	return data.data;
-}
+};
+
+const fetchClassTeachers = async (
+	schoolId: string,
+	sessionId: string,
+	termId: string
+): Promise<ClassTeacher[]> => {
+	const { data } = await axios.get(
+		`/api/class-teacher/list/${schoolId}/${sessionId}/${termId}`
+	);
+	if (!data.success) throw new Error('Failed to fetch class teachers');
+	return data.data.data;
+};
 
 export default function TeacherTable() {
+	const queryClient = useQueryClient();
+	const [deleteId, setDeleteId] = useState<string | null>(null);
+	const [activeTab, setActiveTab] = useState('all-teachers');
+
 	const schoolId = useUserStore((s) => s.schoolId)!;
 	const sessionId = useUserStore((s) => s.session_id);
 	const termId = useUserStore((s) => s.term_id);
-	const queryClient = useQueryClient();
-	const [deleteId, setDeleteId] = useState<string | null>(null);
 
 	const {
 		data: teachers,
 		isLoading,
 		error,
-	} = useQuery<Teacher[], Error>({
+	} = useQuery({
 		queryKey: ['teachers', schoolId],
 		queryFn: () => fetchTeachers(schoolId),
 		enabled: !!schoolId,
 	});
 
-	const { data: fetchedClasses } = useQuery<any[], Error>({
+	const { data: fetchedClasses } = useQuery({
 		queryKey: ['classes', schoolId],
 		queryFn: async () => {
 			const { data } = await axios.get(
@@ -67,18 +95,36 @@ export default function TeacherTable() {
 		enabled: !!schoolId,
 	});
 
+	const {
+		data: classTeachers,
+		isLoading: loadingClassTeachers,
+		error: classTeachersError,
+	} = useQuery({
+		queryKey: ['class-teachers', schoolId, sessionId, termId],
+		queryFn: () => fetchClassTeachers(schoolId, sessionId!, termId!),
+		enabled: !!schoolId && !!sessionId && !!termId,
+	});
+
 	const toggleApproval = async (userId: string, approve: boolean) => {
-		await axios.patch(`/api/user/verify-teacher/${userId}`, {
-			is_approved: approve,
-		});
-		queryClient.invalidateQueries({ queryKey: ['teachers', schoolId] });
+		try {
+			await axios.patch(`/api/user/verify-teacher/${userId}`, {
+				is_approved: approve,
+			});
+			queryClient.invalidateQueries({ queryKey: ['teachers', schoolId] });
+		} catch (err) {
+			console.error('Error toggling approval', err);
+		}
 	};
 
 	const deleteTeacher = async () => {
 		if (!deleteId) return;
-		await axios.delete(`/api/user/delete/${deleteId}`);
-		setDeleteId(null);
-		queryClient.invalidateQueries({ queryKey: ['teachers', schoolId] });
+		try {
+			await axios.delete(`/api/user/delete/${deleteId}`);
+			setDeleteId(null);
+			queryClient.invalidateQueries({ queryKey: ['teachers', schoolId] });
+		} catch (err) {
+			console.error('Error deleting teacher', err);
+		}
 	};
 
 	if (isLoading)
@@ -87,17 +133,18 @@ export default function TeacherTable() {
 		return (
 			<div className='p-4 text-destructive'>Error: {error.message}</div>
 		);
-	if (!teachers || teachers.length === 0)
+	if (!teachers?.length)
 		return (
 			<div className='p-4 text-muted-foreground'>No teachers found.</div>
 		);
 
 	return (
 		<div className='p-0.5 w-full max-w-7xl mx-auto'>
-			<p>Teachers</p>
+			<p className='font-semibold mb-2'>Teachers</p>
+
 			<Tabs
-				// value={activeTab}
-				// onValueChange={setActiveTab}
+				value={activeTab}
+				onValueChange={setActiveTab}
 				className='w-full space-y-6'
 			>
 				<TabsList className='w-full grid grid-cols-2 gap-2 bg-muted p-1 rounded-lg shadow-sm'>
@@ -113,13 +160,13 @@ export default function TeacherTable() {
 						className='flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-semibold transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-white data-[state=active]:text-foreground '
 					>
 						<Settings className='w-4 h-4' />
-						Class Teacher
+						Class Teachers
 					</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value='all-teachers'>
 					<Card className='rounded-2xl'>
-						<CardHeader className='pb-4'>
+						<CardHeader>
 							<CardTitle className='text-xl font-bold'>
 								All Teachers
 							</CardTitle>
@@ -155,9 +202,11 @@ export default function TeacherTable() {
 						</CardContent>
 					</Card>
 				</TabsContent>
+
+				{/* Class Teachers Tab */}
 				<TabsContent value='class-teachers'>
 					<Card className='rounded-2xl'>
-						<CardHeader className='pb-4'>
+						<CardHeader>
 							<CardTitle className='flex items-center justify-between'>
 								Class Teachers
 								<CreateTeacherDialog
@@ -173,11 +222,13 @@ export default function TeacherTable() {
 											queryKey: [
 												'class-teachers',
 												schoolId,
+												sessionId,
+												termId,
 											],
 										});
 									}}
 									classes={fetchedClasses || []}
-									teachers={teachers || []}
+									teachers={teachers}
 								/>
 							</CardTitle>
 						</CardHeader>
@@ -186,22 +237,81 @@ export default function TeacherTable() {
 								<TableHeader>
 									<TableRow>
 										<TableHead>Class</TableHead>
-										<TableHead>Grade level</TableHead>
-										<TableHead>Teacher Name</TableHead>
+										<TableHead>Grade Level</TableHead>
+										<TableHead>Teacher</TableHead>
 										<TableHead className='text-center'>
 											Actions
 										</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
-									{/* {teachers.map((teacher) => (
-										<TeacherRow
-											key={teacher.user_id}
-											teacher={teacher}
-											onToggleApproval={toggleApproval}
-											onDeleteClick={setDeleteId}
-										/>
-									))} */}
+									{loadingClassTeachers ? (
+										<TableRow>
+											<TableCell
+												colSpan={4}
+												className='text-center'
+											>
+												Loading…
+											</TableCell>
+										</TableRow>
+									) : classTeachersError ? (
+										<TableRow>
+											<TableCell
+												colSpan={4}
+												className='text-destructive text-center'
+											>
+												Error:{' '}
+												{classTeachersError.message}
+											</TableCell>
+										</TableRow>
+									) : !classTeachers?.length ? (
+										<TableRow>
+											<TableCell
+												colSpan={4}
+												className='text-muted-foreground text-center'
+											>
+												No class teachers found.
+											</TableCell>
+										</TableRow>
+									) : (
+										classTeachers.map((ct) => (
+											<TableRow key={ct.id}>
+												<TableCell>
+													{ct.class.name}
+												</TableCell>
+												<TableCell>
+													{ct.class.grade_level}
+												</TableCell>
+												<TableCell>
+													{ct.teacher.first_name}{' '}
+													{ct.teacher.last_name}
+												</TableCell>
+												<TableCell className='text-center'>
+													<Button
+														variant='destructive'
+														size='sm'
+														onClick={async () => {
+															await axios.delete(
+																`/api/class-teacher/remove/${ct.id}`
+															);
+															queryClient.invalidateQueries(
+																{
+																	queryKey: [
+																		'class-teachers',
+																		schoolId,
+																		sessionId,
+																		termId,
+																	],
+																}
+															);
+														}}
+													>
+														Remove
+													</Button>
+												</TableCell>
+											</TableRow>
+										))
+									)}
 								</TableBody>
 							</Table>
 						</CardContent>
