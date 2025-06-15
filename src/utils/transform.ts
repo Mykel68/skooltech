@@ -21,6 +21,9 @@ export function transformToStudents(apiData: any): Student[] {
 	const nextTermStarts = rawData.next_term_starts_on ?? '';
 
 	return rawData.students.map((stu: any) => {
+		const firstName = `${stu.first_name}`;
+		const lastName = `${stu.last_name}`;
+
 		const fullName = `${stu.first_name} ${stu.last_name}`;
 		const cs = stu.class_students?.[0];
 
@@ -49,6 +52,8 @@ export function transformToStudents(apiData: any): Student[] {
 		return {
 			id: stu.user_id,
 			name: fullName,
+			firstName: firstName,
+			lastName: lastName,
 			class: cs?.Class?.name ?? '',
 			grade_level: cs?.Class?.grade_level ?? '',
 			session: cs?.Session?.name ?? '',

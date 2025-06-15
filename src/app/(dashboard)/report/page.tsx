@@ -36,6 +36,8 @@ export type APIStudent = {
 export type Student = {
 	id: string;
 	name: string;
+	lastName: string;
+	firstName: string;
 	class: string;
 	grade_level: string;
 	session: string;

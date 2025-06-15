@@ -120,7 +120,7 @@ export default function NigerianReportCard({
 
 					<div className='grid grid-cols-2 gap-4'>
 						{/* Student Personal data */}
-						<div className='space-y-1'>
+						<div className='space-y-3'>
 							<div className='font-bold p-1 text-sm text-center border border'>
 								STUDENT'S PERSONAL DATA
 							</div>
@@ -129,7 +129,7 @@ export default function NigerianReportCard({
 									<tr>
 										<td className='border p-1'>
 											<strong className='text-sm'>
-												NAME
+												FULL NAME
 											</strong>{' '}
 										</td>
 										<td className='border p-1'>
@@ -138,6 +138,19 @@ export default function NigerianReportCard({
 											</strong>
 										</td>
 									</tr>
+									<tr>
+										<td className='border p-1'>
+											<strong className='text-sm'>
+												LAST NAME:
+											</strong>{' '}
+										</td>
+										<td className='border p-1'>
+											<strong className='text-sm'>
+												{student.lastName}
+											</strong>{' '}
+										</td>
+									</tr>
+
 									<tr>
 										<td className='border p-1'>
 											<strong className='text-sm'>
@@ -371,22 +384,23 @@ export default function NigerianReportCard({
 					<table className='w-full border border-black mb-4 text-sm'>
 						<tbody>
 							<tr>
-								<td className='border p-1'>
-									<strong>ATTENDANCE:</strong> Present: ___ /
-									___
+								<td className='border p-2'>
+									<strong>ATTENDANCE:</strong> Present:{' '}
+									{student.attendance?.timesPresent ?? '___'}{' '}
+									/ {student.attendance?.totalDays ?? '___'}
 								</td>
-								<td className='border p-1'>
+								<td className='border p-2'>
 									<strong>POSITION IN CLASS:</strong>{' '}
 									{student.position}
 									{suffix(student.position)}
 								</td>
 							</tr>
 							<tr>
-								<td className='border p-1'>
+								<td className='border p-2'>
 									<strong>TOTAL SCORE:</strong>{' '}
 									{student.totalScore}
 								</td>
-								<td className='border p-1'>
+								<td className='border p-2'>
 									<strong>AVERAGE:</strong>{' '}
 									{student.average.toFixed(1)}%
 								</td>
