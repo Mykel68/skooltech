@@ -63,67 +63,104 @@ export default function NigerianReportCard({
 				{/* Report Content */}
 				<div
 					ref={reportRef}
-					className='p-10'
+					className='p-12 print-area'
 				>
 					{/* School Header */}
-					<div className='text-center border-b border-black pb-2 mb-2'>
-						<img
-							src={schoolInfo.school_image}
-							alt='Logo'
-							className='mx-auto w-16 h-16 object-cover '
-						/>
-						<p className='font-bold text-xl uppercase'>
-							{schoolInfo.name}
-						</p>
-						<p>{schoolInfo.address}</p>
-						<p>
-							Tel: {schoolInfo.phone_number} | Email: {userEmail}
-						</p>
-						<p className='italic'>"{schoolInfo.motto}"</p>
+					<div className='flex items-center justify-between border-b border-gray-300 pb-4 mb-6'>
+						{/* School Logo - Far Left */}
+						<div className='flex-shrink-0 w-24'>
+							<img
+								src={schoolInfo.school_image}
+								alt='School Logo'
+								className='w-24 aspect-square object-cover rounded'
+							/>
+						</div>
+
+						{/* School Info - Centered */}
+						<div className='flex-1 px-4 text-center max-w-2xl'>
+							<p className='font-bold text-3xl mb-2 text-balance uppercase'>
+								{schoolInfo.name}
+							</p>
+							<p className='text-sm text-balance'>
+								{schoolInfo.address}
+							</p>
+							<p className='text-sm'>
+								Tel: {schoolInfo.phone_number} | Email:{' '}
+								{userEmail}
+							</p>
+							<p className='italic text-sm mt-1'>
+								"{schoolInfo.motto}"
+							</p>
+							<i className='text-lg font-semibold mt-2'>
+								Continuous Assessment Report - {student.session}
+							</i>
+						</div>
+
+						{/* Grade Info - Far Right */}
+						<div className='flex-shrink-0 pl-4 ml-4'>
+							<div className='w-24 aspect-square bg-primary text-white rounded flex flex-col items-center justify-center text-center'>
+								<div className='p-1 font-bold text-lg border-b-4 border-black-100 w-full text-center'>
+									{student.grade_level}
+								</div>
+								<div className='p-1 font-semibold text-sm'>
+									{student.term}
+								</div>
+							</div>
+						</div>
 					</div>
 
 					<div className='grid grid-cols-2 gap-4'>
 						{/* Student Personal data */}
 						<div className='space-y-1'>
-							<div className='font-bold p-1 text-center border border'>
+							<div className='font-bold p-1 text-sm text-center border border'>
 								STUDENT'S PERSONAL DATA
 							</div>
 							<table className='w-full border border-black mb-4'>
 								<tbody>
 									<tr>
 										<td className='border p-1'>
-											<strong>NAME</strong>{' '}
+											<strong className='text-sm'>
+												NAME
+											</strong>{' '}
 										</td>
 										<td className='border p-1'>
-											<strong className='uppercase'>
+											<strong className='uppercase text-sm'>
 												{student.name}
 											</strong>
 										</td>
 									</tr>
 									<tr>
 										<td className='border p-1'>
-											<strong>ADM NO:</strong>{' '}
+											<strong className='text-sm'>
+												ADM NO:
+											</strong>{' '}
 										</td>
 										<td className='border p-1'>
-											<strong>
+											<strong className='text-sm'>
 												{student.admissionNumber}
 											</strong>{' '}
 										</td>
 									</tr>
 									<tr>
 										<td className='border p-1'>
-											<strong>CLASS:</strong>{' '}
+											<strong className='text-sm'>
+												CLASS:
+											</strong>{' '}
 										</td>
 										<td className='border p-1'>
-											<strong>{student.class}</strong>{' '}
+											<strong className='text-sm'>
+												{student.class}
+											</strong>{' '}
 										</td>
 									</tr>
 									<tr>
 										<td className='border p-1'>
-											<strong>SEX:</strong>{' '}
+											<strong className='text-sm'>
+												SEX:
+											</strong>{' '}
 										</td>
 										<td className='border p-1'>
-											<strong>
+											<strong className='text-sm'>
 												{student.admissionNumber}
 											</strong>{' '}
 										</td>
@@ -135,23 +172,23 @@ export default function NigerianReportCard({
 						<div className='space-y-1'>
 							{/* Attendance */}
 							<div className='space-y-1'>
-								<div className='font-bold p-1 text-center border border'>
+								<div className='font-bold p-1 text-sm text-center border border'>
 									ATTENDANCE
 								</div>
 								<table className='w-full border border-black mb-4'>
 									<tbody>
 										<tr>
-											<td className='border p-1 text-center'>
+											<td className='border p-1 text-sm text-center'>
 												<strong>
 													Times Sch. Opened
 												</strong>{' '}
 											</td>
-											<td className='border p-1 text-center'>
+											<td className='border p-1 text-sm text-center'>
 												<strong className=''>
 													Times Present
 												</strong>
 											</td>
-											<td className='border p-1 text-center'>
+											<td className='border p-1 text-sm text-center'>
 												<strong className=''>
 													Times Absent
 												</strong>
@@ -174,21 +211,21 @@ export default function NigerianReportCard({
 
 							{/* Term */}
 							<div className='space-y-1'>
-								<div className='font-bold p-1 text-center border border'>
+								<div className='font-bold p-1 text-center text-sm border border'>
 									TERMINAL DURATION WEEKS
 								</div>
 								<table className='w-full border border-black mb-4'>
 									<tbody>
 										<tr>
-											<td className='border p-1 text-center'>
+											<td className='border p-1 text-center text-sm'>
 												<strong>Term Begins</strong>{' '}
 											</td>
-											<td className='border p-1 text-center'>
+											<td className='border p-1 text-center text-sm'>
 												<strong className=''>
 													Term Ends
 												</strong>
 											</td>
-											<td className='border p-1 text-center'>
+											<td className='border p-1 text-center text-sm'>
 												<strong className=''>
 													Next Term Begins
 												</strong>
@@ -279,7 +316,9 @@ export default function NigerianReportCard({
 						<tbody>
 							{student.subjects.map((subj) => (
 								<tr key={subj.name}>
-									<td className='border p-1'>{subj.name}</td>
+									<td className='border p-1 text-sm'>
+										{subj.name}
+									</td>
 									{componentNames.map((cn) => {
 										const comp = subj.components.find(
 											(c) => c.component_name === cn
@@ -312,7 +351,7 @@ export default function NigerianReportCard({
 					</table>
 
 					{/* Attendance & Remarks */}
-					<table className='w-full border border-black mb-4'>
+					<table className='w-full border border-black mb-4 text-sm'>
 						<tbody>
 							<tr>
 								<td className='border p-1'>
@@ -339,20 +378,34 @@ export default function NigerianReportCard({
 					</table>
 
 					{/* Comments */}
-					<div className='mb-2'>
-						<p>
-							<strong>TEACHER'S REMARK:</strong>{' '}
-							__________________________________________
-						</p>
-						<p>
-							<strong>PRINCIPAL'S COMMENT:</strong>{' '}
-							_______________________________________
-						</p>
+					<div className='space-y-2'>
+						{' '}
+						<div className='font-bold p-1 text-sm text-center border border'>
+							REMARKS AND CONCLUSION
+						</div>
+						<div className='mb-6 p-4 rounded-md border border-gray-300 bg-white shadow-sm space-y-4'>
+							<div className='flex flex-col'>
+								<label className='font-semibold text-sm text-gray-700 mb-1'>
+									TEACHER'S REMARK
+								</label>
+								<div className='border-b border-dashed border-gray-400 h-6' />
+							</div>
+
+							<div className='flex flex-col'>
+								<label className='font-semibold text-sm text-gray-700 mb-1'>
+									PRINCIPAL'S COMMENT
+								</label>
+								<div className='border-b border-dashed border-gray-400 h-6' />
+							</div>
+						</div>
 					</div>
 
-					<div className='flex justify-between pt-4'>
-						<p className='text-sm'>Signature & Date:</p>
-						<p className='text-sm'>Next Term Begins: ___________</p>
+					{/* Footer */}
+					<div className='pt-4 text-xs text-gray-500 border-t border-gray-200 mt-20'>
+						This report was electronically generated and does not
+						require a signature.
+						<br />
+						Printed on: {new Date().toLocaleString()}
 					</div>
 				</div>
 			</div>

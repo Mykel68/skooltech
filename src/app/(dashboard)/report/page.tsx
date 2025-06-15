@@ -21,7 +21,7 @@ export type APIStudent = {
 	class_students: {
 		Session: { name: string };
 		Term: { name: string };
-		Class: { name: string };
+		Class: { name: string; grade_level: string };
 	}[];
 	student_scores: {
 		subject: { name: string };
@@ -37,6 +37,7 @@ export type Student = {
 	id: string;
 	name: string;
 	class: string;
+	grade_level: string;
 	session: string;
 	term: string;
 	admissionNumber: string;

@@ -33,6 +33,7 @@ export function transformToStudents(apiData: APIStudent[]): Student[] {
 			id: stu.user_id,
 			name: fullName,
 			class: cs.Class.name,
+			grade_level: cs.Class.grade_level,
 			session: cs.Session.name,
 			term: cs.Term.name,
 			admissionNumber: stu.user_id.slice(0, 6),
