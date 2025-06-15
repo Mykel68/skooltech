@@ -51,11 +51,6 @@ export function Sidebar() {
 		}
 	}, [ready, userId, router]);
 
-	const handleLogout = () => {
-		logout();
-		router.push('/');
-	};
-
 	const fetchSessions = async () => {
 		if (!schoolId) return;
 
