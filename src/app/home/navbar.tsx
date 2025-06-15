@@ -17,8 +17,10 @@ import { Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ModeToggle } from './mode-toggle';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
+	const router = useRouter();
 	return (
 		<motion.header
 			className='sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md  px-4 md:px-6 lg:px-14'
@@ -137,8 +139,13 @@ export default function Navbar() {
 					</NavigationMenu>
 					<div className='flex items-center space-x-2'>
 						{/* <ModeToggle /> */}
-						<button className='shadow-[inset_0_0_0_2px_#7A2CF9] text-black px-8 py-3 rounded-full tracking-widest uppercase font-bold bg-transparent hover:bg-[#7A2CF9] hover:text-white dark:text-neutral-200 transition duration-200'>
-							Get Started
+						<button
+							className='shadow-[inset_0_0_0_2px_#7A2CF9] text-black px-8 py-3 rounded-full tracking-widest uppercase font-bold bg-transparent hover:bg-[#7A2CF9] hover:text-white dark:text-neutral-200 transition duration-200'
+							onClick={() => {
+								router.push('/login');
+							}}
+						>
+							Login
 						</button>
 					</div>
 				</div>
@@ -187,6 +194,9 @@ export default function Navbar() {
 								<Button
 									className='mt-4'
 									asChild
+									onClick={() => {
+										router.push('/login');
+									}}
 								>
 									<Link href='#contact'>Get Started</Link>
 								</Button>

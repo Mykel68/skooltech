@@ -15,8 +15,10 @@ import {
 	CheckCircle,
 	Star,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function ModernCTAUI() {
+	const router = useRouter();
 	const [isFormVisible, setIsFormVisible] = useState(false);
 	const [formData, setFormData] = useState({
 		firstName: '',
@@ -157,7 +159,9 @@ export default function ModernCTAUI() {
 					{/* CTA Buttons */}
 					<div className='flex flex-col sm:flex-row gap-4 justify-center items-center mb-16'>
 						<button
-							onClick={toggleForm}
+							onClick={() => {
+								router.push('/register');
+							}}
 							className='group relative overflow-hidden px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105'
 						>
 							<div className='absolute inset-0 bg-gradient-to-r from-purple-700 to-pink-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
@@ -167,7 +171,10 @@ export default function ModernCTAUI() {
 							</div>
 						</button>
 
-						<button className='group px-8 py-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/20 text-white font-semibold text-lg hover:bg-white/10 transition-all duration-300 hover:scale-105'>
+						<button
+							className='group px-8 py-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/20 text-white font-semibold text-lg hover:bg-white/10 transition-all duration-300 hover:scale-105'
+							onClick={toggleForm}
+						>
 							<div className='flex items-center gap-3'>
 								<Calendar className='w-5 h-5' />
 								<span>Schedule Demo</span>

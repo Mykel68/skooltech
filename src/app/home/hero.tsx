@@ -10,8 +10,10 @@ import {
 	CheckCircle,
 	Star,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function Hero() {
+	const router = useRouter();
 	const stats = [
 		{ value: '500+', label: 'Schools', icon: Users },
 		{ value: '250K+', label: 'Students', icon: TrendingUp },
@@ -175,7 +177,12 @@ export default function Hero() {
 						{/* CTA Buttons */}
 						<motion.div variants={itemVariants}>
 							<div className='flex flex-col sm:flex-row gap-4'>
-								<button className='group relative overflow-hidden px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold text-lg rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 transition-all duration-300'>
+								<button
+									className='group relative overflow-hidden px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold text-lg rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 transition-all duration-300'
+									onClick={() => {
+										router.push('/register');
+									}}
+								>
 									<span className='relative z-10 flex items-center gap-2'>
 										Get Started Free
 										<ArrowRight className='w-5 h-5 group-hover:translate-x-1 transition-transform' />

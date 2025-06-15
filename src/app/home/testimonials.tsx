@@ -9,8 +9,10 @@ import {
 	Play,
 	Pause,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function ModernTestimonialsUI() {
+	const router = useRouter();
 	const [activeIndex, setActiveIndex] = useState(0);
 	const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 	const [hoveredCard, setHoveredCard] = useState(null);
@@ -282,7 +284,12 @@ export default function ModernTestimonialsUI() {
 
 				{/* Call to action */}
 				<div className='text-center mt-20'>
-					<div className='inline-flex items-center gap-4 px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer'>
+					<div
+						className='inline-flex items-center gap-4 px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer'
+						onClick={() => {
+							router.push('/register');
+						}}
+					>
 						<span>Join 10,000+ Schools</span>
 						<div className='w-6 h-6 rounded-full bg-white/20 flex items-center justify-center'>
 							<ChevronRight className='w-4 h-4' />
