@@ -12,35 +12,60 @@ function getGradeFromScore(score: number): string {
 	return 'F9';
 }
 
-export function transformToStudents(apiData: APIStudent[]): Student[] {
-	return apiData.map((stu) => {
+export function transformToStudents(apiData: any): Student[] {
+	const rawData = apiData;
+
+	if (!rawData || !Array.isArray(rawData.students)) return [];
+
+	const totalSchoolDays = rawData.total_school_days ?? 0;
+	const nextTermStarts = rawData.next_term_starts_on ?? '';
+
+	return rawData.students.map((stu: any) => {
 		const fullName = `${stu.first_name} ${stu.last_name}`;
-		const cs = stu.class_students[0];
-		const subjectEntries = stu.student_scores.map((s) => ({
+		const cs = stu.class_students?.[0];
+
+		const termStarts = cs?.Term?.start_date ?? '';
+		const termEnds = cs?.Term?.end_date ?? '';
+
+		const subjectEntries = (stu.student_scores ?? []).map((s: any) => ({
 			name: s.subject.name,
 			components: s.scores,
 			total: s.total_score,
 			grade: s.grade ?? getGradeFromScore(s.total_score),
-			remark: s.remark,
-			position: s.position || 1,
+			remark: s.remark ?? '',
+			position: s.position ?? 1,
 		}));
-		const totalScore = subjectEntries.reduce((acc, s) => acc + s.total, 0);
+
+		const totalScore = subjectEntries.reduce(
+			(acc: number, s: any) => acc + s.total,
+			0
+		);
 		const average = subjectEntries.length
 			? totalScore / subjectEntries.length
 			: 0;
 
+		const daysPresent = stu.attendances?.[0]?.days_present ?? 0;
+
 		return {
 			id: stu.user_id,
 			name: fullName,
-			class: cs.Class.name,
-			grade_level: cs.Class.grade_level,
-			session: cs.Session.name,
-			term: cs.Term.name,
+			class: cs?.Class?.name ?? '',
+			grade_level: cs?.Class?.grade_level ?? '',
+			session: cs?.Session?.name ?? '',
+			term: cs?.Term?.name ?? '',
 			admissionNumber: stu.user_id.slice(0, 6),
 			average,
 			totalScore,
 			subjects: subjectEntries,
-			position: 1, // placeholder or use actual if available
+			position: 1, // or replace with actual rank logic
+			termStarts,
+			termEnds,
+			nextTermBegins: nextTermStarts,
+			attendance: {
+				timesPresent: daysPresent,
+				timesAbsent: totalSchoolDays - daysPresent,
+				totalDays: totalSchoolDays,
+			},
 		};
 	});
 }

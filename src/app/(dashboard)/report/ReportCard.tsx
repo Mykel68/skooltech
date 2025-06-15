@@ -35,6 +35,15 @@ export default function NigerianReportCard({
 	const suffix = (p: number) =>
 		p === 1 ? 'st' : p === 2 ? 'nd' : p === 3 ? 'rd' : 'th';
 
+	function formatDate(dateString: string): string {
+		const date = new Date(dateString);
+		return date.toLocaleDateString('en-GB', {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric',
+		});
+	}
+
 	return (
 		<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'>
 			<div className='bg-white rounded-lg w-full max-w-5xl max-h-[95vh] overflow-auto text-xs print:text-[10px]'>
@@ -196,13 +205,16 @@ export default function NigerianReportCard({
 										</tr>
 										<tr>
 											<td className='border p-1 text-center'>
-												85
+												{student.attendance
+													?.totalDays ?? 'N/A'}
 											</td>
 											<td className='border p-1 text-center'>
-												N/A
+												{student.attendance
+													?.timesPresent ?? 'N/A'}
 											</td>
 											<td className='border p-1 text-center'>
-												N/A
+												{student.attendance
+													?.timesAbsent ?? 'N/A'}
 											</td>
 										</tr>
 									</tbody>
@@ -233,13 +245,18 @@ export default function NigerianReportCard({
 										</tr>
 										<tr>
 											<td className='border p-1 text-center'>
-												85
+												{formatDate(
+													student.termStarts
+												) ?? 'N/A'}
 											</td>
 											<td className='border p-1 text-center'>
-												N/A
+												{formatDate(student.termEnds) ??
+													'N/A'}
 											</td>
 											<td className='border p-1 text-center'>
-												N/A
+												{formatDate(
+													student.nextTermBegins
+												) ?? 'N/A'}
 											</td>
 										</tr>
 									</tbody>

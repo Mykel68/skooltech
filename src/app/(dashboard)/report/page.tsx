@@ -52,6 +52,14 @@ export type Student = {
 		remark: string;
 		position: number;
 	}[];
+	termStarts: string;
+	termEnds: string;
+	nextTermBegins: string;
+	attendance: {
+		timesPresent: number;
+		timesAbsent: number;
+		totalDays: number;
+	};
 };
 
 const ExamReportBuilder = () => {
