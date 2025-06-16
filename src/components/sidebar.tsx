@@ -21,24 +21,8 @@ export function Sidebar() {
 	const userId = useUserStore((s) => s.userId);
 	const schoolImage = useUserStore((s) => s.schoolImage);
 	const schoolName = useUserStore((s) => s.schoolName);
-	const setUser = useUserStore((s) => s.setUser);
-	const schoolId = useUserStore((s) => s.schoolId);
 
 	const [ready, setReady] = useState(false);
-	const [currentSession, setCurrentSession] = useState<any>(null);
-	const [currentTerm, setCurrentTerm] = useState<any>(null);
-	const [sessions, setSessions] = useState<Session[]>([]);
-
-	type Term = {
-		term_id: string;
-		name: string;
-	};
-
-	type Session = {
-		session_id: string;
-		terms: Term[];
-		name: string;
-	};
 
 	useEffect(() => {
 		restoreUserFromCookie();
@@ -50,71 +34,6 @@ export function Sidebar() {
 			router.push('/login');
 		}
 	}, [ready, userId, router]);
-
-	const fetchSessions = async () => {
-		if (!schoolId) return;
-
-		const res = await axios.get(`/api/term/get-all-terms/${schoolId}`);
-		const sessionData = res.data?.data?.data?.sessions;
-
-		if (!sessionData || typeof sessionData !== 'object') {
-			throw new Error('Failed to fetch sessions');
-		}
-
-		// Safely convert object to array
-		return Object.entries(sessionData).map(([id, session]) => ({
-			...(session as Record<string, any>), // Explicitly assert the type
-			session_id: id,
-		}));
-	};
-
-	useEffect(() => {
-		if (!schoolId) return;
-
-		fetchSessions()
-			.then((data) => {
-				if (!data) return;
-				setSessions(data as any);
-				const defaultSession = data[0] as Session;
-				const defaultTerm = defaultSession.terms?.[0] ?? null;
-
-				setCurrentSession(defaultSession);
-				setCurrentTerm(defaultTerm);
-
-				setUser({
-					session_id: defaultSession.session_id,
-					term_id: defaultTerm?.term_id!,
-				});
-			})
-			.catch((err) => console.error('Error fetching sessions:', err));
-	}, [schoolId, setUser]);
-
-	const handleSessionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const selectedId = e.target.value;
-		const selectedSession = sessions.find(
-			(s) => s.session_id === selectedId
-		);
-		if (selectedSession) {
-			const firstTerm = selectedSession.terms?.[0] || null;
-			setCurrentSession(selectedSession);
-			setCurrentTerm(firstTerm);
-			setUser({
-				session_id: selectedSession.session_id,
-				term_id: firstTerm?.term_id,
-			});
-		}
-	};
-
-	const handleTermChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const selectedTermId = e.target.value;
-		const selectedTerm = currentSession?.terms?.find(
-			(t: any) => t.term_id === selectedTermId
-		);
-		if (selectedTerm) {
-			setCurrentTerm(selectedTerm);
-			setUser({ term_id: selectedTerm.term_id });
-		}
-	};
 
 	return (
 		<>
@@ -141,41 +60,9 @@ export function Sidebar() {
 						className='h-10 w-10 rounded-full object-cover'
 					/>
 					<div className='flex flex-col flex-1'>
-						<p className='text-sm font-semibold text-white truncate'>
+						<p className='text-lg font-semibold text-white truncate'>
 							{schoolName ?? 'Loading…'}
 						</p>
-						<div className='grid grid-cols-2 gap-2 mt-1'>
-							<select
-								value={currentSession?.session_id || ''}
-								onChange={handleSessionChange}
-								className='text-xs bg-green-800 text-white rounded px-2 py-1 outline-none focus:ring-1 ring-white'
-							>
-								{sessions.map((session) => (
-									<option
-										key={session.session_id}
-										value={session.session_id}
-									>
-										{session.name}
-									</option>
-								))}
-							</select>
-
-							<select
-								value={currentTerm?.term_id || ''}
-								onChange={handleTermChange}
-								className='text-xs bg-green-800 text-white rounded px-2 py-1 outline-none focus:ring-1 ring-white'
-								disabled={currentSession?.terms?.length <= 1}
-							>
-								{currentSession?.terms?.map((term: any) => (
-									<option
-										key={term.term_id}
-										value={term.term_id}
-									>
-										{term.name}
-									</option>
-								)) ?? <option disabled>No Term</option>}
-							</select>
-						</div>
 					</div>
 					<Button
 						variant='ghost'

@@ -13,20 +13,12 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useUserStore } from '@/stores/userStore';
-import { logout } from '@/utils/logout';
-import { useRouter } from 'next/navigation';
 
 export function Header() {
 	const { toggle } = useSidebar();
 	const { userId, username, firstName, lastName } = useUserStore(
 		(state) => state
 	);
-	const router = useRouter();
-
-	const handleLogout = () => {
-		logout();
-		router.push('/login');
-	};
 
 	return (
 		<header className='sticky top-0 z-40 border-b bg-background'>
@@ -82,9 +74,9 @@ export function Header() {
 						<DropdownMenuItem>Profile</DropdownMenuItem>
 						<DropdownMenuItem>Settings</DropdownMenuItem>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem onClick={handleLogout}>
+						{/* <DropdownMenuItem onClick={handleLogout}>
 							Logout
-						</DropdownMenuItem>
+						</DropdownMenuItem> */}
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</div>
