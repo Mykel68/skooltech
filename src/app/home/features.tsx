@@ -130,7 +130,7 @@ export default function Features() {
 	return (
 		<section
 			id='features'
-			className='relative py-24 px-4 md:px-6 lg:px-12 overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-blue-50/30 dark:from-slate-900 dark:via-slate-900/95 dark:to-indigo-950/20'
+			className='relative py-24 md:px-6 lg:px-12 overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-blue-50/30 dark:from-slate-900 dark:via-slate-900/95 dark:to-indigo-950/20'
 		>
 			{/* Background Elements */}
 			<div className='absolute inset-0 bg-grid-slate-100 dark:bg-grid-slate-800/50 bg-[size:80px_80px] opacity-20' />

@@ -73,7 +73,7 @@ export default function ModernTestimonialsUI() {
 	};
 
 	return (
-		<div className='min-h-screen px-4 md:px-6 lg:px-12 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden'>
+		<div className='min-h-screen md:px-6 lg:px-12 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden'>
 			{/* Animated background elements */}
 			<div className='absolute inset-0'>
 				<div className='absolute top-20 left-20 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse'></div>

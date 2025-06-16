@@ -62,7 +62,7 @@ export default function Hero() {
 	};
 
 	return (
-		<section className='relative min-h-screen flex py-16 items-center px-4 md:px-6 lg:px-12 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/30 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/30'>
+		<section className='relative min-h-screen flex py-16 items-center md:px-6 lg:px-12 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/30 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/30'>
 			{/* Enhanced Background Elements */}
 			<div className='absolute inset-0 bg-grid-slate-100 dark:bg-grid-slate-800/50 bg-[size:60px_60px] opacity-30' />
 
@@ -111,7 +111,7 @@ export default function Hero() {
 				transition={{ delay: 4 }}
 			/>
 
-			<div className='relative container mx-auto px-6 lg:px-8 z-10'>
+			<div className='relative container mx-auto px-4 lg:px-8 z-10'>
 				<div className='grid gap-12 lg:grid-cols-2 lg:gap-16 items-center'>
 					{/* Left Content */}
 					<motion.div
@@ -135,7 +135,7 @@ export default function Hero() {
 							variants={itemVariants}
 							className='space-y-6'
 						>
-							<h1 className='text-5xl  font-bold leading-tight'>
+							<h1 className='text-4xl md:text-5xl  font-bold leading-tight'>
 								<span className='bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent'>
 									Revolutionizing
 								</span>
@@ -149,7 +149,7 @@ export default function Hero() {
 								</span>
 							</h1>
 
-							<p className='text-xl lg:text-2xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl'>
+							<p className='text-lg md:text-xl lg:text-2xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl'>
 								Streamline exam management, result processing,
 								and fee payments with our comprehensive school
 								management system powered by cutting-edge
@@ -183,14 +183,14 @@ export default function Hero() {
 										router.push('/register');
 									}}
 								>
-									<span className='relative z-10 flex items-center gap-2'>
+									<span className='relative z-10 flex items-center justify-center gap-2'>
 										Get Started Free
 										<ArrowRight className='w-5 h-5 group-hover:translate-x-1 transition-transform' />
 									</span>
 									<div className='absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity' />
 								</button>
 
-								<button className='group flex items-center gap-3 px-8 py-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-lg rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all duration-300'>
+								<button className='group flex items-center justify-center gap-3 px-8 py-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-lg rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all duration-300'>
 									<div className='w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform'>
 										<Play className='w-4 h-4 text-white ml-0.5' />
 									</div>
@@ -237,7 +237,7 @@ export default function Hero() {
 
 						{/* Stats */}
 						<motion.div variants={itemVariants}>
-							<div className='flex flex-wrap gap-6'>
+							<div className='flex flex-wrap md:gap-6'>
 								{stats.map((stat, i) => {
 									const IconComponent = stat.icon;
 									return (

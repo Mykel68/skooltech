@@ -152,7 +152,7 @@ export default function Navbar() {
 
 				{/* Mobile Navigation */}
 				<div className='flex items-center md:hidden space-x-2'>
-					<ModeToggle />
+					{/* <ModeToggle /> */}
 					<Sheet>
 						<SheetTrigger asChild>
 							<Button

@@ -93,7 +93,7 @@ export default function About() {
 	return (
 		<section
 			id='about'
-			className='relative py-24 px-4 md:px-6 lg:px-12 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/20'
+			className='relative py-24 md:px-6 lg:px-12 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/20'
 		>
 			{/* Background decorative elements */}
 			<div className='absolute inset-0 bg-grid-slate-100 dark:bg-grid-slate-800 bg-[size:60px_60px] opacity-30' />
@@ -126,7 +126,7 @@ export default function About() {
 							</span>
 						</h2>
 
-						<p className='max-w-3xl mx-auto text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed'>
+						<p className='max-w-3xl mx-auto text-lg md:text-xl text-slate-600 text-balance text-wrap dark:text-slate-300 leading-relaxed'>
 							SkoolTech is a comprehensive school management
 							system designed to streamline administrative tasks
 							and enhance educational outcomes through
@@ -137,7 +137,7 @@ export default function About() {
 					{/* Stats Section */}
 					<motion.div
 						variants={containerVariants}
-						className='grid grid-cols-2 lg:grid-cols-4 gap-6'
+						className='grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6'
 					>
 						{stats.map((stat, i) => {
 							const IconComponent = stat.icon;
