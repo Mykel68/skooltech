@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { UserPen, UserPlus } from 'lucide-react';
+import { RefreshCw, UserPen, UserPlus, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 import { TeacherRow } from './TeacherRow';
@@ -139,8 +139,27 @@ export default function TeacherTable() {
 		);
 
 	return (
-		<div className='p-0.5 w-full max-w-7xl mx-auto'>
-			<p className='font-semibold mb-2'>Teachers</p>
+		<div className='p-0.5 w-full max-w-7xl mx-auto space-y-4'>
+			<div className='bg-white rounded-xl shadow-sm border border-slate-200 p-6'>
+				<div className='flex items-center justify-between'>
+					<div>
+						<h1 className='text-3xl font-bold text-slate-900 flex items-center gap-3'>
+							<Users className='w-8 h-8 text-blue-600' />
+							Teacher Management
+						</h1>
+						<p className='text-slate-600 mt-1'>
+							Manage and approve teachers registrations
+						</p>
+					</div>
+					<button
+						onClick={() => window.location.reload()}
+						className='flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+					>
+						<RefreshCw className='w-4 h-4' />
+						Refresh
+					</button>
+				</div>
+			</div>
 
 			<Tabs
 				value={activeTab}
