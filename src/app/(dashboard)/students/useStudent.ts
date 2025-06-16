@@ -10,6 +10,7 @@ export type Student = {
 	class: string;
 	is_approved: boolean;
 	phone: string;
+	grade_level: string;
 	enrollment_date: string; // ISO string or formatted date
 };
 

@@ -177,7 +177,7 @@ export default function AdminDashboardPage() {
 		<div className='min-h-screen'>
 			{/* Header */}
 
-			<div className='max-w-7xl mx-auto px-6 py-6'>
+			<div className='max-w-7xl mx-auto p-6 pt-0'>
 				{/* Main Stats Cards */}
 				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
 					<div className='bg-white p-6 rounded-lg shadow-sm border'>
