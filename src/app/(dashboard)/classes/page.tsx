@@ -18,13 +18,15 @@ import {
 	BookOpen,
 	Clock,
 } from 'lucide-react';
-import { useClasses } from './useClass';
+import { getDefaultClasses, useClasses } from './useClass';
 import { useUserStore } from '@/stores/userStore';
 
 export default function EnhancedClassDisplay() {
 	const schoolId = useUserStore((s) => s.schoolId!);
 	const sessionId = useUserStore((s) => s.session_id!);
 	const termId = useUserStore((s) => s.term_id!);
+
+	const defaultClasses = getDefaultClasses();
 
 	const [searchTerm, setSearchTerm] = useState('');
 	const [selectedGrade, setSelectedGrade] = useState('all');
@@ -67,13 +69,13 @@ export default function EnhancedClassDisplay() {
 		return grades.sort();
 	};
 
-	const getStatusColor = (status) => {
+	const getStatusColor = (status: string) => {
 		return status === 'active'
 			? 'bg-green-100 text-green-800'
 			: 'bg-gray-100 text-gray-800';
 	};
 
-	const getGradeColor = (grade) => {
+	const getGradeColor = (grade: string) => {
 		const colors = {
 			JSS1: 'bg-blue-100 text-blue-800',
 			JSS2: 'bg-purple-100 text-purple-800',
