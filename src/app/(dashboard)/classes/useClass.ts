@@ -6,9 +6,9 @@ export type Class = {
 	name: string;
 	short: string;
 	grade_level: string;
-	teacher: string;
+	teacher: 'Unknown';
 	student_count: number;
-	subject: [];
+	subjects: [];
 	created_at: string;
 	classroom: string;
 	status: string;
@@ -25,7 +25,21 @@ export const useClasses = (
 			const { data } = await axios.get(
 				`/api/class/get-all-classs/${schoolId}`
 			);
-			return data.data.classes;
+			// return data.data.classes;
+			return (data.data.classes as any[]).map(
+				(cls): Class => ({
+					class_id: cls.class_id ?? '',
+					name: cls.name ?? '',
+					short: cls.short ?? '',
+					grade_level: cls.grade_level ?? '',
+					teacher: cls.teacher ?? 'Unknown',
+					student_count: cls.student_count ?? 0,
+					subjects: cls.subjects ?? [],
+					created_at: cls.created_at ?? '',
+					classroom: cls.classroom ?? '',
+					status: cls.status ?? 'active',
+				})
+			);
 		},
 		enabled: !!schoolId,
 	});

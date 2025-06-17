@@ -304,15 +304,6 @@ export default function EnhancedClassDisplay() {
 									</div>
 								</div>
 
-								<div className='flex items-center justify-between text-sm'>
-									<span className='text-gray-600'>
-										Classroom:
-									</span>
-									<span className='font-medium text-gray-900'>
-										{cls.classroom}
-									</span>
-								</div>
-
 								<div className='pt-2 border-t'>
 									<p className='text-xs text-gray-600 mb-2'>
 										Subjects ({cls.subjects.length}):
@@ -378,9 +369,7 @@ export default function EnhancedClassDisplay() {
 										<th className='text-left p-4 font-medium text-gray-900'>
 											Students
 										</th>
-										<th className='text-left p-4 font-medium text-gray-900'>
-											Classroom
-										</th>
+
 										<th className='text-left p-4 font-medium text-gray-900'>
 											Status
 										</th>
@@ -425,9 +414,7 @@ export default function EnhancedClassDisplay() {
 													</span>
 												</div>
 											</td>
-											<td className='p-4 text-gray-900'>
-												{cls.classroom}
-											</td>
+
 											<td className='p-4'>
 												<Badge
 													className={getStatusColor(
