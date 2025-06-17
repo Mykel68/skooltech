@@ -25,7 +25,8 @@ export type Subject = {
 		grade_level: string;
 	};
 	teacher: {
-		username: string;
+		name: string;
 		email: string;
+		teacher_id: string;
 	};
 };
