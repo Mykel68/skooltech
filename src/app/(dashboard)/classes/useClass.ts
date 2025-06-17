@@ -10,7 +10,6 @@ export type Class = {
 	student_count: number;
 	subjects: [];
 	created_at: string;
-	classroom: string;
 	status: string;
 };
 
@@ -36,7 +35,6 @@ export const useClasses = (
 					student_count: cls.student_count ?? 0,
 					subjects: cls.subjects ?? [],
 					created_at: cls.created_at ?? '',
-					classroom: cls.classroom ?? '',
 					status: cls.status ?? 'active',
 				})
 			);
