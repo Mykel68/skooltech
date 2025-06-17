@@ -20,9 +20,9 @@ import { useStudents } from './useStudent';
 import axios from 'axios';
 
 export default function StudentManagementAdmin() {
-	const schoolId = useUserStore((s) => s.schoolId);
-	const sessionId = useUserStore((s) => s.session_id);
-	const termId = useUserStore((s) => s.term_id);
+	const schoolId = useUserStore((s) => s.schoolId!);
+	const sessionId = useUserStore((s) => s.session_id!);
+	const termId = useUserStore((s) => s.term_id!);
 
 	const queryClient = useQueryClient();
 	const {
