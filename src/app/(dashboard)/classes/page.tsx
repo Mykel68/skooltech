@@ -18,15 +18,15 @@ import {
 	BookOpen,
 	Clock,
 } from 'lucide-react';
-import { getDefaultClasses, useClasses } from './useClass';
+import { getDefaultClasses, useClasses, useCreateClass } from './useClass';
 import { useUserStore } from '@/stores/userStore';
+import { CreateClassDialog } from './createClassDialog';
 
 export default function EnhancedClassDisplay() {
 	const schoolId = useUserStore((s) => s.schoolId!);
 	const sessionId = useUserStore((s) => s.session_id!);
 	const termId = useUserStore((s) => s.term_id!);
-
-	const defaultClasses = getDefaultClasses();
+	const [open, setOpen] = useState(false);
 
 	const [searchTerm, setSearchTerm] = useState('');
 	const [selectedGrade, setSelectedGrade] = useState('all');
@@ -38,6 +38,10 @@ export default function EnhancedClassDisplay() {
 		isLoading,
 		refetch,
 	} = useClasses(schoolId, sessionId, termId);
+
+	const { mutateAsync } = useCreateClass(schoolId, () => {
+		setOpen(false);
+	});
 
 	// Filter and sort classes
 	const filteredClasses = classes
@@ -100,10 +104,11 @@ export default function EnhancedClassDisplay() {
 						{filteredClasses.length} classes)
 					</p>
 				</div>
-				<Button className='lg:w-auto w-full'>
-					<Plus className='w-4 h-4 mr-2' />
-					Add New Class
-				</Button>
+				<CreateClassDialog
+					open={open}
+					setOpen={setOpen}
+					mutateAsync={mutateAsync}
+				/>
 			</div>
 
 			{/* Stats Cards */}
