@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	Calendar,
 	Clock,
@@ -19,6 +19,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useUserStore } from '@/stores/userStore';
 import axios from 'axios';
 import { toast } from 'sonner';
+import CreateItemDialog from './CreateItemDialog';
 
 interface Session {
 	session_id: string;
@@ -169,128 +170,6 @@ const SessionCard = ({ session, onEditClick, toggleActive, onViewDetails }) => {
 	);
 };
 
-const CreateSessionDialog = ({ open, setOpen, onSubmit }) => {
-	const [formData, setFormData] = useState({
-		name: '',
-		start_date: '',
-		end_date: '',
-	});
-
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		onSubmit(formData);
-		setFormData({ name: '', start_date: '', end_date: '' });
-	};
-
-	if (!open) return null;
-
-	return (
-		<div className='fixed inset-0 z-50 flex items-center justify-center'>
-			<div
-				className='absolute inset-0 bg-black/20 backdrop-blur-sm'
-				onClick={() => setOpen(false)}
-			/>
-			<div className='relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden'>
-				<div className='bg-gradient-to-r from-emerald-500 to-teal-500 p-6 text-white'>
-					<div className='flex items-center justify-between'>
-						<div className='flex items-center gap-3'>
-							<div className='w-10 h-10 bg-white/20 rounded-full flex items-center justify-center'>
-								<Sparkles className='w-5 h-5' />
-							</div>
-							<h2 className='text-xl font-bold'>
-								Create New Session
-							</h2>
-						</div>
-						<button
-							onClick={() => setOpen(false)}
-							className='p-2 hover:bg-white/20 rounded-full transition-colors'
-						>
-							<X className='w-5 h-5' />
-						</button>
-					</div>
-				</div>
-
-				<div className='p-6'>
-					<div className='space-y-6'>
-						<div>
-							<label className='block text-sm font-semibold text-slate-700 mb-2'>
-								Session Name
-							</label>
-							<input
-								type='text'
-								value={formData.name}
-								onChange={(e) =>
-									setFormData({
-										...formData,
-										name: e.target.value,
-									})
-								}
-								className='w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
-								placeholder='e.g., 2024-2025 Academic Year'
-								required
-							/>
-						</div>
-
-						<div className='grid grid-cols-2 gap-4'>
-							<div>
-								<label className='block text-sm font-semibold text-slate-700 mb-2'>
-									Start Date
-								</label>
-								<input
-									type='date'
-									value={formData.start_date}
-									onChange={(e) =>
-										setFormData({
-											...formData,
-											start_date: e.target.value,
-										})
-									}
-									className='w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
-									required
-								/>
-							</div>
-
-							<div>
-								<label className='block text-sm font-semibold text-slate-700 mb-2'>
-									End Date
-								</label>
-								<input
-									type='date'
-									value={formData.end_date}
-									onChange={(e) =>
-										setFormData({
-											...formData,
-											end_date: e.target.value,
-										})
-									}
-									className='w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
-									required
-								/>
-							</div>
-						</div>
-
-						<div className='flex items-center gap-3 pt-4'>
-							<button
-								type='button'
-								onClick={() => setOpen(false)}
-								className='flex-1 px-4 py-3 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium transition-colors'
-							>
-								Cancel
-							</button>
-							<button
-								onClick={handleSubmit}
-								className='flex-1 px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl font-medium transition-all shadow-lg shadow-emerald-200'
-							>
-								Create Session
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-};
-
 const SessionList = ({
 	sessions,
 	isLoading,
@@ -345,8 +224,65 @@ const SessionList = ({
 };
 
 const TermsView = ({ session, onBack }) => {
+	const [openCreateTermDialog, setOpenCreateTermDialog] = useState(false);
+	const [editingTerm, setEditingTerm] = useState(null);
+	const queryClient = useQueryClient();
+	const schoolId = useUserStore((s) => s.schoolId);
+
+	const updateTermMutation = useMutation({
+		mutationFn: async ({ termId, data }) => {
+			return axios.patch(
+				`/api/term/update/${schoolId}/${session.session_id}/${termId}`,
+				data
+			);
+		},
+		onSuccess: () => {
+			toast.success('Term updated');
+			queryClient.invalidateQueries({
+				queryKey: ['sessions', schoolId, session.session_id],
+			});
+		},
+		onError: () => toast.error('Failed to update term'),
+	});
+
+	const createTermMutation = useMutation({
+		mutationFn: async (data) => {
+			return axios.post(
+				`/api/term/create-new/${schoolId}/${session.session_id}`,
+				data
+			);
+		},
+		onSuccess: () => {
+			toast.success('Term created');
+			queryClient.invalidateQueries({
+				queryKey: ['sessions', schoolId, session.session_id],
+			});
+		},
+		onError: () => toast.error('Failed to create term'),
+	});
+
+	const handleCreateTerm = (formData) => {
+		if (editingTerm) {
+			updateTermMutation.mutate({
+				termId: editingTerm.term_id,
+				data: formData,
+			});
+			setEditingTerm(null);
+		} else {
+			createTermMutation.mutate(formData);
+		}
+		setOpenCreateTermDialog(false);
+	};
+
+	const handleToggleActive = (term) => {
+		updateTermMutation.mutate({
+			termId: term.term_id,
+			data: { is_active: !term.is_active },
+		});
+	};
+
 	return (
-		<div className='min-h-screen '>
+		<div className='min-h-screen'>
 			<div className='max-w-7xl mx-auto p-6'>
 				<div className='mb-8'>
 					<button
@@ -368,8 +304,10 @@ const TermsView = ({ session, onBack }) => {
 								{formatDate(session.end_date)}
 							</p>
 						</div>
-
-						<button className='flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl font-medium transition-all shadow-lg shadow-blue-200'>
+						<button
+							onClick={() => setOpenCreateTermDialog(true)}
+							className='flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl font-medium transition-all shadow-lg shadow-blue-200'
+						>
 							<Plus className='w-5 h-5' />
 							Create New Term
 						</button>
@@ -386,7 +324,6 @@ const TermsView = ({ session, onBack }) => {
 									: 'border-slate-200 bg-gradient-to-br from-slate-50 to-gray-50 shadow-lg shadow-slate-100/50'
 							}`}
 						>
-							{/* Status indicator */}
 							<div className='absolute top-4 right-4'>
 								<div
 									className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${
@@ -405,12 +342,10 @@ const TermsView = ({ session, onBack }) => {
 									{term.is_active ? 'Active' : 'Inactive'}
 								</div>
 							</div>
-
 							<div className='p-6'>
 								<h3 className='text-xl font-bold text-slate-900 mb-2'>
 									{term.name}
 								</h3>
-
 								<div className='flex items-center gap-2 text-sm text-slate-600 mb-4'>
 									<Calendar className='w-4 h-4' />
 									<span>
@@ -418,14 +353,19 @@ const TermsView = ({ session, onBack }) => {
 										{formatDate(term.end_date)}
 									</span>
 								</div>
-
 								<div className='flex items-center gap-2 mt-4'>
-									<button className='flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 transition-all duration-200'>
+									<button
+										onClick={() => {
+											setEditingTerm(term);
+											setOpenCreateTermDialog(true);
+										}}
+										className='flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 transition-all duration-200'
+									>
 										<Edit3 className='w-4 h-4' />
 										Edit
 									</button>
-
 									<button
+										onClick={() => handleToggleActive(term)}
 										className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
 											term.is_active
 												? 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-200'
@@ -449,6 +389,19 @@ const TermsView = ({ session, onBack }) => {
 						</div>
 					))}
 				</div>
+
+				<CreateItemDialog
+					open={openCreateTermDialog}
+					setOpen={(val) => {
+						if (!val) setEditingTerm(null);
+						setOpenCreateTermDialog(val);
+					}}
+					onSubmit={handleCreateTerm}
+					initialData={editingTerm}
+					title={editingTerm ? 'Edit Term' : 'Create New Term'}
+					submitLabel={editingTerm ? 'Update Term' : 'Create Term'}
+					nameLabel='Term Name'
+				/>
 			</div>
 		</div>
 	);
@@ -456,6 +409,7 @@ const TermsView = ({ session, onBack }) => {
 
 export default function SessionManagementUI() {
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
+	const [editingSession, setEditingSession] = useState<Session | null>(null);
 	const [currentView, setCurrentView] = useState<'sessions' | 'terms'>(
 		'sessions'
 	);
@@ -477,7 +431,6 @@ export default function SessionManagementUI() {
 		enabled: !!schoolId,
 	});
 
-	// ✅ Create a new session
 	const createMutation = useMutation({
 		mutationFn: async (
 			formData: Omit<Session, 'session_id' | 'is_active'>
@@ -496,7 +449,6 @@ export default function SessionManagementUI() {
 		onError: () => toast.error('Failed to create session'),
 	});
 
-	// ✅ Update (activate/deactivate)
 	const updateMutation = useMutation({
 		mutationFn: async ({
 			session_id,
@@ -529,12 +481,21 @@ export default function SessionManagementUI() {
 		formData: Omit<Session, 'session_id' | 'is_active'>
 	) => {
 		if (!schoolId) return toast.error('School ID missing');
-		createMutation.mutate(formData);
+
+		if (editingSession) {
+			updateMutation.mutate({
+				session_id: editingSession.session_id,
+				data: formData,
+			});
+			setEditingSession(null);
+			setOpenCreateDialog(false);
+		} else {
+			createMutation.mutate(formData);
+		}
 	};
 
 	const handleEditClick = (session: Session) => {
-		// Optional: set session for editing
-		// setEditSession(session);
+		setEditingSession(session);
 		setOpenCreateDialog(true);
 	};
 
@@ -560,7 +521,6 @@ export default function SessionManagementUI() {
 	return (
 		<div className='min-h-screen'>
 			<div className='max-w-7xl mx-auto p-6'>
-				{/* Header */}
 				<div className='mb-8 flex items-center justify-between'>
 					<div>
 						<h1 className='text-3xl font-bold text-slate-900 mb-2'>
@@ -570,7 +530,6 @@ export default function SessionManagementUI() {
 							Manage your academic sessions and terms
 						</p>
 					</div>
-
 					<button
 						onClick={() => setOpenCreateDialog(true)}
 						className='flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl font-medium transition-all shadow-lg hover:shadow-xl hover:scale-105'
@@ -580,7 +539,6 @@ export default function SessionManagementUI() {
 					</button>
 				</div>
 
-				{/* Sessions Grid */}
 				<SessionList
 					sessions={sessions}
 					isLoading={isLoading}
@@ -589,11 +547,21 @@ export default function SessionManagementUI() {
 					onViewDetails={onViewDetails}
 				/>
 
-				{/* Create Session Dialog */}
-				<CreateSessionDialog
+				<CreateItemDialog
 					open={openCreateDialog}
-					setOpen={setOpenCreateDialog}
+					setOpen={(val) => {
+						if (!val) setEditingSession(null);
+						setOpenCreateDialog(val);
+					}}
 					onSubmit={handleCreateSession}
+					initialData={editingSession}
+					title={
+						editingSession ? 'Edit Session' : 'Create New Session'
+					}
+					submitLabel={
+						editingSession ? 'Update Session' : 'Create Session'
+					}
+					nameLabel='Session Name'
 				/>
 			</div>
 		</div>
