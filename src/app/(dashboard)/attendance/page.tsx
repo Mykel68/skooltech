@@ -29,6 +29,8 @@ import {
 	Filter,
 	BookOpen,
 } from 'lucide-react';
+import { useUserStore } from '@/stores/userStore';
+import axios from 'axios';
 
 // Table components defined inline
 const Table = ({ children, ...props }) => (
@@ -94,147 +96,42 @@ const mockClasses = [
 	{ id: '5', name: 'Grade 12A', teacher: 'Prof. Smith', totalStudents: 27 },
 ];
 
-// Mock attendance data - this would come from your backend
-const mockAttendanceData = [
-	{
-		id: '1',
-		studentId: 'STU001',
-		studentName: 'John Doe',
-		rollNumber: '001',
-		classId: '1',
-		className: 'Grade 10A',
-		totalDays: 180,
-		presentDays: 165,
-		absentDays: 15,
-		lateArrivals: 8,
-		earlyDepartures: 3,
-		attendancePercentage: 91.7,
-		lastAttendanceDate: '2024-06-18',
-	},
-	{
-		id: '2',
-		studentId: 'STU002',
-		studentName: 'Jane Smith',
-		rollNumber: '002',
-		classId: '1',
-		className: 'Grade 10A',
-		totalDays: 180,
-		presentDays: 172,
-		absentDays: 8,
-		lateArrivals: 5,
-		earlyDepartures: 1,
-		attendancePercentage: 95.6,
-		lastAttendanceDate: '2024-06-19',
-	},
-	{
-		id: '3',
-		studentId: 'STU003',
-		studentName: 'Mike Johnson',
-		rollNumber: '003',
-		classId: '1',
-		className: 'Grade 10A',
-		totalDays: 180,
-		presentDays: 158,
-		absentDays: 22,
-		lateArrivals: 12,
-		earlyDepartures: 6,
-		attendancePercentage: 87.8,
-		lastAttendanceDate: '2024-06-17',
-	},
-	{
-		id: '4',
-		studentId: 'STU004',
-		studentName: 'Sarah Wilson',
-		rollNumber: '001',
-		classId: '2',
-		className: 'Grade 10B',
-		totalDays: 180,
-		presentDays: 175,
-		absentDays: 5,
-		lateArrivals: 2,
-		earlyDepartures: 0,
-		attendancePercentage: 97.2,
-		lastAttendanceDate: '2024-06-19',
-	},
-	{
-		id: '5',
-		studentId: 'STU005',
-		studentName: 'David Brown',
-		rollNumber: '002',
-		classId: '2',
-		className: 'Grade 10B',
-		totalDays: 180,
-		presentDays: 145,
-		absentDays: 35,
-		lateArrivals: 18,
-		earlyDepartures: 10,
-		attendancePercentage: 80.6,
-		lastAttendanceDate: '2024-06-15',
-	},
-];
-
-// Mock API functions
-const fetchClasses = async () => {
-	await new Promise((resolve) => setTimeout(resolve, 500));
-	return mockClasses;
-};
-
-const fetchClassAttendance = async (filters) => {
-	await new Promise((resolve) => setTimeout(resolve, 500));
-	let filtered = mockAttendanceData;
-
-	if (filters.classId && filters.classId !== 'all') {
-		filtered = filtered.filter(
-			(record) => record.classId === filters.classId
-		);
-	}
-
-	if (filters.search) {
-		const searchLower = filters.search.toLowerCase();
-		filtered = filtered.filter(
-			(record) =>
-				record.studentName.toLowerCase().includes(searchLower) ||
-				record.studentId.toLowerCase().includes(searchLower) ||
-				record.rollNumber.toLowerCase().includes(searchLower)
-		);
-	}
-
-	if (filters.attendanceFilter && filters.attendanceFilter !== 'all') {
-		if (filters.attendanceFilter === 'excellent') {
-			filtered = filtered.filter(
-				(record) => record.attendancePercentage >= 95
-			);
-		} else if (filters.attendanceFilter === 'good') {
-			filtered = filtered.filter(
-				(record) =>
-					record.attendancePercentage >= 85 &&
-					record.attendancePercentage < 95
-			);
-		} else if (filters.attendanceFilter === 'average') {
-			filtered = filtered.filter(
-				(record) =>
-					record.attendancePercentage >= 75 &&
-					record.attendancePercentage < 85
-			);
-		} else if (filters.attendanceFilter === 'poor') {
-			filtered = filtered.filter(
-				(record) => record.attendancePercentage < 75
-			);
-		}
-	}
-
-	return filtered;
-};
-
 const AttendancePage = () => {
-	const [selectedClass, setSelectedClass] = useState('all');
+	const [selectedClass, setSelectedClass] = useState('');
+	const [totalDays, setTotalDays] = useState(0);
 	const [searchQuery, setSearchQuery] = useState('');
-	const [attendanceFilter, setAttendanceFilter] = useState('all');
+	const [attendanceFilter, setAttendanceFilter] = useState('');
 
-	// Fetch classes
+	const schoolId = useUserStore((s) => s.schoolId);
+	const termId = useUserStore((s) => s.term_id);
+	const sessionId = useUserStore((s) => s.session_id);
+
+	const fetchClassAttendance = async ({
+		schoolId,
+		sessionId,
+		termId,
+		classId,
+	}) => {
+		if (!classId) throw new Error('Class ID is required');
+
+		const res = await axios.get(
+			`/api/attendance/summ/${schoolId}/${classId}/${sessionId}/${termId}`
+		);
+		setTotalDays(res.data.data.totalDays);
+		return res.data.data.attendanceData;
+	};
+
 	const { data: classes = [], isLoading: classesLoading } = useQuery({
-		queryKey: ['classes'],
-		queryFn: fetchClasses,
+		queryKey: ['classes', schoolId, sessionId, termId],
+		queryFn: async () => {
+			const res = await axios.get(
+				`/api/class/get-all-classs/${schoolId}/${sessionId}/${termId}`
+			);
+			const fetchedClasses = res.data.data.classes;
+
+			return fetchedClasses;
+		},
+		enabled: !!schoolId && !!sessionId && !!termId,
 	});
 
 	// Fetch attendance with filters
@@ -242,16 +139,19 @@ const AttendancePage = () => {
 		useQuery({
 			queryKey: [
 				'class-attendance',
+				schoolId,
+				sessionId,
+				termId,
 				selectedClass,
-				searchQuery,
-				attendanceFilter,
 			],
 			queryFn: () =>
 				fetchClassAttendance({
+					schoolId,
+					sessionId,
+					termId,
 					classId: selectedClass,
-					search: searchQuery,
-					attendanceFilter: attendanceFilter,
 				}),
+			enabled: !!schoolId && !!sessionId && !!termId && !!selectedClass,
 		});
 
 	// Calculate overall statistics
@@ -361,10 +261,7 @@ const AttendancePage = () => {
 							{overallStats.totalStudents}
 						</div>
 						<p className='text-xs text-muted-foreground'>
-							Across{' '}
-							{selectedClass === 'all'
-								? 'all classes'
-								: 'selected class'}
+							For selected class
 						</p>
 					</CardContent>
 				</Card>
@@ -445,13 +342,10 @@ const AttendancePage = () => {
 									<SelectValue placeholder='Select class' />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value='all'>
-										All Classes
-									</SelectItem>
 									{classes.map((cls) => (
 										<SelectItem
-											key={cls.id}
-											value={cls.id}
+											key={cls.class_id}
+											value={cls.class_id}
 										>
 											{cls.name} - {cls.teacher}
 										</SelectItem>
@@ -519,12 +413,15 @@ const AttendancePage = () => {
 						Student Attendance Records
 					</CardTitle>
 					<CardDescription>
-						{attendanceRecords.length} students found
-						{selectedClass !== 'all' &&
-							` in ${
-								classes.find((c) => c.id === selectedClass)
-									?.name
-							}`}
+						<div className='flex items-center justify-between'>
+							{attendanceRecords.length} students found
+							{selectedClass &&
+								` in ${
+									classes.find((c) => c.id === selectedClass)
+										?.className
+								}`}
+							<p>Total Days: {totalDays}</p>
+						</div>
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -537,17 +434,13 @@ const AttendancePage = () => {
 							<Table>
 								<TableHeader>
 									<TableRow>
-										<TableHead>Roll No.</TableHead>
 										<TableHead>Student Name</TableHead>
 										<TableHead>Student ID</TableHead>
 										<TableHead>Class</TableHead>
-										<TableHead>Total Days</TableHead>
 										<TableHead>Present</TableHead>
 										<TableHead>Absent</TableHead>
-										<TableHead>Late Arrivals</TableHead>
 										<TableHead>Attendance %</TableHead>
 										<TableHead>Status</TableHead>
-										<TableHead>Last Present</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
@@ -563,11 +456,10 @@ const AttendancePage = () => {
 										</TableRow>
 									) : (
 										attendanceRecords.map((record) => (
-											<TableRow key={record.id}>
-												<TableCell className='font-medium'>
-													{record.rollNumber}
-												</TableCell>
-												<TableCell className='font-medium'>
+											<TableRow
+												key={record.attendance_id}
+											>
+												<TableCell className='font-medium px-3'>
 													{record.studentName}
 												</TableCell>
 												<TableCell className='text-muted-foreground'>
@@ -576,20 +468,15 @@ const AttendancePage = () => {
 												<TableCell>
 													{record.className}
 												</TableCell>
-												<TableCell>
-													{record.totalDays}
-												</TableCell>
-												<TableCell className='text-green-600 font-medium'>
+												<TableCell className='text-green-600 font-medium text-center'>
 													{record.presentDays}
 												</TableCell>
-												<TableCell className='text-red-600 font-medium'>
+												<TableCell className='text-red-600 font-medium text-center'>
 													{record.absentDays}
 												</TableCell>
-												<TableCell className='text-yellow-600'>
-													{record.lateArrivals}
-												</TableCell>
+
 												<TableCell
-													className={`font-bold ${getAttendanceColor(
+													className={`font-bold text-center ${getAttendanceColor(
 														record.attendancePercentage
 													)}`}
 												>
@@ -602,11 +489,6 @@ const AttendancePage = () => {
 													{getAttendanceBadge(
 														record.attendancePercentage
 													)}
-												</TableCell>
-												<TableCell className='text-muted-foreground'>
-													{new Date(
-														record.lastAttendanceDate
-													).toLocaleDateString()}
 												</TableCell>
 											</TableRow>
 										))
