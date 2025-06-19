@@ -88,14 +88,14 @@ const ExamReportBuilder = () => {
 	});
 
 	const { data: classes = [], isLoading: classesLoading } = useQuery({
-		queryKey: ['classes', schoolId],
+		queryKey: ['classes', schoolId, sessionId, termId],
 		queryFn: async () => {
 			const res = await axios.get(
-				`/api/class/get-all-classs/${schoolId}`
+				`/api/class/get-all-classs/${schoolId}/${sessionId}/${termId}`
 			);
 			return res.data.data.classes;
 		},
-		enabled: !!schoolId,
+		enabled: !!schoolId && !!sessionId && !!termId,
 	});
 
 	const { data: students = [], isLoading: studentsLoading } = useQuery({
