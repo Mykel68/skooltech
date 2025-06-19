@@ -20,6 +20,7 @@ import { useUserStore } from '@/stores/userStore';
 import axios from 'axios';
 import { toast } from 'sonner';
 import CreateItemDialog from './CreateItemDialog';
+import { useRouter } from 'next/navigation';
 
 interface Session {
 	session_id: string;
@@ -224,10 +225,12 @@ const SessionList = ({
 };
 
 const TermsView = ({ session, onBack }) => {
+	const router = useRouter();
 	const [openCreateTermDialog, setOpenCreateTermDialog] = useState(false);
 	const [editingTerm, setEditingTerm] = useState(null);
 	const queryClient = useQueryClient();
 	const schoolId = useUserStore((s) => s.schoolId);
+	const [terms, setTerms] = useState(session.terms || []);
 
 	const updateTermMutation = useMutation({
 		mutationFn: async ({ termId, data }) => {
@@ -263,22 +266,69 @@ const TermsView = ({ session, onBack }) => {
 
 	const handleCreateTerm = (formData) => {
 		if (editingTerm) {
-			updateTermMutation.mutate({
-				termId: editingTerm.term_id,
-				data: formData,
-			});
-			setEditingTerm(null);
+			updateTermMutation.mutate(
+				{
+					termId: editingTerm.term_id,
+					data: formData,
+				},
+				{
+					onSuccess: () => {
+						toast.success('Term updated');
+						setTerms((prev) =>
+							prev.map((t) =>
+								t.term_id === editingTerm.term_id
+									? { ...t, ...formData }
+									: t
+							)
+						);
+						setEditingTerm(null);
+						setOpenCreateTermDialog(false);
+					},
+					onError: () => toast.error('Failed to update term'),
+				}
+			);
 		} else {
-			createTermMutation.mutate(formData);
+			createTermMutation.mutate(formData, {
+				onSuccess: (res) => {
+					toast.success('Term created');
+					const newTerm = res.data; // or manually assign a temp ID if not returned
+					setTerms((prev) => [...prev, newTerm]);
+					setOpenCreateTermDialog(false);
+				},
+				onError: () => toast.error('Failed to create term'),
+			});
 		}
-		setOpenCreateTermDialog(false);
 	};
 
 	const handleToggleActive = (term) => {
-		updateTermMutation.mutate({
-			termId: term.term_id,
-			data: { is_active: !term.is_active },
-		});
+		const isActivating = !term.is_active;
+
+		// Backend update
+		updateTermMutation.mutate(
+			{
+				termId: term.term_id,
+				data: { is_active: isActivating },
+			},
+			{
+				onSuccess: () => {
+					toast.success(
+						`Term ${isActivating ? 'activated' : 'deactivated'}`
+					);
+
+					// Update frontend state:
+					setTerms((prev) =>
+						prev.map((t) =>
+							t.term_id === term.term_id
+								? { ...t, is_active: isActivating }
+								: isActivating
+								? { ...t, is_active: false } // deactivate others
+								: t
+						)
+					);
+				},
+				onError: () => toast.error('Failed to toggle term'),
+			}
+		);
 	};
 
 	return (
@@ -315,7 +365,7 @@ const TermsView = ({ session, onBack }) => {
 				</div>
 
 				<div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
-					{session.terms.map((term) => (
+					{terms.map((term) => (
 						<div
 							key={term.term_id}
 							className={`relative overflow-hidden rounded-xl border-2 transition-all duration-300 ${
