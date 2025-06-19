@@ -29,6 +29,13 @@ interface Session {
 	end_date: string;
 	is_active?: string;
 }
+interface Term {
+	term_id: string;
+	name: string;
+	start_date: string;
+	end_date: string;
+	is_active: boolean;
+}
 
 // Utility function to format dates
 const formatDate = (dateString) => {
@@ -300,10 +307,15 @@ const TermsView = ({ session, onBack }) => {
 		}
 	};
 
-	const handleToggleActive = (term) => {
+	const handleToggleActive = (term: Term) => {
 		const isActivating = !term.is_active;
 
-		// Backend update
+		// Optional: prevent deactivating the last active term
+		if (!isActivating && terms.filter((t) => t.is_active).length === 1) {
+			toast.warning('At least one term must remain active');
+			return;
+		}
+
 		updateTermMutation.mutate(
 			{
 				termId: term.term_id,
@@ -315,13 +327,13 @@ const TermsView = ({ session, onBack }) => {
 						`Term ${isActivating ? 'activated' : 'deactivated'}`
 					);
 
-					// Update frontend state:
+					// Update frontend state so only one term is active at a time
 					setTerms((prev) =>
 						prev.map((t) =>
 							t.term_id === term.term_id
 								? { ...t, is_active: isActivating }
 								: isActivating
-								? { ...t, is_active: false } // deactivate others
+								? { ...t, is_active: false }
 								: t
 						)
 					);
@@ -365,7 +377,7 @@ const TermsView = ({ session, onBack }) => {
 				</div>
 
 				<div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
-					{terms.map((term) => (
+					{terms.map((term: Term) => (
 						<div
 							key={term.term_id}
 							className={`relative overflow-hidden rounded-xl border-2 transition-all duration-300 ${
