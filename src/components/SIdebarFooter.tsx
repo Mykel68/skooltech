@@ -28,7 +28,7 @@ export function AnimatedUpgradeFooter({
       initial={{ height: 56 }}
       animate={{ height: hovered ? "auto" : 56 }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
-      className="overflow-hidden bg-green-800/50 backdrop-blur-sm border-t border-emerald-600 cursor-pointer"
+      className="overflow-hidden bg-green-800/50 backdrop-blur-sm border-t border-emerald-600 "
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -84,7 +84,7 @@ export function AnimatedUpgradeFooter({
             </div>
 
             {/* Upgrade CTA */}
-            <div className="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg p-3 text-center">
+            <div className="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg p-3 text-center cursor-pointer">
               <div className="flex items-center justify-center gap-1 mb-2">
                 <Zap className="h-4 w-4 text-white animate-pulse" />
                 <span className="text-sm font-semibold text-white">
