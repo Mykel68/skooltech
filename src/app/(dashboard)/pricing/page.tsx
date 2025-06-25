@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-
 import { X, Check, Star, Users, Shield, BarChart3, Crown } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -45,9 +44,9 @@ const PricingModalOverlay = ({ isOpen, onClose }) => {
     {
       name: "Starter",
       subtitle: "Perfect for small schools",
-      userLimit: "Up to 200 students",
-      sessionPrice: 45000,
-      termPrice: 18000,
+      userLimit: "Up to 100 students",
+      sessionPrice: 150000,
+      termPrice: 55500,
       color: "border-blue-200 bg-blue-50",
       buttonColor: "bg-blue-600 hover:bg-blue-700",
       popular: false,
@@ -72,8 +71,8 @@ const PricingModalOverlay = ({ isOpen, onClose }) => {
       name: "Professional",
       subtitle: "Most popular for growing schools",
       userLimit: "Up to 500 students",
-      sessionPrice: 85000,
-      termPrice: 32000,
+      sessionPrice: 251000,
+      termPrice: 93000,
       color: "border-green-200 bg-green-50",
       buttonColor: "bg-green-600 hover:bg-green-700",
       popular: true,
@@ -97,8 +96,8 @@ const PricingModalOverlay = ({ isOpen, onClose }) => {
       name: "Enterprise",
       subtitle: "For large schools & school groups",
       userLimit: "Up to 2000 students",
-      sessionPrice: 150000,
-      termPrice: 58000,
+      sessionPrice: 401000,
+      termPrice: 148500,
       color: "border-purple-200 bg-purple-50",
       buttonColor: "bg-purple-600 hover:bg-purple-700",
       popular: false,
@@ -123,8 +122,8 @@ const PricingModalOverlay = ({ isOpen, onClose }) => {
       name: "Premium",
       subtitle: "Unlimited scale for large institutions",
       userLimit: "Unlimited students",
-      sessionPrice: 250000,
-      termPrice: 95000,
+      sessionPrice: 599000,
+      termPrice: 222000,
       color: "border-orange-200 bg-orange-50",
       buttonColor: "bg-orange-600 hover:bg-orange-700",
       popular: false,
