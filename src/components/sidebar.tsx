@@ -12,6 +12,7 @@ import { footerItems, navItems } from "@/constants/sidebar";
 import { restoreUserFromCookie } from "@/utils/restoreAuth";
 import axios from "axios";
 import { logout } from "@/utils/logout";
+import { AnimatedUpgradeFooter } from "./SIdebarFooter";
 
 export function Sidebar() {
   const router = useRouter();
@@ -178,77 +179,13 @@ export function Sidebar() {
         </div>
 
         {/* Sticky Upgrade Footer - Hover to Expand */}
-        <div className="group relative overflow-hidden hover:h-auto transition-all duration-300 h-14 lg:h-16">
-          <div className="absolute inset-0 z-[-1] bg-green-800/50 backdrop-blur-sm border-t border-emerald-600" />
-
-          {/* Collapsed State Content */}
-          <div className="flex items-center justify-center h-full text-xs text-green-100 px-4 group-hover:hidden">
-            <Zap className="h-4 w-4 mr-1 text-yellow-400" />
-            <span>Upgrade Now — ₦18,000/term</span>
-          </div>
-
-          {/* Expanded Content on Hover */}
-          <div className="hidden group-hover:block p-4 border-t border-emerald-600">
-            {/* Usage Stats */}
-            <div className="mb-4">
-              <div className="flex items-center justify-between text-xs text-green-200 mb-1">
-                <span className="flex items-center gap-1">
-                  <Users className="h-3 w-3" />
-                  Students
-                </span>
-                <span>
-                  {studentCount}/{studentLimit}
-                </span>
-              </div>
-              <div className="w-full bg-green-900/50 rounded-full h-2">
-                <div
-                  className={cn(
-                    "h-2 rounded-full transition-all duration-300",
-                    getUsageColor()
-                  )}
-                  style={{ width: `${getUsagePercentage()}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between text-xs text-green-200 mb-4">
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                Trial Days Left
-              </span>
-              <span className="font-medium">{trialDaysLeft} days</span>
-            </div>
-
-            <div className="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg p-3 text-center">
-              <div className="flex items-center justify-center gap-1 mb-2">
-                <Zap className="h-4 w-4 text-white" />
-                <span className="text-sm font-semibold text-white">
-                  Upgrade Now
-                </span>
-              </div>
-              <p className="text-xs text-white/90 mb-3">
-                Unlock unlimited students & premium features
-              </p>
-              <Link href="/pricing">
-                <Button
-                  size="sm"
-                  className="w-full bg-white text-orange-600 hover:bg-gray-100 font-medium"
-                >
-                  View Plans
-                </Button>
-              </Link>
-            </div>
-
-            <div className="mt-3 space-y-1">
-              <Link
-                href="/pricing"
-                className="block text-xs text-green-200 hover:text-white transition-colors text-center"
-              >
-                Starting from ₦18,000/term
-              </Link>
-            </div>
-          </div>
-        </div>
+        <AnimatedUpgradeFooter
+          studentCount={studentCount}
+          studentLimit={studentLimit}
+          trialDaysLeft={trialDaysLeft}
+          getUsageColor={getUsageColor}
+          getUsagePercentage={getUsagePercentage}
+        />
       </aside>
     </>
   );
