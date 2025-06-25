@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 const PricingModalOverlay = ({ isOpen, onClose }) => {
   const [billingCycle, setBillingCycle] = useState("session");
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [expandedPlan, setExpandedPlan] = useState(null);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -180,9 +181,9 @@ const PricingModalOverlay = ({ isOpen, onClose }) => {
       <div className="relative h-full flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-7xl h-full max-h-[95vh] overflow-hidden flex flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+          <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-600 to-purple-600 text-white">
             <div>
-              <h1 className="text-3xl font-bold">
+              <h1 className="text-xl font-bold">
                 Upgrade Your School Management
               </h1>
               <p className="text-blue-100 mt-1">
@@ -250,72 +251,93 @@ const PricingModalOverlay = ({ isOpen, onClose }) => {
 
               {/* Pricing Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {plans.map((plan, index) => (
-                  <div
-                    key={plan.name}
-                    className={`relative rounded-xl border-2 p-6 hover:shadow-lg transition-all duration-300 ${
-                      plan.color
-                    } ${plan.popular ? "scale-105 ring-2 ring-green-500" : ""}`}
-                  >
-                    {plan.popular && (
-                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                        <div className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
-                          <Star className="w-3 h-3" />
-                          Most Popular
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="text-center mb-4">
-                      <h3 className="text-xl font-bold text-gray-900 mb-1">
-                        {plan.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm mb-3">
-                        {plan.subtitle}
-                      </p>
-                      <div className="mb-3">
-                        <div className="text-3xl font-bold text-gray-900">
-                          {formatPrice(
-                            billingCycle === "session"
-                              ? plan.sessionPrice
-                              : plan.termPrice
-                          )}
-                        </div>
-                        <div className="text-gray-600 text-sm">
-                          per {billingCycle} • {plan.userLimit}
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handlePlanSelect(plan.name)}
-                        className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${plan.buttonColor} text-white`}
-                      >
-                        {selectedPlan === plan.name
-                          ? "Selected"
-                          : "Select Plan"}
-                      </button>
-                    </div>
-
-                    <div className="space-y-2 text-sm">
-                      <h4 className="font-semibold text-gray-900 flex items-center gap-1">
-                        <Check className="w-3 h-3 text-green-500" />
-                        Key Features:
-                      </h4>
-                      {plan.features.slice(0, 4).map((feature, idx) => (
-                        <div key={idx} className="flex items-start gap-2">
-                          <Check className="w-3 h-3 text-green-500 mt-0.5 flex-shrink-0" />
-                          <span className="text-gray-700 text-xs">
-                            {feature}
-                          </span>
-                        </div>
-                      ))}
-                      {plan.features.length > 4 && (
-                        <div className="text-xs text-gray-500 italic">
-                          +{plan.features.length - 4} more features
+                {plans.map((plan) => {
+                  const isExpanded = expandedPlan === plan.name;
+                  return (
+                    <div
+                      key={plan.name}
+                      className={`relative rounded-xl border-2 p-6 hover:shadow-lg transition-all duration-300 ${
+                        plan.color
+                      } ${
+                        plan.popular ? "scale-105 ring-2 ring-green-500" : ""
+                      }`}
+                    >
+                      {plan.popular && (
+                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                          <div className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+                            <Star className="w-3 h-3" /> Most Popular
+                          </div>
                         </div>
                       )}
+                      <div className="text-center mb-4">
+                        <h3 className="text-xl font-bold text-gray-900 mb-1">
+                          {plan.name}
+                        </h3>
+                        <p className="text-gray-600 text-sm mb-3">
+                          {plan.subtitle}
+                        </p>
+                        <div className="mb-2">
+                          <div className="text-3xl font-bold text-gray-900">
+                            {formatPrice(
+                              billingCycle === "session"
+                                ? plan.sessionPrice
+                                : plan.termPrice
+                            )}
+                          </div>
+                          <div className="text-gray-600 text-sm">
+                            per {billingCycle} • {plan.userLimit}
+                          </div>
+                          {billingCycle === "session" && (
+                            <div className="text-emerald-600 text-xs font-medium mt-1">
+                              Save 10% compared to paying per term
+                            </div>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => handlePlanSelect(plan.name)}
+                          className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${plan.buttonColor} text-white`}
+                        >
+                          {selectedPlan === plan.name
+                            ? "Selected"
+                            : "Select Plan"}
+                        </button>
+                        <button
+                          onClick={() =>
+                            setExpandedPlan(isExpanded ? null : plan.name)
+                          }
+                          className="text-blue-600 text-xs mt-2 hover:underline"
+                        >
+                          {isExpanded
+                            ? "Hide full plan details"
+                            : "View all features"}
+                        </button>
+                      </div>
+
+                      <div className="space-y-2 text-sm">
+                        <h4 className="font-semibold text-gray-900 flex items-center gap-1">
+                          <Check className="w-3 h-3 text-green-500" /> Key
+                          Features:
+                        </h4>
+                        {(isExpanded
+                          ? plan.features
+                          : plan.features.slice(0, 4)
+                        ).map((feature, idx) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            <Check className="w-3 h-3 text-green-500 mt-0.5 flex-shrink-0" />
+                            <span className="text-gray-700 text-xs">
+                              {feature}
+                            </span>
+                          </div>
+                        ))}
+                        {!isExpanded && plan.features.length > 4 && (
+                          <div className="text-xs text-gray-500 italic">
+                            +{plan.features.length - 4} more features
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Feature Comparison */}
@@ -363,7 +385,7 @@ const PricingModalOverlay = ({ isOpen, onClose }) => {
           </div>
 
           {/* Footer */}
-          <div className="border-t bg-gray-50 p-6">
+          <div className="border-t bg-gray-50 p-4">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-center sm:text-left">
                 <p className="text-gray-600 text-sm">
