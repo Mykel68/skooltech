@@ -8,6 +8,7 @@ import {
 	UserPlus,
 	UserCheck,
 	Shield,
+	BookOpen,
 } from 'lucide-react';
 
 export const navItems = [
@@ -35,7 +36,7 @@ export const navItems = [
 	{
 		name: 'Subjects',
 		href: '/subjects',
-		icon: FileText,
+		icon: BookOpen,
 	},
 	{
 		name: 'Sessions',
