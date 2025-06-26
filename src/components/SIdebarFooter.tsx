@@ -50,7 +50,7 @@ export function AnimatedUpgradeFooter({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 1 }}
             className="p-4 space-y-4"
           >
             {/* Usage Stats */}

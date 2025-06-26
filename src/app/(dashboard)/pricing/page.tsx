@@ -53,10 +53,9 @@ const PricingModalOverlay = ({ isOpen, onClose }) => {
       popular: false,
       features: [
         "Student Registration & Profiles",
-        "Fee Payment Management",
         "Basic Attendance Tracking",
         "Simple Report Generation",
-        "Parent SMS Notifications",
+        // "Parent SMS Notifications",
         "Basic Academic Records",
         "Email Support",
         "Single Campus Support",
@@ -65,7 +64,7 @@ const PricingModalOverlay = ({ isOpen, onClose }) => {
         "No Advanced Analytics",
         "No Exam Management",
         "No Bulk SMS",
-        "No API Access",
+        // "No API Access",
       ],
     },
     {
@@ -79,6 +78,7 @@ const PricingModalOverlay = ({ isOpen, onClose }) => {
       popular: true,
       features: [
         "Everything in Starter",
+        "Fee Payment Management",
         "Advanced Exam Management",
         "Comprehensive Result Processing",
         "Attendance Analytics",
