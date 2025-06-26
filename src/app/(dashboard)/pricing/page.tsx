@@ -78,6 +78,7 @@ const PricingModalOverlay = ({ isOpen, onClose }) => {
       popular: true,
       features: [
         "Everything in Starter",
+        "Export School's Data",
         "Fee Payment Management",
         "Advanced Exam Management",
         "Comprehensive Result Processing",
