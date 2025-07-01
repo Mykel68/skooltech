@@ -4,10 +4,16 @@ import React, { useState, useEffect } from "react";
 import { X, Check, Star, Users, Shield, BarChart3, Crown } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const PricingModalOverlay = ({ isOpen, onClose }) => {
+const PricingModalOverlay = ({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
   const [billingCycle, setBillingCycle] = useState("session");
-  const [selectedPlan, setSelectedPlan] = useState(null);
-  const [expandedPlan, setExpandedPlan] = useState(null);
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -24,7 +30,7 @@ const PricingModalOverlay = ({ isOpen, onClose }) => {
 
   // Handle ESC key press
   useEffect(() => {
-    const handleEscape = (e) => {
+    const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         onClose();
       }
@@ -148,7 +154,7 @@ const PricingModalOverlay = ({ isOpen, onClose }) => {
     },
   ];
 
-  const formatPrice = (price) => {
+  const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-NG", {
       style: "currency",
       currency: "NGN",
@@ -157,7 +163,7 @@ const PricingModalOverlay = ({ isOpen, onClose }) => {
     }).format(price);
   };
 
-  const handlePlanSelect = (planName) => {
+  const handlePlanSelect = (planName: string) => {
     setSelectedPlan(planName);
     // Here you would typically handle the plan selection logic
     console.log(`Selected plan: ${planName}`);

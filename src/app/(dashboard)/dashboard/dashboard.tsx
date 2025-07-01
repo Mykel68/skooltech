@@ -32,18 +32,6 @@ export default function AdminDashboardPage() {
   const sessionId = useUserStore((s) => s.session_id);
   const termId = useUserStore((s) => s.term_id);
 
-  // Mock data - replace with actual API calls
-  //   const dashboardStats = {
-  //     totalStudents: 1247,
-  //     totalTeachers: 85,
-  //     totalClasses: 42,
-  //     totalRevenue: 2340000,
-  //     studentGrowth: 12.5,
-  //     teacherGrowth: 8.3,
-  //     classGrowth: 5.2,
-  //     revenueGrowth: 15.7,
-  //   };
-
   interface DashboardStats {
     totalStudents: number;
     totalTeachers: number;
@@ -282,9 +270,31 @@ export default function AdminDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Revenue</p>
-                <p className="text-3xl font-bold text-gray-900">
-                  ₦{(dashboardStats?.totalRevenue / 1000000).toFixed(1)}M
-                </p>
+                {dashboardStats ? (
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Revenue</p>
+                    <p className="text-3xl font-bold text-gray-900">
+                      ₦{(dashboardStats.totalRevenue / 1_000_000).toFixed(1)}M
+                    </p>
+                    <div className="flex items-center mt-2">
+                      <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
+                      <span className="text-sm text-green-600">
+                        +{dashboardStats.revenueGrowth}%
+                      </span>
+                      <span className="text-sm text-gray-500 ml-1">
+                        from last term
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Revenue</p>
+                    <p className="text-3xl font-bold text-gray-900">
+                      Loading...
+                    </p>
+                  </div>
+                )}
+
                 <div className="flex items-center mt-2">
                   <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
                   <span className="text-sm text-green-600">
