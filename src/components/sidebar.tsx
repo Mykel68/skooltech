@@ -10,9 +10,8 @@ import { useSidebar } from "./sidebar-provider";
 import { useUserStore } from "@/stores/userStore";
 import { footerItems, navItems } from "@/constants/sidebar";
 import { restoreUserFromCookie } from "@/utils/restoreAuth";
-import axios from "axios";
-import { logout } from "@/utils/logout";
 import { AnimatedUpgradeFooter } from "./SIdebarFooter";
+import { usePlanStore } from "@/stores/planStore";
 
 export function Sidebar() {
   const router = useRouter();
@@ -24,10 +23,10 @@ export function Sidebar() {
   const schoolName = useUserStore((s) => s.schoolName);
 
   // Add these to your user store or get from your user data
-  const currentPlan = useUserStore((s) => s.currentPlan) || "Free Trial";
-  const studentCount = useUserStore((s) => s.studentCount) || 0;
-  const studentLimit = useUserStore((s) => s.studentLimit) || 50; // Free trial limit
-  const trialDaysLeft = useUserStore((s) => s.trialDaysLeft) || 14;
+  const currentPlan = usePlanStore((p) => p.currentPlan) || "Free Trial";
+  const studentCount = usePlanStore((p) => p.studentCount) || 0;
+  const studentLimit = usePlanStore((p) => p.studentLimit) || 50; // Free trial limit
+  const trialDaysLeft = usePlanStore((p) => p.trialDaysLeft) || 14;
 
   const [ready, setReady] = useState(false);
 
@@ -115,11 +114,11 @@ export function Sidebar() {
                 >
                   <item.icon className="h-5 w-5" />
                   <span>{item.name}</span>
-                  {item.badge && (
+                  {/* {item.badge && (
                     <span className="ml-auto inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
                       {item.badge}
                     </span>
-                  )}
+                  )} */}
                 </Link>
               );
             })}
