@@ -1,6 +1,10 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const NotFoundPage = () => {
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4">
       <div className="max-w-lg w-full text-center">
@@ -65,7 +69,7 @@ const NotFoundPage = () => {
           {/* Navigation Options */}
           <div className="space-y-3">
             <button
-              onClick={() => (window.location.href = "/")}
+              onClick={() => router.push("/dashboard")}
               className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2"
             >
               <svg
@@ -85,7 +89,7 @@ const NotFoundPage = () => {
             </button>
 
             <button
-              onClick={() => window.history.back()}
+              onClick={() => router.back()}
               className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2"
             >
               <svg

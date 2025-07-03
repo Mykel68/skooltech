@@ -32,7 +32,7 @@ const LoadingPage = () => {
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-gray-800">Loading...</h2>
           <p className="text-gray-600 max-w-md mx-auto">
-            Please wait while we prepare your educational dashboard
+            Please wait while we prepare your school's dashboard
           </p>
 
           {/* Animated Progress Bar */}

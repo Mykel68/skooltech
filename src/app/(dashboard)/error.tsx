@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const ErrorPage = ({ error, reset }: { error: Error; reset: () => void }) => {
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-orange-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full text-center">
@@ -53,7 +55,7 @@ const ErrorPage = ({ error, reset }: { error: Error; reset: () => void }) => {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
-              onClick={reset}
+              onClick={() => router.refresh()}
               className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2"
             >
               <svg
@@ -73,7 +75,7 @@ const ErrorPage = ({ error, reset }: { error: Error; reset: () => void }) => {
             </button>
 
             <button
-              onClick={() => (window.location.href = "/")}
+              onClick={() => router.push("/")}
               className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2"
             >
               <svg
