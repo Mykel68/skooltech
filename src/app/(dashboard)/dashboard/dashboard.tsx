@@ -269,40 +269,20 @@ export default function AdminDashboardPage() {
           <div className="bg-white p-6 rounded-lg shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Revenue</p>
-                {dashboardStats ? (
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Revenue</p>
-                    <p className="text-3xl font-bold text-gray-900">
-                      ₦{(dashboardStats.totalRevenue / 1_000_000).toFixed(1)}M
-                    </p>
-                    <div className="flex items-center mt-2">
-                      <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-                      <span className="text-sm text-green-600">
-                        +{dashboardStats.revenueGrowth}%
-                      </span>
-                      <span className="text-sm text-gray-500 ml-1">
-                        from last term
-                      </span>
-                    </div>
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Revenue</p>
+                  <p className="text-3xl font-bold text-gray-900">
+                    ₦{(dashboardStats?.totalRevenue! / 1_000_000).toFixed(1)}M
+                  </p>
+                  <div className="flex items-center mt-2">
+                    <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
+                    <span className="text-sm text-green-600">
+                      +{dashboardStats?.revenueGrowth}%
+                    </span>
+                    <span className="text-sm text-gray-500 ml-1">
+                      from last term
+                    </span>
                   </div>
-                ) : (
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Revenue</p>
-                    <p className="text-3xl font-bold text-gray-900">
-                      Loading...
-                    </p>
-                  </div>
-                )}
-
-                <div className="flex items-center mt-2">
-                  <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-                  <span className="text-sm text-green-600">
-                    +{dashboardStats?.revenueGrowth}%
-                  </span>
-                  <span className="text-sm text-gray-500 ml-1">
-                    from last term
-                  </span>
                 </div>
               </div>
               <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
