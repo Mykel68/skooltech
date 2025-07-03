@@ -17,29 +17,20 @@ import {
 } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useUserStore } from "@/stores/userStore";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { toast } from "sonner";
 import CreateItemDialog from "./CreateItemDialog";
 import { useRouter } from "next/navigation";
-
-interface Session {
-  session_id: string;
-  name: string;
-  start_date: string;
-  end_date: string;
-  is_active: boolean;
-  terms_count?: number;
-  students_count?: number;
-  terms?: Term[];
-}
-
-interface Term {
-  term_id: string;
-  name: string;
-  start_date: string;
-  end_date: string;
-  is_active: boolean;
-}
+import {
+  Session,
+  Term,
+  SessionFormData,
+  TermFormData,
+  SessionCardProps,
+  SessionListProps,
+  TermsViewProps,
+  ViewType,
+} from "./types";
 
 // Utility function to format dates
 const formatDate = (dateString: string): string => {
@@ -51,20 +42,13 @@ const formatDate = (dateString: string): string => {
   });
 };
 
-type SessionCardProps = {
-  session: Session;
-  onEditClick: (session: Session) => void;
-  toggleActive: (session: Session) => void;
-  onViewDetails: (session: Session) => void;
-};
-
 const SessionCard: React.FC<SessionCardProps> = ({
   session,
   onEditClick,
   toggleActive,
   onViewDetails,
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
 
   return (
     <div
@@ -132,13 +116,13 @@ const SessionCard: React.FC<SessionCardProps> = ({
               <div className="flex items-center gap-2 text-sm">
                 <BookOpen className="w-4 h-4 text-blue-500" />
                 <span className="text-slate-700">
-                  {session.terms_count} Terms
+                  {session.terms_count || 0} Terms
                 </span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Users className="w-4 h-4 text-purple-500" />
                 <span className="text-slate-700">
-                  {session.students_count} Students
+                  {session.students_count || 0} Students
                 </span>
               </div>
             </div>
@@ -154,7 +138,7 @@ const SessionCard: React.FC<SessionCardProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 toggleActive(session);
               }}
@@ -178,7 +162,7 @@ const SessionCard: React.FC<SessionCardProps> = ({
             </button>
 
             <button
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 onEditClick(session);
               }}
@@ -194,18 +178,12 @@ const SessionCard: React.FC<SessionCardProps> = ({
   );
 };
 
-const SessionList = ({
+const SessionList: React.FC<SessionListProps> = ({
   sessions,
   isLoading,
   onEditClick,
   toggleActive,
   onViewDetails,
-}: {
-  sessions: Session[];
-  isLoading: boolean;
-  onEditClick: (session: Session) => void;
-  toggleActive: (session: Session) => void;
-  onViewDetails: (session: Session) => void;
 }) => {
   if (isLoading) {
     return (
@@ -250,22 +228,23 @@ const SessionList = ({
   );
 };
 
-const TermsView = ({
-  session,
-  onBack,
-}: {
-  session: Session;
-  onBack: () => void;
-}) => {
+const TermsView: React.FC<TermsViewProps> = ({ session, onBack }) => {
   const router = useRouter();
-  const [openCreateTermDialog, setOpenCreateTermDialog] = useState(false);
-  const [editingTerm, setEditingTerm] = useState(null);
+  const [openCreateTermDialog, setOpenCreateTermDialog] =
+    useState<boolean>(false);
+  const [editingTerm, setEditingTerm] = useState<Term | null>(null);
   const queryClient = useQueryClient();
   const schoolId = useUserStore((s) => s.schoolId);
-  const [terms, setTerms] = useState(session.terms || []);
+  const [terms, setTerms] = useState<Term[]>(session.terms || []);
 
   const updateTermMutation = useMutation({
-    mutationFn: async ({ termId, data }: { termId: string; data: Term }) => {
+    mutationFn: async ({
+      termId,
+      data,
+    }: {
+      termId: string;
+      data: Partial<Term>;
+    }) => {
       return axios.patch(
         `/api/term/update/${schoolId}/${session.session_id}/${termId}`,
         data
@@ -281,7 +260,7 @@ const TermsView = ({
   });
 
   const createTermMutation = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (data: TermFormData) => {
       return axios.post(
         `/api/term/create-new/${schoolId}/${session.session_id}`,
         data
@@ -296,11 +275,11 @@ const TermsView = ({
     onError: () => toast.error("Failed to create term"),
   });
 
-  const handleCreateTerm = (formData: Term) => {
+  const handleCreateTerm = (formData: TermFormData) => {
     if (editingTerm) {
       updateTermMutation.mutate(
         {
-          termId: editingTerm?.term_id!,
+          termId: editingTerm.term_id,
           data: formData,
         },
         {
@@ -308,7 +287,7 @@ const TermsView = ({
             toast.success("Term updated");
             setTerms((prev) =>
               prev.map((t) =>
-                t.term_id === editingTerm?.term_id! ? { ...t, ...formData } : t
+                t.term_id === editingTerm.term_id ? { ...t, ...formData } : t
               )
             );
             setEditingTerm(null);
@@ -319,9 +298,9 @@ const TermsView = ({
       );
     } else {
       createTermMutation.mutate(formData, {
-        onSuccess: (res) => {
+        onSuccess: (res: AxiosResponse) => {
           toast.success("Term created");
-          const newTerm = res.data; // or manually assign a temp ID if not returned
+          const newTerm = res.data;
           setTerms((prev) => [...prev, newTerm]);
           setOpenCreateTermDialog(false);
         },
@@ -474,7 +453,7 @@ const TermsView = ({
 
         <CreateItemDialog
           open={openCreateTermDialog}
-          setOpen={(val) => {
+          setOpen={(val: boolean) => {
             if (!val) setEditingTerm(null);
             setOpenCreateTermDialog(val);
           }}
@@ -490,11 +469,9 @@ const TermsView = ({
 };
 
 export default function SessionManagementUI() {
-  const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  const [openCreateDialog, setOpenCreateDialog] = useState<boolean>(false);
   const [editingSession, setEditingSession] = useState<Session | null>(null);
-  const [currentView, setCurrentView] = useState<"sessions" | "terms">(
-    "sessions"
-  );
+  const [currentView, setCurrentView] = useState<ViewType>("sessions");
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
 
   const queryClient = useQueryClient();
@@ -502,7 +479,7 @@ export default function SessionManagementUI() {
 
   const { data: sessions = [], isLoading } = useQuery({
     queryKey: ["sessions", schoolId],
-    queryFn: async () => {
+    queryFn: async (): Promise<Session[]> => {
       const res = await axios.get(`/api/session/get-all-session/${schoolId}`);
       return res.data.data.sessions;
     },
@@ -510,7 +487,7 @@ export default function SessionManagementUI() {
   });
 
   const createMutation = useMutation({
-    mutationFn: async (formData: Omit<Session, "session_id" | "is_active">) => {
+    mutationFn: async (formData: SessionFormData) => {
       const res = await axios.post(
         `/api/session/create-new/${schoolId}`,
         formData
@@ -545,18 +522,22 @@ export default function SessionManagementUI() {
     onError: () => toast.error("Failed to update session"),
   });
 
-  const toggleActive = (session: Session) => {
-    if (!schoolId) return toast.error("School ID missing");
+  const toggleActive = (session: Session): void => {
+    if (!schoolId) {
+      toast.error("School ID missing");
+      return;
+    }
     updateMutation.mutate({
       session_id: session.session_id,
       data: { is_active: !session.is_active },
     });
   };
 
-  const handleCreateSession = (
-    formData: Omit<Session, "session_id" | "is_active">
-  ) => {
-    if (!schoolId) return toast.error("School ID missing");
+  const handleCreateSession = (formData: SessionFormData): void => {
+    if (!schoolId) {
+      toast.error("School ID missing");
+      return;
+    }
 
     if (editingSession) {
       updateMutation.mutate({
@@ -570,17 +551,17 @@ export default function SessionManagementUI() {
     }
   };
 
-  const handleEditClick = (session: Session) => {
+  const handleEditClick = (session: Session): void => {
     setEditingSession(session);
     setOpenCreateDialog(true);
   };
 
-  const onViewDetails = (session: Session) => {
+  const onViewDetails = (session: Session): void => {
     setSelectedSession(session);
     setCurrentView("terms");
   };
 
-  const handleBackToSessions = () => {
+  const handleBackToSessions = (): void => {
     setCurrentView("sessions");
     setSelectedSession(null);
   };
@@ -622,7 +603,7 @@ export default function SessionManagementUI() {
 
         <CreateItemDialog
           open={openCreateDialog}
-          setOpen={(val) => {
+          setOpen={(val: boolean) => {
             if (!val) setEditingSession(null);
             setOpenCreateDialog(val);
           }}
