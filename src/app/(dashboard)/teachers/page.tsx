@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { TeacherRow } from "./TeacherRow";
 import { DeleteTeacherDialog } from "./dialogs/DeleteTeacherDialog";
 import { CreateTeacherDialog } from "./ClassTeacherDialog";
+import Loading from "@/components/Loading";
 
 export type Teacher = {
   user_id: string;
@@ -125,12 +126,10 @@ export default function TeacherTable() {
     }
   };
 
-  // if (isLoading)
-  // 	return <div className='p-4 text-muted-foreground'>Loading…</div>;
-  // if (error)
-  // 	return (
-  // 		<div className='p-4 text-destructive'>Error: {error.message}</div>
-  // 	);
+  if (isLoading)
+    return <Loading message="Fetching teachers from your school " />;
+  if (error)
+    return <div className="p-4 text-destructive">Error: {error.message}</div>;
   if (!teachers?.length)
     return <div className="p-4 text-muted-foreground">No teachers found.</div>;
 
