@@ -127,7 +127,7 @@ export default function TeacherTable() {
   };
 
   if (isLoading)
-    return <Loading message="Fetching teachers from your school " />;
+    return <Loading message="Fetching teachers from your school " overlay />;
   if (error)
     return <div className="p-4 text-destructive">Error: {error.message}</div>;
   if (!teachers?.length)
