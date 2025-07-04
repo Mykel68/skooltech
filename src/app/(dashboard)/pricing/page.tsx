@@ -62,8 +62,8 @@ const PricingModalOverlay = ({
       name: "Reports Only",
       subtitle: "Basic reporting for small schools",
       pricePerStudent: {
-        session: 80, // NGN per student per session
-        term: 30, // NGN per student per term
+        session: 3000,
+        term: 1000,
       },
       minStudents: 1,
       maxStudents: 200,
@@ -72,6 +72,7 @@ const PricingModalOverlay = ({
       popular: false,
       features: [
         "Student Registration & Profiles",
+        "Teacher Registration & Profiles",
         "Basic Attendance Tracking",
         "Simple Report Generation",
         "Academic Records Reports",
@@ -90,8 +91,8 @@ const PricingModalOverlay = ({
       name: "Reports + Payment",
       subtitle: "Reports with payment management",
       pricePerStudent: {
-        session: 150,
-        term: 55,
+        session: 4800,
+        term: 1600,
       },
       minStudents: 1,
       maxStudents: 500,
@@ -120,8 +121,8 @@ const PricingModalOverlay = ({
       name: "Complete School",
       subtitle: "Full school management system",
       pricePerStudent: {
-        session: 250,
-        term: 90,
+        session: 6000,
+        term: 2000,
       },
       minStudents: 1,
       maxStudents: 1000,
@@ -149,8 +150,8 @@ const PricingModalOverlay = ({
       name: "Enterprise",
       subtitle: "Advanced features for large institutions",
       pricePerStudent: {
-        session: 400,
-        term: 150,
+        session: 9000,
+        term: 3000,
       },
       minStudents: 100,
       maxStudents: 5000,
