@@ -1,7 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Check, Star, Users, Shield, BarChart3, Crown } from "lucide-react";
+import {
+  X,
+  Check,
+  Star,
+  Users,
+  Shield,
+  BarChart3,
+  Crown,
+  Calculator,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const PricingModalOverlay = ({
@@ -13,6 +22,7 @@ const PricingModalOverlay = ({
 }) => {
   const [billingCycle, setBillingCycle] = useState("session");
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [studentCount, setStudentCount] = useState(50);
   const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
 
   // Prevent body scroll when modal is open
@@ -49,11 +59,14 @@ const PricingModalOverlay = ({
 
   const plans = [
     {
-      name: "Starter",
-      subtitle: "Perfect for small schools",
-      userLimit: "Up to 100 students",
-      sessionPrice: 150000,
-      termPrice: 55500,
+      name: "Reports Only",
+      subtitle: "Basic reporting for small schools",
+      pricePerStudent: {
+        session: 80, // NGN per student per session
+        term: 30, // NGN per student per term
+      },
+      minStudents: 1,
+      maxStudents: 200,
       color: "border-blue-200 bg-blue-50",
       buttonColor: "bg-blue-600 hover:bg-blue-700",
       popular: false,
@@ -61,56 +74,91 @@ const PricingModalOverlay = ({
         "Student Registration & Profiles",
         "Basic Attendance Tracking",
         "Simple Report Generation",
-        // "Parent SMS Notifications",
-        "Basic Academic Records",
+        "Academic Records Reports",
+        "Export to PDF/Excel",
         "Email Support",
         "Single Campus Support",
       ],
       limitations: [
+        "No Payment Processing",
+        "No SMS Notifications",
         "No Advanced Analytics",
         "No Exam Management",
-        "No Bulk SMS",
-        // "No API Access",
       ],
     },
     {
-      name: "Professional",
-      subtitle: "Most popular for growing schools",
-      userLimit: "Up to 500 students",
-      sessionPrice: 251000,
-      termPrice: 93000,
+      name: "Reports + Payment",
+      subtitle: "Reports with payment management",
+      pricePerStudent: {
+        session: 150,
+        term: 55,
+      },
+      minStudents: 1,
+      maxStudents: 500,
       color: "border-green-200 bg-green-50",
       buttonColor: "bg-green-600 hover:bg-green-700",
       popular: true,
       features: [
-        "Everything in Starter",
-        "Export School's Data",
+        "Everything in Reports Only",
         "Fee Payment Management",
-        "Advanced Exam Management",
-        "Comprehensive Result Processing",
-        "Attendance Analytics",
-        "Bulk SMS & Email",
-        "Parent Portal Access",
-        "Staff Management System",
-        "Financial Reports & Analytics",
-        "Multi-class Timetabling",
-        "Assignment Management",
-        "Priority Email Support",
-        "Phone Support (Business Hours)",
+        "Payment Tracking & Reports",
+        "Outstanding Fees Alerts",
+        "Receipt Generation",
+        "Payment History",
+        "Financial Reports",
+        "Parent Payment Portal",
+        "Multiple Payment Methods",
+        "Automated Payment Reminders",
       ],
-      limitations: ["Limited API Calls", "No White-label Options"],
+      limitations: [
+        "No Advanced Exam Management",
+        "No Bulk SMS",
+        "Limited Analytics",
+      ],
     },
     {
-      name: "Enterprise",
-      subtitle: "For large schools & school groups",
-      userLimit: "Up to 2000 students",
-      sessionPrice: 401000,
-      termPrice: 148500,
+      name: "Complete School",
+      subtitle: "Full school management system",
+      pricePerStudent: {
+        session: 250,
+        term: 90,
+      },
+      minStudents: 1,
+      maxStudents: 1000,
       color: "border-purple-200 bg-purple-50",
       buttonColor: "bg-purple-600 hover:bg-purple-700",
       popular: false,
       features: [
-        "Everything in Professional",
+        "Everything in Reports + Payment",
+        "Advanced Exam Management",
+        "Comprehensive Result Processing",
+        "Bulk SMS & Email",
+        "Staff Management System",
+        "Multi-class Timetabling",
+        "Assignment Management",
+        "Parent Portal Access",
+        "Attendance Analytics",
+        "Student Behavior Tracking",
+        "Library Management",
+        "Inventory Management",
+        "Priority Support",
+      ],
+      limitations: ["No Multi-campus Support", "No API Access"],
+    },
+    {
+      name: "Enterprise",
+      subtitle: "Advanced features for large institutions",
+      pricePerStudent: {
+        session: 400,
+        term: 150,
+      },
+      minStudents: 100,
+      maxStudents: 5000,
+      color: "border-orange-200 bg-orange-50",
+      buttonColor: "bg-orange-600 hover:bg-orange-700",
+      popular: false,
+      features: [
+        "Everything in Complete School",
         "Multi-campus Management",
         "Advanced Analytics Dashboard",
         "Custom Report Builder",
@@ -120,35 +168,10 @@ const PricingModalOverlay = ({
         "Automated Backup & Recovery",
         "Custom Workflows",
         "Integration with Banks",
+        "Biometric Integration",
         "24/7 Priority Support",
         "Dedicated Account Manager",
         "On-site Training Available",
-      ],
-      limitations: [],
-    },
-    {
-      name: "Premium",
-      subtitle: "Unlimited scale for large institutions",
-      userLimit: "Unlimited students",
-      sessionPrice: 599000,
-      termPrice: 222000,
-      color: "border-orange-200 bg-orange-50",
-      buttonColor: "bg-orange-600 hover:bg-orange-700",
-      popular: false,
-      features: [
-        "Everything in Enterprise",
-        "Unlimited Students & Staff",
-        "Advanced AI Analytics",
-        "Custom Mobile App",
-        "Advanced Biometric Integration",
-        "Custom Module Development",
-        "Advanced Payment Gateway",
-        "Multi-language Support",
-        "Advanced Security & Compliance",
-        "Dedicated Server Options",
-        "24/7 Technical Support",
-        "Quarterly Business Reviews",
-        "Custom Training Programs",
       ],
       limitations: [],
     },
@@ -163,12 +186,49 @@ const PricingModalOverlay = ({
     }).format(price);
   };
 
+  const calculateTotalPrice = (plan: any) => {
+    const pricePerStudent =
+      billingCycle === "session"
+        ? plan.pricePerStudent.session
+        : plan.pricePerStudent.term;
+
+    const effectiveStudentCount = Math.max(
+      Math.min(studentCount, plan.maxStudents),
+      plan.minStudents
+    );
+
+    return pricePerStudent * effectiveStudentCount;
+  };
+
+  const getValidPlansForStudentCount = () => {
+    return plans.filter(
+      (plan) =>
+        studentCount >= plan.minStudents && studentCount <= plan.maxStudents
+    );
+  };
+
   const handlePlanSelect = (planName: string) => {
     setSelectedPlan(planName);
-    // Here you would typically handle the plan selection logic
-    console.log(`Selected plan: ${planName}`);
-    // You might want to redirect to payment or show a confirmation
+    console.log(`Selected plan: ${planName} for ${studentCount} students`);
   };
+
+  const handleStudentCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const count = parseInt(e.target.value) || 0;
+    setStudentCount(Math.max(1, count));
+    // Reset selected plan if it's no longer valid
+    if (selectedPlan) {
+      const selectedPlanData = plans.find((p) => p.name === selectedPlan);
+      if (
+        selectedPlanData &&
+        (count < selectedPlanData.minStudents ||
+          count > selectedPlanData.maxStudents)
+      ) {
+        setSelectedPlan(null);
+      }
+    }
+  };
+
+  const validPlans = getValidPlansForStudentCount();
 
   return (
     <div
@@ -191,10 +251,10 @@ const PricingModalOverlay = ({
           <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-600 to-purple-600 text-white">
             <div>
               <h1 className="text-xl font-bold">
-                Upgrade Your School Management
+                Choose Your School Management Plan
               </h1>
               <p className="text-blue-100 mt-1">
-                Choose the perfect plan for your institution
+                Pay only for the students you need
               </p>
             </div>
             <button
@@ -230,6 +290,33 @@ const PricingModalOverlay = ({
                 </div>
               </div>
 
+              {/* Student Count Input */}
+              <div className="bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-6 mb-8">
+                <div className="flex items-center justify-center gap-6">
+                  <div className="flex items-center gap-3">
+                    <Calculator className="w-6 h-6 text-blue-600" />
+                    <label className="text-lg font-semibold text-gray-900">
+                      Number of Students:
+                    </label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      value={studentCount}
+                      onChange={handleStudentCountChange}
+                      min="1"
+                      max="5000"
+                      className="w-24 p-2 border border-gray-300 rounded-lg text-center font-bold text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <span className="text-gray-600">students</span>
+                  </div>
+                </div>
+                <p className="text-center text-gray-600 text-sm mt-2">
+                  Pricing is calculated per student. Enter your current or
+                  expected student count.
+                </p>
+              </div>
+
               {/* Billing Toggle */}
               <div className="flex items-center justify-center mb-8">
                 <div className="bg-gray-100 rounded-lg p-1 shadow-sm">
@@ -260,13 +347,24 @@ const PricingModalOverlay = ({
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {plans.map((plan) => {
                   const isExpanded = expandedPlan === plan.name;
+                  const isPlanValid = validPlans.includes(plan);
+                  const totalPrice = calculateTotalPrice(plan);
+                  const pricePerStudent =
+                    billingCycle === "session"
+                      ? plan.pricePerStudent.session
+                      : plan.pricePerStudent.term;
+
                   return (
                     <div
                       key={plan.name}
-                      className={`relative rounded-xl border-2 p-6 hover:shadow-lg transition-all duration-300 ${
+                      className={`relative rounded-xl border-2 p-6 transition-all duration-300 ${
                         plan.color
                       } ${
                         plan.popular ? "scale-105 ring-2 ring-green-500" : ""
+                      } ${
+                        !isPlanValid
+                          ? "opacity-50 pointer-events-none"
+                          : "hover:shadow-lg"
                       }`}
                     >
                       {plan.popular && (
@@ -276,6 +374,15 @@ const PricingModalOverlay = ({
                           </div>
                         </div>
                       )}
+
+                      {!isPlanValid && (
+                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                          <div className="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                            Not Available
+                          </div>
+                        </div>
+                      )}
+
                       <div className="text-center mb-4">
                         <h3 className="text-xl font-bold text-gray-900 mb-1">
                           {plan.name}
@@ -285,29 +392,37 @@ const PricingModalOverlay = ({
                         </p>
                         <div className="mb-2">
                           <div className="text-3xl font-bold text-gray-900">
-                            {formatPrice(
-                              billingCycle === "session"
-                                ? plan.sessionPrice
-                                : plan.termPrice
-                            )}
+                            {formatPrice(totalPrice)}
                           </div>
                           <div className="text-gray-600 text-sm">
-                            per {billingCycle} • {plan.userLimit}
+                            for {studentCount} students per {billingCycle}
+                          </div>
+                          <div className="text-gray-500 text-xs mt-1">
+                            {formatPrice(pricePerStudent)} per student
                           </div>
                           {billingCycle === "session" && (
                             <div className="text-emerald-600 text-xs font-medium mt-1">
-                              Save 10% compared to paying per term
+                              Save 15% compared to per term
                             </div>
                           )}
                         </div>
-                        <button
-                          onClick={() => handlePlanSelect(plan.name)}
-                          className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${plan.buttonColor} text-white`}
-                        >
-                          {selectedPlan === plan.name
-                            ? "Selected"
-                            : "Select Plan"}
-                        </button>
+
+                        <div className="text-xs text-gray-500 mb-3">
+                          Valid for {plan.minStudents}-{plan.maxStudents}{" "}
+                          students
+                        </div>
+
+                        {isPlanValid && (
+                          <button
+                            onClick={() => handlePlanSelect(plan.name)}
+                            className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${plan.buttonColor} text-white`}
+                          >
+                            {selectedPlan === plan.name
+                              ? "Selected"
+                              : "Select Plan"}
+                          </button>
+                        )}
+
                         <button
                           onClick={() =>
                             setExpandedPlan(isExpanded ? null : plan.name)
@@ -322,8 +437,7 @@ const PricingModalOverlay = ({
 
                       <div className="space-y-2 text-sm">
                         <h4 className="font-semibold text-gray-900 flex items-center gap-1">
-                          <Check className="w-3 h-3 text-green-500" /> Key
-                          Features:
+                          <Check className="w-3 h-3 text-green-500" /> Features:
                         </h4>
                         {(isExpanded
                           ? plan.features
@@ -350,7 +464,7 @@ const PricingModalOverlay = ({
               {/* Feature Comparison */}
               <div className="bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
-                  Why Upgrade from Free Trial?
+                  Why Choose Our School Management System?
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="text-center">
@@ -358,10 +472,10 @@ const PricingModalOverlay = ({
                       <Users className="w-6 h-6 text-blue-600" />
                     </div>
                     <h4 className="font-semibold text-gray-900 mb-2">
-                      Unlimited Students
+                      Pay Per Student
                     </h4>
                     <p className="text-gray-600 text-sm">
-                      Scale beyond the 50 student trial limit
+                      Only pay for the students you actually have
                     </p>
                   </div>
                   <div className="text-center">
@@ -369,10 +483,10 @@ const PricingModalOverlay = ({
                       <BarChart3 className="w-6 h-6 text-green-600" />
                     </div>
                     <h4 className="font-semibold text-gray-900 mb-2">
-                      Advanced Analytics
+                      Scalable Features
                     </h4>
                     <p className="text-gray-600 text-sm">
-                      Deep insights into school performance
+                      Choose features that match your school's needs
                     </p>
                   </div>
                   <div className="text-center">
@@ -380,7 +494,7 @@ const PricingModalOverlay = ({
                       <Shield className="w-6 h-6 text-purple-600" />
                     </div>
                     <h4 className="font-semibold text-gray-900 mb-2">
-                      Priority Support
+                      Reliable Support
                     </h4>
                     <p className="text-gray-600 text-sm">
                       Get help when you need it most
@@ -412,8 +526,16 @@ const PricingModalOverlay = ({
                 <button
                   onClick={() => {
                     if (selectedPlan) {
-                      // Handle upgrade process
-                      console.log("Proceeding with upgrade:", selectedPlan);
+                      const selectedPlanData = plans.find(
+                        (p) => p.name === selectedPlan
+                      );
+                      const totalPrice = calculateTotalPrice(selectedPlanData);
+                      console.log("Proceeding with upgrade:", {
+                        plan: selectedPlan,
+                        studentCount,
+                        totalPrice,
+                        billingCycle,
+                      });
                     }
                   }}
                   disabled={!selectedPlan}
@@ -436,39 +558,19 @@ const PricingModalOverlay = ({
   );
 };
 
-// Usage example component showing how to trigger the modal
+// Usage example component
 const DashboardWithPricingModal = () => {
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(true);
   const router = useRouter();
 
   return (
     <div className="min-h-screen ">
-      {/* Your existing dashboard content */}
-      {/* <div className="p-8"> */}
-      {/* <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-        <p className="text-gray-600 mb-4">
-          Your existing dashboard content goes here...
-        </p> */}
-
-      {/* Trigger button */}
-      {/* <button
-          onClick={() => setIsPricingModalOpen(true)}
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          View Pricing Plans
-        </button> */}
-      {/* </div> */}
-
       {/* Pricing Modal Overlay */}
       <PricingModalOverlay
         isOpen={isPricingModalOpen}
         onClose={() => {
           setIsPricingModalOpen(false);
-          if (window.history.length > 1) {
-            router.back();
-          } else {
-            router.push("/");
-          }
+          router.back();
         }}
       />
     </div>
