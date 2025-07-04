@@ -12,6 +12,11 @@ import {
   Calculator,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { usePlanStore } from "@/stores/planStore";
+import {
+  generatePlansWithPrices,
+  getSessionDiscountPercent,
+} from "@/utils/pricing";
 
 const PricingModalOverlay = ({
   isOpen,
@@ -20,10 +25,21 @@ const PricingModalOverlay = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
+  const plans = generatePlansWithPrices();
+
+  const currentPlan = usePlanStore((p) => p.currentPlan) || "Free Trial";
+  const studentNumber = usePlanStore((p) => p.studentCount) || 0;
+  const studentLimit = usePlanStore((p) => p.studentLimit) || 50; // Free trial limit
+  const trialDaysLeft = usePlanStore((p) => p.trialDaysLeft) || 14;
+
   const [billingCycle, setBillingCycle] = useState("session");
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-  const [studentCount, setStudentCount] = useState(50);
+  const [studentCount, setStudentCount] = useState(
+    studentNumber > 0 ? studentNumber : 1
+  );
   const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
+
+  const setPlanData = usePlanStore((p) => p.setPlanData);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -56,127 +72,6 @@ const PricingModalOverlay = ({
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
-
-  const plans = [
-    {
-      name: "Reports Only",
-      subtitle: "Basic reporting for small schools",
-      pricePerStudent: {
-        session: 3000,
-        term: 1000,
-      },
-      minStudents: 1,
-      maxStudents: 200,
-      color: "border-blue-200 bg-blue-50",
-      buttonColor: "bg-blue-600 hover:bg-blue-700",
-      popular: false,
-      features: [
-        "Student Registration & Profiles",
-        "Teacher Registration & Profiles",
-        "Basic Attendance Tracking",
-        "Simple Report Generation",
-        "Academic Records Reports",
-        "Export to PDF/Excel",
-        "Email Support",
-        "Single Campus Support",
-      ],
-      limitations: [
-        "No Payment Processing",
-        "No SMS Notifications",
-        "No Advanced Analytics",
-        "No Exam Management",
-      ],
-    },
-    {
-      name: "Reports + Payment",
-      subtitle: "Reports with payment management",
-      pricePerStudent: {
-        session: 4800,
-        term: 1600,
-      },
-      minStudents: 1,
-      maxStudents: 500,
-      color: "border-green-200 bg-green-50",
-      buttonColor: "bg-green-600 hover:bg-green-700",
-      popular: true,
-      features: [
-        "Everything in Reports Only",
-        "Fee Payment Management",
-        "Payment Tracking & Reports",
-        "Outstanding Fees Alerts",
-        "Receipt Generation",
-        "Payment History",
-        "Financial Reports",
-        "Parent Payment Portal",
-        "Multiple Payment Methods",
-        "Automated Payment Reminders",
-      ],
-      limitations: [
-        "No Advanced Exam Management",
-        "No Bulk SMS",
-        "Limited Analytics",
-      ],
-    },
-    {
-      name: "Complete School",
-      subtitle: "Full school management system",
-      pricePerStudent: {
-        session: 6000,
-        term: 2000,
-      },
-      minStudents: 1,
-      maxStudents: 1000,
-      color: "border-purple-200 bg-purple-50",
-      buttonColor: "bg-purple-600 hover:bg-purple-700",
-      popular: false,
-      features: [
-        "Everything in Reports + Payment",
-        "Advanced Exam Management",
-        "Comprehensive Result Processing",
-        "Bulk SMS & Email",
-        "Staff Management System",
-        "Multi-class Timetabling",
-        "Assignment Management",
-        "Parent Portal Access",
-        "Attendance Analytics",
-        "Student Behavior Tracking",
-        "Library Management",
-        "Inventory Management",
-        "Priority Support",
-      ],
-      limitations: ["No Multi-campus Support", "No API Access"],
-    },
-    {
-      name: "Enterprise",
-      subtitle: "Advanced features for large institutions",
-      pricePerStudent: {
-        session: 9000,
-        term: 3000,
-      },
-      minStudents: 100,
-      maxStudents: 5000,
-      color: "border-orange-200 bg-orange-50",
-      buttonColor: "bg-orange-600 hover:bg-orange-700",
-      popular: false,
-      features: [
-        "Everything in Complete School",
-        "Multi-campus Management",
-        "Advanced Analytics Dashboard",
-        "Custom Report Builder",
-        "API Access & Integrations",
-        "White-label Branding",
-        "Advanced Security Features",
-        "Automated Backup & Recovery",
-        "Custom Workflows",
-        "Integration with Banks",
-        "Biometric Integration",
-        "24/7 Priority Support",
-        "Dedicated Account Manager",
-        "On-site Training Available",
-      ],
-      limitations: [],
-    },
-  ];
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-NG", {
@@ -216,6 +111,7 @@ const PricingModalOverlay = ({
   const handleStudentCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const count = parseInt(e.target.value) || 0;
     setStudentCount(Math.max(1, count));
+    // setPlanData({ studentCount: Math.max(1, count) });
     // Reset selected plan if it's no longer valid
     if (selectedPlan) {
       const selectedPlanData = plans.find((p) => p.name === selectedPlan);
@@ -277,10 +173,11 @@ const PricingModalOverlay = ({
                   </div>
                   <div>
                     <h3 className="font-semibold text-amber-900">
-                      You're currently on Free Trial
+                      You're currently on {currentPlan}
                     </h3>
                     <p className="text-amber-700 text-sm">
-                      14 days remaining • 45/50 students used
+                      {trialDaysLeft} days remaining • {studentCount}/
+                      {studentLimit} students used
                     </p>
                   </div>
                   <div className="ml-auto">
@@ -329,7 +226,7 @@ const PricingModalOverlay = ({
                         : "text-gray-600 hover:text-gray-900"
                     }`}
                   >
-                    Per Session (Save 15%)
+                    Per Session (Save {getSessionDiscountPercent()}%)
                   </button>
                   <button
                     onClick={() => setBillingCycle("term")}
@@ -403,7 +300,8 @@ const PricingModalOverlay = ({
                           </div>
                           {billingCycle === "session" && (
                             <div className="text-emerald-600 text-xs font-medium mt-1">
-                              Save 15% compared to per term
+                              Save {getSessionDiscountPercent()}% compared to
+                              per term
                             </div>
                           )}
                         </div>
