@@ -137,7 +137,7 @@ export default function StudentManagementAdmin() {
   };
 
   return (
-    <div className="min-h-screen p-6 pt-0">
+    <div className="min-h-screen pt-0">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">

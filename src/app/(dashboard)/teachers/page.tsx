@@ -134,7 +134,7 @@ export default function TeacherTable() {
     return <div className="p-4 text-muted-foreground">No teachers found.</div>;
 
   return (
-    <div className="p-0.5 w-full max-w-7xl mx-auto space-y-4">
+    <div className="w-full max-w-7xl mx-auto space-y-4">
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <div className="flex items-center justify-between">
           <div>
