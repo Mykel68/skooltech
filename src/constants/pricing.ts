@@ -62,7 +62,7 @@ export const RAW_PLANS = [
   {
     name: "Complete School",
     subtitle: "Full school management system",
-    termPrice: 2000,
+    termPrice: 2500,
     minStudents: 1,
     maxStudents: 1000,
     color: "border-purple-200 bg-purple-50",
@@ -88,7 +88,7 @@ export const RAW_PLANS = [
   {
     name: "Enterprise",
     subtitle: "Advanced features for large institutions",
-    termPrice: 3000,
+    termPrice: 5000,
     minStudents: 100,
     maxStudents: 5000,
     color: "border-orange-200 bg-orange-50",
