@@ -1,9 +1,13 @@
+"use client";
+
 import type React from "react";
 // import { Sidebar } from "@/components/sidebar";
 import { SidebarProvider } from "@/components/sidebar-provider";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/sidebar";
 import Head from "@/components/Head";
+import { useRouter } from "next/navigation";
+import { useUserStore } from "@/stores/userStore";
 // import ClientLayout from "./client-layout";
 
 export default function DashboardLayout({
@@ -11,6 +15,14 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const user = useUserStore();
+  const role = user?.role;
+
+  if (!role || role !== "Admin") {
+    router.replace("/");
+  }
+
   return (
     <SidebarProvider>
       <div className="min-h-screen bg-background">
