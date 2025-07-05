@@ -88,7 +88,9 @@ export default function TeacherTable() {
   const { data: fetchedClasses } = useQuery({
     queryKey: ["classes", schoolId],
     queryFn: async () => {
-      const { data } = await axios.get(`/api/class/get-all-classs/${schoolId}`);
+      const { data } = await axios.get(
+        `/api/class/get-all-classs/${schoolId}/${sessionId}/${termId}`
+      );
       return data.data.classes;
     },
     enabled: !!schoolId,

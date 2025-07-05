@@ -72,17 +72,16 @@ export function Sidebar() {
       >
         {/* Header */}
         <div className="flex items-center gap-3 border-b px-4 h-16 flex-shrink-0">
-          {
-            schoolImage ? (
-              <img
-            src={schoolImage ?? "/images/default-logo.png"}
-            alt="logo"
-            className="h-10 w-10 rounded-full object-cover"
-          /> ) : (
+          {schoolImage ? (
+            <img
+              src={schoolImage ?? "/images/default-logo.png"}
+              alt="logo"
+              className="h-10 w-10 rounded-full object-cover"
+            />
+          ) : (
             <Skeleton className="h-10 w-10 rounded-full object-cover" />
-          )
-          }
-         
+          )}
+
           <div className="flex flex-col flex-1">
             {schoolName ? (
               <p className="text-lg font-semibold text-white truncate">
@@ -99,7 +98,7 @@ export function Sidebar() {
                   <span className="text-xs text-green-200">{currentPlan}</span>
                 </div>
               ) : (
-                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-1/2" />
               )}
             </div>
           </div>
