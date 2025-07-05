@@ -83,7 +83,7 @@ export function Sidebar() {
                 {schoolName}
               </p>
             ) : (
-              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-1/2 mb-2" />
             )}
 
             <div className="flex items-center gap-1">
