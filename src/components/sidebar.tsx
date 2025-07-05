@@ -12,6 +12,7 @@ import { footerItems, navItems } from "@/constants/sidebar";
 import { restoreUserFromCookie } from "@/utils/restoreAuth";
 import { AnimatedUpgradeFooter } from "./SIdebarFooter";
 import { usePlanStore } from "@/stores/planStore";
+import { Skeleton } from "./ui/skeleton";
 
 export function Sidebar() {
   const router = useRouter();
@@ -77,12 +78,23 @@ export function Sidebar() {
             className="h-10 w-10 rounded-full object-cover"
           />
           <div className="flex flex-col flex-1">
-            <p className="text-lg font-semibold text-white truncate">
-              {schoolName ?? "Loading…"}
-            </p>
+            {schoolName ? (
+              <p className="text-lg font-semibold text-white truncate">
+                {schoolName}
+              </p>
+            ) : (
+              <Skeleton className="h-6 w-full" />
+            )}
+
             <div className="flex items-center gap-1">
-              <Crown className="h-3 w-3 text-yellow-400" />
-              <span className="text-xs text-green-200">{currentPlan}</span>
+              {currentPlan ? (
+                <div className="flex items-center gap-1">
+                  <Crown className="h-3 w-3 text-yellow-400" />
+                  <span className="text-xs text-green-200">{currentPlan}</span>
+                </div>
+              ) : (
+                <Skeleton className="h-4 w-full" />
+              )}
             </div>
           </div>
           <Button
