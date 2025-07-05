@@ -43,9 +43,9 @@ export default function Loading({
         {/* Animated loader icon */}
         <div className="flex justify-center mb-6">
           <div className="relative">
-            <div className="w-16 h-16 border-4 border-blue-200 rounded-full animate-pulse"></div>
-            <div className="absolute inset-0 w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-            <Loader className="absolute inset-0 w-8 h-8 text-blue-600 m-auto animate-pulse" />
+            <div className="w-16 h-16 border-4 border-green-200 rounded-full animate-pulse"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+            <Loader className="absolute inset-0 w-8 h-8 text-green-600 m-auto animate-pulse" />
           </div>
         </div>
 
@@ -65,13 +65,13 @@ export default function Loading({
 
         {/* Pulsing dots */}
         <div className="flex justify-center space-x-1 mt-4">
-          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
           <div
-            className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"
+            className="w-2 h-2 bg-green-500 rounded-full animate-pulse"
             style={{ animationDelay: "0.2s" }}
           ></div>
           <div
-            className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"
+            className="w-2 h-2 bg-green-500 rounded-full animate-pulse"
             style={{ animationDelay: "0.4s" }}
           ></div>
         </div>
