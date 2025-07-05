@@ -37,7 +37,7 @@ export function Sidebar() {
   }, []);
 
   useEffect(() => {
-    if (ready && userId === null) {
+    if (ready && !userId) {
       router.push("/login");
     }
   }, [ready, userId, router]);
@@ -72,11 +72,17 @@ export function Sidebar() {
       >
         {/* Header */}
         <div className="flex items-center gap-3 border-b px-4 h-16 flex-shrink-0">
-          <img
+          {
+            schoolImage ? (
+              <img
             src={schoolImage ?? "/images/default-logo.png"}
             alt="logo"
             className="h-10 w-10 rounded-full object-cover"
-          />
+          /> ) : (
+            <Skeleton className="h-10 w-10 rounded-full object-cover" />
+          )
+          }
+         
           <div className="flex flex-col flex-1">
             {schoolName ? (
               <p className="text-lg font-semibold text-white truncate">
@@ -87,7 +93,7 @@ export function Sidebar() {
             )}
 
             <div className="flex items-center gap-1">
-              {currentPlan ? (
+              {schoolName ? (
                 <div className="flex items-center gap-1">
                   <Crown className="h-3 w-3 text-yellow-400" />
                   <span className="text-xs text-green-200">{currentPlan}</span>

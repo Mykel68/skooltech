@@ -272,7 +272,11 @@ export default function AdminDashboardPage() {
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Revenue</p>
                   <p className="text-3xl font-bold text-gray-900">
-                    ₦{(dashboardStats?.totalRevenue! / 1_000_000).toFixed(1)}M
+                    {dashboardStats?.totalRevenue
+                      ? `₦${(dashboardStats.totalRevenue / 1_000_000).toFixed(
+                          1
+                        )}M`
+                      : "₦0.0"}
                   </p>
                   <div className="flex items-center mt-2">
                     <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
