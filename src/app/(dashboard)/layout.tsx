@@ -20,7 +20,7 @@ export default function DashboardLayout({
   const role = user?.role;
 
   if (!role || role !== "Admin") {
-    router.replace("/");
+    router.replace("/login");
   }
 
   return (

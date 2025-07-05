@@ -74,9 +74,11 @@ export default function StudentManagementAdmin() {
   const handleBulkAction = async (action: "approve" | "disapprove") => {
     try {
       const ids = Array.from(selectedStudents);
-      await axios.post("/students/bulk-update", {
-        action,
-        studentIds: ids,
+      // a boolean value for is_approved
+      const is_approved = action === "approve" ? true : false;
+      await axios.patch("/api/user/bulk-update", {
+        is_approved,
+        user_ids: ids,
       });
       setSelectedStudents(new Set());
       queryClient.invalidateQueries({ queryKey: ["students", schoolId] });
