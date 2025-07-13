@@ -49,6 +49,11 @@ export const navItems = [
     icon: Shield,
   },
   {
+    name: "Events",
+    href: "/events",
+    icon: Calendar,
+  },
+  {
     name: "Reports",
     href: "/report",
     icon: FileText,
