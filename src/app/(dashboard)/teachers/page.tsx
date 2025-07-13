@@ -157,23 +157,38 @@ export default function TeacherTable() {
           </button>
         </div>
       </div>
-
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
         className="w-full space-y-6"
       >
-        <TabsList className="w-full grid grid-cols-2 gap-2 bg-muted p-1 rounded-lg shadow-sm">
+        <TabsList className="w-full gap-16 flex rounded-xl border border-border bg-card p-1 shadow-sm">
           <TabsTrigger
             value="all-teachers"
-            className="flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-semibold transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-white data-[state=active]:text-foreground "
+            className="
+        flex-1 flex items-center justify-center gap-2
+        rounded-lg px-4 py-2 text-sm font-medium
+        transition-all
+        bg-muted text-muted-foreground
+        hover:bg-accent hover:text-accent-foreground
+        data-[state=active]:bg-primary data-[state=active]:text-primary-foreground
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50
+      "
           >
             <UserPen className="w-4 h-4" />
             All Teachers
           </TabsTrigger>
           <TabsTrigger
             value="class-teachers"
-            className="flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-semibold transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-white data-[state=active]:text-foreground "
+            className="
+        flex-1 flex items-center justify-center gap-2
+        rounded-lg px-4 py-2 text-sm font-medium
+        transition-all
+        bg-muted text-muted-foreground
+        hover:bg-accent hover:text-accent-foreground
+        data-[state=active]:bg-primary data-[state=active]:text-primary-foreground
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50
+      "
           >
             <UserPlus className="w-4 h-4" />
             Class Teachers
@@ -181,9 +196,9 @@ export default function TeacherTable() {
         </TabsList>
 
         <TabsContent value="all-teachers">
-          <Card className="rounded-2xl">
+          <Card className="rounded-2xl border border-border shadow-sm">
             <CardHeader>
-              <CardTitle className="flex items-center justify-betwee">
+              <CardTitle className="flex items-center justify-between">
                 All Teachers
               </CardTitle>
             </CardHeader>
@@ -215,9 +230,8 @@ export default function TeacherTable() {
           </Card>
         </TabsContent>
 
-        {/* Class Teachers Tab */}
         <TabsContent value="class-teachers">
-          <Card className="rounded-2xl">
+          <Card className="rounded-2xl border border-border shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 Class Teachers
