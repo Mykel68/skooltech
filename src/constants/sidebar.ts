@@ -9,6 +9,7 @@ import {
   UserCheck,
   Shield,
   BookOpen,
+  Send,
 } from "lucide-react";
 
 export const navItems = [
@@ -49,9 +50,9 @@ export const navItems = [
     icon: Shield,
   },
   {
-    name: "Events",
-    href: "/events",
-    icon: Calendar,
+    name: "Communication",
+    href: "/communication",
+    icon: Send,
   },
   {
     name: "Reports",
