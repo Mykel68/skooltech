@@ -1,5 +1,8 @@
 "use client";
 
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { messageSchema, MessageFormData } from "@/schema/messageSchema";
 import {
   Dialog,
   DialogContent,
@@ -14,16 +17,42 @@ import { Upload, FileText, Send } from "lucide-react";
 export default function CreateMessageDialog({
   open,
   setOpen,
-  formData,
-  setFormData,
-  formErrors,
   messageTypes,
-  handleFileUpload,
-  handleRecipientToggle,
-  handleSubmit,
   recipientOptions,
   createMessageMutation,
 }: any) {
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    watch,
+    setValue,
+    reset,
+  } = useForm<MessageFormData>({
+    resolver: zodResolver(messageSchema),
+    defaultValues: {
+      title: "",
+      content: "",
+      recipients: [],
+      type: "announcement",
+      attachment: null,
+    },
+  });
+
+  const contentMode = watch("contentMode") || "write";
+  const attachment = watch("attachment");
+
+  const onSubmit = (data: MessageFormData) => {
+    // flatten recipientSelections to recipients array
+    const selections = data.recipientSelections
+      ? Object.values(data.recipientSelections).filter(Boolean)
+      : [];
+    createMessageMutation.mutate({ ...data, recipients: selections });
+    reset();
+    setOpen(false);
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-2xl rounded-2xl bg-white">
@@ -34,39 +63,30 @@ export default function CreateMessageDialog({
         </DialogHeader>
 
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           className="space-y-6 max-h-[80vh] p-2  overflow-y-auto"
         >
-          {/* Message Type */}
+          {/* Type */}
           <div>
             <label className="block text-sm font-medium text-muted-foreground mb-2">
               Message Type
             </label>
             <div className="grid grid-cols-2 gap-3">
-              {messageTypes.map((type: any) => {
-                const Icon = type.icon;
-                const isActive = formData.type === type.value;
-                return (
-                  <button
-                    key={type.value}
-                    type="button"
-                    onClick={() =>
-                      setFormData((prev: any) => ({
-                        ...prev,
-                        type: type.value,
-                      }))
-                    }
-                    className={`flex flex-col items-center justify-center gap-1 p-4 rounded-xl border transition-all ${
-                      isActive
-                        ? "border-green-500 bg-green-50 text-green-700 font-medium"
-                        : "border-gray-200 hover:border-gray-300 text-gray-700"
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span className="text-sm">{type.label}</span>
-                  </button>
-                );
-              })}
+              {messageTypes.map((type: any) => (
+                <button
+                  key={type.value}
+                  type="button"
+                  onClick={() => setValue("type", type.value)}
+                  className={`flex flex-col items-center justify-center gap-1 p-4 rounded-xl border ${
+                    watch("type") === type.value
+                      ? "border-green-500 bg-green-50 text-green-700 font-medium"
+                      : "border-gray-200 hover:border-gray-300 text-gray-700"
+                  }`}
+                >
+                  <type.icon className="w-5 h-5" />
+                  <span className="text-sm">{type.label}</span>
+                </button>
+              ))}
             </div>
           </div>
 
@@ -75,56 +95,36 @@ export default function CreateMessageDialog({
             <label className="block text-sm font-medium text-muted-foreground mb-1">
               Title
             </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData((prev: any) => ({ ...prev, title: e.target.value }))
-              }
+            <Input
+              {...register("title")}
               placeholder="Enter message title"
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                formErrors.title ? "border-red-500" : "border-gray-300"
-              }`}
+              className="bg-transparent"
             />
-            {formErrors.title && (
-              <p className="text-red-500 text-sm mt-1">{formErrors.title}</p>
+            {errors.title && (
+              <p className="text-red-500 text-sm">{errors.title.message}</p>
             )}
           </div>
 
-          {/* Tabs for Content */}
+          {/* Tabs */}
           <Tabs
             defaultValue="write"
-            onValueChange={(value) =>
-              setFormData((prev: any) => ({ ...prev, contentMode: value }))
-            }
+            onValueChange={(v) => setValue("contentMode", v)}
           >
-            <TabsList className="grid w-full grid-cols-2 mb-3 bg-muted rounded-lg">
+            <TabsList className="grid w-full grid-cols-2 mb-3 bg-muted rounded-lg gap-4">
               <TabsTrigger value="write">Write Content</TabsTrigger>
-              <TabsTrigger value="upload">Upload File</TabsTrigger>
+              <TabsTrigger value="upload">Upload Content File</TabsTrigger>
             </TabsList>
 
             <TabsContent value="write">
-              <label className="block text-sm font-medium text-muted-foreground mb-1">
-                Content
-              </label>
+              <label className="block text-sm font-medium mb-1">Content</label>
               <textarea
-                value={formData.content}
-                onChange={(e) =>
-                  setFormData((prev: any) => ({
-                    ...prev,
-                    content: e.target.value,
-                  }))
-                }
+                {...register("content")}
                 rows={6}
                 placeholder="Type your message here..."
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${
-                  formErrors.content ? "border-red-500" : "border-gray-300"
-                }`}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-green-500"
               />
-              {formErrors.content && (
-                <p className="text-red-500 text-sm mt-1">
-                  {formErrors.content}
-                </p>
+              {errors.content && (
+                <p className="text-red-500 text-sm">{errors.content.message}</p>
               )}
             </TabsContent>
 
@@ -132,24 +132,20 @@ export default function CreateMessageDialog({
               <label className="block text-sm font-medium text-muted-foreground mb-1">
                 Upload Content File
               </label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+              <div className="border border-dashed border-gray-300 rounded-lg p-4 text-center">
                 <p className="text-sm text-gray-600 mb-2">
-                  Drop content file here or click to upload
+                  Upload your document (PDF, DOC, TXT)
                 </p>
-                <input
+                <Input
                   type="file"
-                  onChange={handleFileUpload}
                   accept=".pdf,.doc,.docx,.txt"
-                  className="hidden"
-                  id="content-upload"
+                  {...register("contentFile")}
                 />
-                <label
-                  htmlFor="content-upload"
-                  className="cursor-pointer bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm"
-                >
-                  Choose File
-                </label>
+                {errors.contentFile && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.contentFile.message}
+                  </p>
+                )}
               </div>
             </TabsContent>
           </Tabs>
@@ -163,67 +159,48 @@ export default function CreateMessageDialog({
               type="file"
               className="bg-transparent"
               onChange={(e) =>
-                setFormData((prev: any) => ({
-                  ...prev,
-                  attachment: e.target.files?.[0] || null,
-                }))
+                setValue("attachment", e.target.files?.[0] || null)
               }
               accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
               id="attachment-upload"
             />
-            {formData.attachment && (
+            {attachment && (
               <p className="text-sm text-gray-600 mt-2 flex items-center">
                 <FileText className="w-4 h-4 mr-1" />
-                {formData.attachment.name}
+                {attachment.name}
               </p>
             )}
           </div>
 
           {/* Recipients */}
           <div>
-            <label className="block text-sm font-medium text-muted-foreground mb-1">
-              Recipients
-            </label>
+            <label className="block text-sm font-medium mb-1">Recipients</label>
             <p className="text-xs text-gray-500 mb-3">
-              Select who should receive this message. You can choose specific
-              classes or all.
+              Select who should receive this message
             </p>
-
-            <div className=" grid grid-cols-2 gap-x-4 space-y-4">
+            <div className="grid grid-cols-2 gap-x-4 space-y-4">
               {recipientOptions.map((group: any) => (
                 <div key={group.group}>
-                  <label className="block text-sm font-medium text-gray-800 mb-1">
+                  <label className="block text-sm font-medium mb-1">
                     {group.group}
                   </label>
                   <select
-                    value={formData.recipientSelections?.[group.group] || ""}
-                    onChange={(e) =>
-                      setFormData((prev: any) => ({
-                        ...prev,
-                        recipientSelections: {
-                          ...prev.recipientSelections,
-                          [group.group]: e.target.value,
-                        },
-                      }))
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    {...register(`recipientSelections.${group.group}` as const)}
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-green-500"
                   >
                     <option value="">Select...</option>
-                    {group.options.map(
-                      (option: { label: string; value: string }) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      )
-                    )}
+                    {group.options.map((option: any) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
               ))}
             </div>
-
-            {formErrors.recipients && (
+            {errors.recipients && (
               <p className="text-red-500 text-sm mt-1">
-                {formErrors.recipients}
+                {errors.recipients.message}
               </p>
             )}
           </div>
@@ -233,7 +210,7 @@ export default function CreateMessageDialog({
             <DialogClose asChild>
               <button
                 type="button"
-                className="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+                className="px-6 py-2 bg-gray-100 rounded-lg"
               >
                 Cancel
               </button>
@@ -241,19 +218,14 @@ export default function CreateMessageDialog({
             <button
               type="submit"
               disabled={createMessageMutation.isPending}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center disabled:opacity-50"
+              className="px-6 py-2 bg-green-600 text-white rounded-lg flex items-center disabled:opacity-50"
             >
               {createMessageMutation.isPending ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Sending...
-                </>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
               ) : (
-                <>
-                  <Send className="w-4 h-4 mr-2" />
-                  Send Message
-                </>
+                <Send className="w-4 h-4 mr-2" />
               )}
+              Send
             </button>
           </div>
         </form>

@@ -30,6 +30,7 @@ import { useState } from "react";
 import CreateMessageDialog from "./createEventModal";
 import { useUserStore } from "@/stores/userStore";
 import { useClasses } from "../classes/useClass";
+import axios from "axios";
 
 // ----------------------
 // Zod schema and types
@@ -169,19 +170,23 @@ const CommunicationCenter = () => {
 
   const createMessageMutation = useMutation<Message, Error, MessageFormData>({
     mutationFn: async (newMessage) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return {
-        ...newMessage,
-        id: Date.now(),
-        status: "sent",
-        createdAt: new Date().toISOString(),
-        sentAt: new Date().toISOString(),
-        author: "Admin",
-        hasAttachment: !!newMessage.attachment,
-        attachmentName: newMessage.attachment?.name,
-        recipientCount: newMessage.recipients.length * 100,
-        readCount: Math.floor(newMessage.recipients.length * 80),
-      } satisfies Message;
+      const formData = new FormData();
+
+      formData.append("title", newMessage.title);
+      formData.append("content", newMessage.content);
+      formData.append("type", newMessage.type);
+      newMessage.recipients.forEach((recipient, idx) =>
+        formData.append(`recipients[${idx}]`, recipient)
+      );
+
+      if (newMessage.attachment) {
+        formData.append("attachment", newMessage.attachment);
+      }
+      if (newMessage.scheduleDate) {
+        formData.append("scheduleDate", newMessage.scheduleDate);
+      }
+
+      const response = await axios.post(`/api/message/${schoolId}`, formData);
     },
     onSuccess: (newMessage) => {
       queryClient.setQueryData<Message[]>(["messages"], (old = []) => [
@@ -287,23 +292,6 @@ const CommunicationCenter = () => {
       scheduleDate: "",
     });
     setFormErrors({});
-  };
-
-  const validateForm = (): boolean => {
-    try {
-      messageSchema.parse(formData);
-      setFormErrors({});
-      return true;
-    } catch (error: any) {
-      if (error?.errors) {
-        const errors: FormErrors = {};
-        error.errors.forEach((err: any) => {
-          errors[err.path[0] as keyof MessageFormData] = err.message;
-        });
-        setFormErrors(errors);
-      }
-      return false;
-    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
