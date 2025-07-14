@@ -350,7 +350,7 @@ const CommunicationCenter = () => {
       </p>
       <button
         onClick={() => setShowCreateModal(true)}
-        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center mx-auto"
+        className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center mx-auto"
       >
         <Plus className="w-5 h-5 mr-2" />
         Send First Message
@@ -376,7 +376,7 @@ const CommunicationCenter = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <Megaphone className="w-8 h-8 text-blue-600 mr-3" />
+              <Megaphone className="w-8 h-8 text-green-600 mr-3" />
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">
                   Communication Center
@@ -409,13 +409,13 @@ const CommunicationCenter = () => {
                 placeholder="Search messages..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 w-64"
               />
             </div>
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               <option value="all">All Types</option>
               {messageTypes.map((type) => (
@@ -506,7 +506,7 @@ const CommunicationCenter = () => {
                   <div className="flex items-center gap-2 ml-4">
                     <button
                       onClick={() => setSelectedMessage(message)}
-                      className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                     >
                       <Eye className="w-4 h-4" />
                     </button>
@@ -598,7 +598,7 @@ const CommunicationCenter = () => {
                         {selectedMessage.attachmentName}
                       </span>
                     </div>
-                    <button className="text-blue-600 hover:text-blue-800 text-sm flex items-center">
+                    <button className="text-green-600 hover:text-green-800 text-sm flex items-center">
                       <Download className="w-4 h-4 mr-1" />
                       Download
                     </button>
