@@ -1,191 +1,269 @@
-import React from "react";
-import { X, Send, Calendar, Clock, MapPin, Users } from "lucide-react";
+"use client";
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EventModalProps } from "./types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Upload, FileText, Send } from "lucide-react";
 
-export default function CreateEventModal({
-  isOpen,
-  onClose,
-  onSubmit,
-  form,
-  setForm,
-  recipientOptions,
+export default function CreateMessageDialog({
+  open,
+  setOpen,
+  formData,
+  setFormData,
+  formErrors,
+  messageTypes,
+  handleFileUpload,
   handleRecipientToggle,
-}: EventModalProps) {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit();
-  };
-
+  handleSubmit,
+  recipientOptions,
+  createMessageMutation,
+}: any) {
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="max-w-2xl rounded-2xl bg-white">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-primary" />
-            Create Event
+          <DialogTitle className="text-xl font-semibold">
+            Send New Message
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="title">Event Title</Label>
-              <Input
-                id="title"
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder="Enter event title"
-                className="mt-1"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={form.description}
-                onChange={(e) =>
-                  setForm({ ...form, description: e.target.value })
-                }
-                placeholder="Enter event description"
-                rows={4}
-                className="mt-1"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="date" className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  Date
-                </Label>
-                <Input
-                  id="date"
-                  type="date"
-                  value={form.date}
-                  onChange={(e) => setForm({ ...form, date: e.target.value })}
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="time" className="flex items-center gap-1">
-                  <Clock className="h-4 w-4" />
-                  Time
-                </Label>
-                <Input
-                  id="time"
-                  type="time"
-                  value={form.time}
-                  onChange={(e) => setForm({ ...form, time: e.target.value })}
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="priority">Priority</Label>
-                <Select
-                  value={form.priority}
-                  onValueChange={(value) =>
-                    setForm({ ...form, priority: value as any })
-                  }
-                >
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select priority" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">Low</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="location" className="flex items-center gap-1">
-                <MapPin className="h-4 w-4" />
-                Location
-              </Label>
-              <Input
-                id="location"
-                value={form.location}
-                onChange={(e) => setForm({ ...form, location: e.target.value })}
-                placeholder="Enter event location"
-                className="mt-1"
-              />
-            </div>
-
-            <div>
-              <Label className="flex items-center gap-1 mb-3">
-                <Users className="h-4 w-4" />
-                Recipients
-              </Label>
-              <Card>
-                <CardContent className="p-4">
-                  <ScrollArea className="h-48">
-                    {recipientOptions.map((group) => (
-                      <div key={group.group} className="mb-4">
-                        <h4 className="font-medium text-sm text-muted-foreground mb-2 uppercase tracking-wide">
-                          {group.group}
-                        </h4>
-                        <div className="space-y-2">
-                          {group.options.map((option) => (
-                            <div key={option} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={option}
-                                checked={form.recipients.includes(option)}
-                                onCheckedChange={() =>
-                                  handleRecipientToggle(option, true)
-                                }
-                              />
-                              <Label
-                                htmlFor={option}
-                                className="text-sm font-normal cursor-pointer"
-                              >
-                                {option}
-                              </Label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </ScrollArea>
-                </CardContent>
-              </Card>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 max-h-[80vh] p-2  overflow-y-auto"
+        >
+          {/* Message Type */}
+          <div>
+            <label className="block text-sm font-medium text-muted-foreground mb-2">
+              Message Type
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              {messageTypes.map((type: any) => {
+                const Icon = type.icon;
+                const isActive = formData.type === type.value;
+                return (
+                  <button
+                    key={type.value}
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev: any) => ({
+                        ...prev,
+                        type: type.value,
+                      }))
+                    }
+                    className={`flex flex-col items-center justify-center gap-1 p-4 rounded-xl border transition-all ${
+                      isActive
+                        ? "border-green-500 bg-green-50 text-green-700 font-medium"
+                        : "border-gray-200 hover:border-gray-300 text-gray-700"
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="text-sm">{type.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit" className="min-w-32">
-              <Send className="h-4 w-4 mr-2" />
-              Send Event
-            </Button>
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-medium text-muted-foreground mb-1">
+              Title
+            </label>
+            <input
+              type="text"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData((prev: any) => ({ ...prev, title: e.target.value }))
+              }
+              placeholder="Enter message title"
+              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                formErrors.title ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            {formErrors.title && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.title}</p>
+            )}
+          </div>
+
+          {/* Tabs for Content */}
+          <Tabs
+            defaultValue="write"
+            onValueChange={(value) =>
+              setFormData((prev: any) => ({ ...prev, contentMode: value }))
+            }
+          >
+            <TabsList className="grid w-full grid-cols-2 mb-3 bg-muted rounded-lg">
+              <TabsTrigger value="write">Write Content</TabsTrigger>
+              <TabsTrigger value="upload">Upload File</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="write">
+              <label className="block text-sm font-medium text-muted-foreground mb-1">
+                Content
+              </label>
+              <textarea
+                value={formData.content}
+                onChange={(e) =>
+                  setFormData((prev: any) => ({
+                    ...prev,
+                    content: e.target.value,
+                  }))
+                }
+                rows={6}
+                placeholder="Type your message here..."
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${
+                  formErrors.content ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              {formErrors.content && (
+                <p className="text-red-500 text-sm mt-1">
+                  {formErrors.content}
+                </p>
+              )}
+            </TabsContent>
+
+            <TabsContent value="upload">
+              <label className="block text-sm font-medium text-muted-foreground mb-1">
+                Upload Content File
+              </label>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                <p className="text-sm text-gray-600 mb-2">
+                  Drop content file here or click to upload
+                </p>
+                <input
+                  type="file"
+                  onChange={handleFileUpload}
+                  accept=".pdf,.doc,.docx,.txt"
+                  className="hidden"
+                  id="content-upload"
+                />
+                <label
+                  htmlFor="content-upload"
+                  className="cursor-pointer bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm"
+                >
+                  Choose File
+                </label>
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          {/* Optional Attachment */}
+          <div>
+            <label className="block text-sm font-medium text-muted-foreground mb-1">
+              Attachment (Optional)
+            </label>
+            <Input
+              type="file"
+              className="bg-transparent"
+              onChange={(e) =>
+                setFormData((prev: any) => ({
+                  ...prev,
+                  attachment: e.target.files?.[0] || null,
+                }))
+              }
+              accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+              id="attachment-upload"
+            />
+            {formData.attachment && (
+              <p className="text-sm text-gray-600 mt-2 flex items-center">
+                <FileText className="w-4 h-4 mr-1" />
+                {formData.attachment.name}
+              </p>
+            )}
+          </div>
+
+          {/* Priority */}
+          <div>
+            <label className="block text-sm font-medium text-muted-foreground mb-1">
+              Priority
+            </label>
+            <select
+              value={formData.priority}
+              onChange={(e) =>
+                setFormData((prev: any) => ({
+                  ...prev,
+                  priority: e.target.value,
+                }))
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          {/* Recipients */}
+          <div>
+            <label className="block text-sm font-medium text-muted-foreground mb-1">
+              Recipients
+            </label>
+            <div className="border border-gray-300 rounded-lg p-4 max-h-64 overflow-y-auto">
+              {recipientOptions.map((group: any) => (
+                <div key={group.group} className="mb-4">
+                  <h4 className="font-medium text-gray-800 mb-2">
+                    {group.group}
+                  </h4>
+                  <div className="space-y-2">
+                    {group.options.map((option: string) => (
+                      <label key={option} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={formData.recipients.includes(option)}
+                          onChange={() => handleRecipientToggle(option)}
+                          className="mr-3 h-4 w-4 text-green-600 border-gray-300"
+                        />
+                        <span className="text-sm text-gray-700">{option}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {formErrors.recipients && (
+              <p className="text-red-500 text-sm mt-1">
+                {formErrors.recipients}
+              </p>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="flex justify-end gap-3 pt-6 border-t">
+            <DialogClose asChild>
+              <button
+                type="button"
+                className="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+            </DialogClose>
+            <button
+              type="submit"
+              disabled={createMessageMutation.isPending}
+              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center disabled:opacity-50"
+            >
+              {createMessageMutation.isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  Send Message
+                </>
+              )}
+            </button>
           </div>
         </form>
       </DialogContent>
     </Dialog>
   );
+}

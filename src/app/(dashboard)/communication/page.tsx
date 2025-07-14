@@ -1,480 +1,643 @@
 "use client";
 
-import React, { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { z } from "zod";
 import {
-  Calendar,
-  Users,
+  Send,
   FileText,
-  Plus,
-  Edit3,
-  Trash2,
-  Eye,
+  Upload,
+  Users,
+  MessageSquare,
+  Calendar,
   Clock,
-  MapPin,
-  AlertCircle,
   CheckCircle,
+  AlertCircle,
+  Trash2,
+  Edit3,
+  Eye,
+  X,
+  Plus,
+  Filter,
+  Search,
+  Download,
+  Paperclip,
+  Megaphone,
+  Mail,
+  BookOpen,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Event,
-  Newsletter,
-  EventFormData,
-  NewsletterFormData,
-  RecipientGroup,
-  Priority,
-  Status,
-} from "./types";
-import CreateEventModal from "./createEventModal";
-import CreateNewsletterModal from "./createNewsletterModal";
+import { useState } from "react";
+import CreateMessageDialog from "./createEventModal";
 
-const CommunicationCenter: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>("events");
-  const [showCreateEvent, setShowCreateEvent] = useState<boolean>(false);
-  const [showCreateNewsletter, setShowCreateNewsletter] =
-    useState<boolean>(false);
+// ----------------------
+// Zod schema and types
+// ----------------------
 
-  const [events, setEvents] = useState<Event[]>([
-    {
-      id: 1,
-      title: "Annual Sports Day",
-      description:
-        "Join us for our annual sports day celebration with various competitions and activities.",
-      date: "2024-08-15",
-      time: "09:00",
-      location: "Main Sports Ground",
-      recipients: ["All Parents", "All Students", "All Teachers"],
-      status: "sent",
-      sentDate: "2024-07-20",
-      priority: "high",
-    },
-    {
-      id: 2,
-      title: "Parent-Teacher Meeting",
-      description:
-        "Scheduled meetings to discuss student progress and academic performance.",
-      date: "2024-08-10",
-      time: "14:00",
-      location: "Respective Classrooms",
-      recipients: ["Grade 5 Parents", "Grade 5 Teachers"],
-      status: "draft",
-      priority: "medium",
-    },
-  ]);
+const messageSchema = z.object({
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(100, "Title must be less than 100 characters"),
+  content: z
+    .string()
+    .min(1, "Content is required")
+    .max(5000, "Content must be less than 5000 characters"),
+  recipients: z
+    .array(z.string())
+    .min(1, "At least one recipient group is required"),
+  type: z.enum(["announcement", "message", "urgent", "newsletter"]),
+  priority: z.enum(["low", "medium", "high"]),
+  attachment: z.any().optional(),
+  scheduleDate: z.string().optional(),
+});
 
-  const [newsletters, setNewsletters] = useState<Newsletter[]>([
-    {
-      id: 1,
-      title: "Monthly Newsletter - July 2024",
-      content:
-        "Dear Parents,\n\nWe hope this message finds you well. Here are the highlights from this month...",
-      recipients: ["All Parents"],
-      status: "sent",
-      sentDate: "2024-07-01",
-      hasAttachment: true,
-      attachmentName: "july_newsletter.pdf",
-    },
-    {
-      id: 2,
-      title: "Academic Calendar Update",
-      content:
-        "Important updates regarding the upcoming academic calendar changes...",
-      recipients: ["All Parents", "All Teachers"],
-      status: "draft",
-      hasAttachment: false,
-    },
-  ]);
+export type MessageFormData = z.infer<typeof messageSchema>;
 
-  const [eventForm, setEventForm] = useState<EventFormData>({
-    title: "",
-    description: "",
-    date: "",
-    time: "",
-    location: "",
-    recipients: [],
-    priority: "medium",
-  });
+export interface Message {
+  id: number;
+  title: string;
+  content: string;
+  recipients: string[];
+  type: "announcement" | "message" | "urgent" | "newsletter";
+  priority: "low" | "medium" | "high";
+  status: string;
+  createdAt: string;
+  sentAt: string;
+  author: string;
+  hasAttachment: boolean;
+  attachmentName?: string;
+  recipientCount: number;
+  readCount: number;
+}
 
-  const [newsletterForm, setNewsletterForm] = useState<NewsletterFormData>({
+type FormErrors = Partial<Record<keyof MessageFormData, string>>;
+
+// ----------------------
+// Component
+// ----------------------
+
+const CommunicationCenter = () => {
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [filterType, setFilterType] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const queryClient = useQueryClient();
+
+  const [formData, setFormData] = useState<MessageFormData>({
     title: "",
     content: "",
     recipients: [],
+    type: "announcement",
+    priority: "medium",
     attachment: null,
+    scheduleDate: "",
   });
 
-  const recipientOptions: RecipientGroup[] = [
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+
+  // ----------------------
+  // Mock Data
+  // ----------------------
+
+  const mockMessages: Message[] = [
     {
-      group: "Parents",
-      options: [
-        "All Parents",
-        "Grade 1 Parents",
-        "Grade 2 Parents",
-        "Grade 3 Parents",
-        "Grade 4 Parents",
-        "Grade 5 Parents",
-      ],
+      id: 1,
+      title: "Annual Sports Day Announcement",
+      content: "We are excited to announce our annual sports day...",
+      recipients: ["All Students", "All Parents", "All Teachers"],
+      type: "announcement",
+      priority: "high",
+      status: "sent",
+      createdAt: "2024-07-10T10:30:00Z",
+      sentAt: "2024-07-10T10:35:00Z",
+      author: "Admin",
+      hasAttachment: false,
+      recipientCount: 1250,
+      readCount: 856,
     },
     {
-      group: "Students",
-      options: [
-        "All Students",
-        "Grade 1 Students",
-        "Grade 2 Students",
-        "Grade 3 Students",
-        "Grade 4 Students",
-        "Grade 5 Students",
-      ],
+      id: 2,
+      title: "Monthly Newsletter - July 2024",
+      content: "Dear School Community, Here are the highlights...",
+      recipients: ["All Parents"],
+      type: "newsletter",
+      priority: "medium",
+      status: "sent",
+      createdAt: "2024-07-01T09:00:00Z",
+      sentAt: "2024-07-01T09:05:00Z",
+      author: "Admin",
+      hasAttachment: true,
+      attachmentName: "july_newsletter.pdf",
+      recipientCount: 800,
+      readCount: 650,
     },
     {
-      group: "Teachers",
-      options: [
-        "All Teachers",
-        "Grade 1 Teachers",
-        "Grade 2 Teachers",
-        "Grade 3 Teachers",
-        "Grade 4 Teachers",
-        "Grade 5 Teachers",
-        "Subject Teachers",
-      ],
+      id: 3,
+      title: "Emergency School Closure Notice",
+      content: "Due to severe weather conditions...",
+      recipients: ["All Students", "All Parents", "All Teachers"],
+      type: "urgent",
+      priority: "high",
+      status: "sent",
+      createdAt: "2024-07-08T16:45:00Z",
+      sentAt: "2024-07-08T16:50:00Z",
+      author: "Admin",
+      hasAttachment: false,
+      recipientCount: 1250,
+      readCount: 1180,
     },
   ];
 
-  const handleCreateEvent = (): void => {
-    if (eventForm.title && eventForm.date && eventForm.recipients.length > 0) {
-      const newEvent: Event = {
+  // ----------------------
+  // React Query
+  // ----------------------
+
+  const { data: messages = [], isLoading } = useQuery<Message[]>({
+    queryKey: ["messages"],
+    queryFn: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      return mockMessages;
+    },
+  });
+
+  const createMessageMutation = useMutation<Message, Error, MessageFormData>({
+    mutationFn: async (newMessage) => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return {
+        ...newMessage,
         id: Date.now(),
-        ...eventForm,
         status: "sent",
-        sentDate: new Date().toISOString().split("T")[0],
-      };
-      setEvents([newEvent, ...events]);
-      setEventForm({
-        title: "",
-        description: "",
-        date: "",
-        time: "",
-        location: "",
-        recipients: [],
-        priority: "medium",
-      });
-      setShowCreateEvent(false);
+        createdAt: new Date().toISOString(),
+        sentAt: new Date().toISOString(),
+        author: "Admin",
+        hasAttachment: !!newMessage.attachment,
+        attachmentName: newMessage.attachment?.name,
+        recipientCount: newMessage.recipients.length * 100,
+        readCount: Math.floor(newMessage.recipients.length * 80),
+      } satisfies Message;
+    },
+    onSuccess: (newMessage) => {
+      queryClient.setQueryData<Message[]>(["messages"], (old = []) => [
+        newMessage,
+        ...old,
+      ]);
+      toast.success("Message sent successfully!");
+      setShowCreateModal(false);
+      resetForm();
+    },
+    onError: () => {
+      toast.error("Failed to send message. Please try again.");
+    },
+  });
+
+  const deleteMessageMutation = useMutation<number, Error, number>({
+    mutationFn: async (messageId) => {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      return messageId;
+    },
+    onSuccess: (messageId) => {
+      queryClient.setQueryData<Message[]>(["messages"], (old = []) =>
+        old.filter((msg) => msg.id !== messageId)
+      );
+      toast.success("Message deleted successfully!");
+    },
+    onError: () => {
+      toast.error("Failed to delete message. Please try again.");
+    },
+  });
+
+  // ----------------------
+  // Recipients and Types
+  // ----------------------
+
+  const recipientOptions = [
+    {
+      group: "Students",
+      options: ["All Students", "Grade 1 Students", "Grade 2 Students"],
+    },
+    {
+      group: "Parents",
+      options: ["All Parents", "Grade 1 Parents", "Grade 2 Parents"],
+    },
+    {
+      group: "Teachers",
+      options: ["All Teachers", "Grade 1 Teachers", "Grade 2 Teachers"],
+    },
+  ];
+
+  const messageTypes = [
+    {
+      value: "announcement",
+      label: "Announcement",
+      icon: Megaphone,
+      color: "blue",
+    },
+    {
+      value: "message",
+      label: "General Message",
+      icon: MessageSquare,
+      color: "green",
+    },
+    {
+      value: "urgent",
+      label: "Urgent Notice",
+      icon: AlertCircle,
+      color: "red",
+    },
+    { value: "newsletter", label: "Newsletter", icon: Mail, color: "purple" },
+  ];
+
+  // ----------------------
+  // Helpers
+  // ----------------------
+
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      content: "",
+      recipients: [],
+      type: "announcement",
+      priority: "medium",
+      attachment: null,
+      scheduleDate: "",
+    });
+    setFormErrors({});
+  };
+
+  const validateForm = (): boolean => {
+    try {
+      messageSchema.parse(formData);
+      setFormErrors({});
+      return true;
+    } catch (error: any) {
+      if (error?.errors) {
+        const errors: FormErrors = {};
+        error.errors.forEach((err: any) => {
+          errors[err.path[0] as keyof MessageFormData] = err.message;
+        });
+        setFormErrors(errors);
+      }
+      return false;
     }
   };
 
-  const handleCreateNewsletter = (): void => {
-    if (
-      newsletterForm.title &&
-      newsletterForm.content &&
-      newsletterForm.recipients.length > 0
-    ) {
-      const newNewsletter: Newsletter = {
-        id: Date.now(),
-        ...newsletterForm,
-        status: "sent",
-        sentDate: new Date().toISOString().split("T")[0],
-        hasAttachment: !!newsletterForm.attachment,
-        attachmentName: newsletterForm.attachment?.name || undefined,
-      };
-      setNewsletters([newNewsletter, ...newsletters]);
-      setNewsletterForm({
-        title: "",
-        content: "",
-        recipients: [],
-        attachment: null,
-      });
-      setShowCreateNewsletter(false);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) {
+      createMessageMutation.mutate(formData);
     }
   };
 
-  const handleRecipientToggle = (recipient: string, isEvent: boolean): void => {
-    if (isEvent) {
-      const currentRecipients = eventForm.recipients;
-      const newRecipients = currentRecipients.includes(recipient)
-        ? currentRecipients.filter((r) => r !== recipient)
-        : [...currentRecipients, recipient];
-      setEventForm({ ...eventForm, recipients: newRecipients });
-    } else {
-      const currentRecipients = newsletterForm.recipients;
-      const newRecipients = currentRecipients.includes(recipient)
-        ? currentRecipients.filter((r) => r !== recipient)
-        : [...currentRecipients, recipient];
-      setNewsletterForm({ ...newsletterForm, recipients: newRecipients });
+  const handleRecipientToggle = (recipient: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      recipients: prev.recipients.includes(recipient)
+        ? prev.recipients.filter((r) => r !== recipient)
+        : [...prev.recipients, recipient],
+    }));
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("File size must be less than 10MB");
+        return;
+      }
+      setFormData((prev) => ({ ...prev, attachment: file }));
+      toast.success("File uploaded successfully");
     }
   };
 
-  const getStatusVariant = (
-    status: Status
-  ):
-    | "default"
-    | "secondary"
-    | "outline"
-    | "destructive"
-    | "success"
-    | "warning"
-    | "info" => {
-    switch (status) {
-      case "sent":
-        return "success";
-      case "draft":
-        return "secondary";
-      case "scheduled":
-        return "default";
-      default:
-        return "outline";
-    }
+  const getTypeColor = (type: Message["type"]) => {
+    const colors: Record<Message["type"], string> = {
+      announcement: "bg-blue-100 text-blue-800",
+      message: "bg-green-100 text-green-800",
+      urgent: "bg-red-100 text-red-800",
+      newsletter: "bg-purple-100 text-purple-800",
+    };
+    return colors[type];
   };
 
-  const getPriorityVariant = (
-    priority: Priority
-  ):
-    | "default"
-    | "secondary"
-    | "outline"
-    | "destructive"
-    | "success"
-    | "warning"
-    | "info" => {
-    switch (priority) {
-      case "high":
-        return "destructive";
-      case "medium":
-        return "warning";
-      case "low":
-        return "default";
-      default:
-        return "default";
-    }
+  const getPriorityColor = (priority: Message["priority"]) => {
+    const colors: Record<Message["priority"], string> = {
+      low: "bg-green-100 text-green-800",
+      medium: "bg-yellow-100 text-yellow-800",
+      high: "bg-red-100 text-red-800",
+    };
+    return colors[priority];
   };
 
-  const StatusIcon: React.FC<{ status: Status }> = ({ status }) => {
-    switch (status) {
-      case "sent":
-        return <CheckCircle className="h-4 w-4" />;
-      case "draft":
-        return <Edit3 className="h-4 w-4" />;
-      case "scheduled":
-        return <Clock className="h-4 w-4" />;
-      default:
-        return <AlertCircle className="h-4 w-4" />;
-    }
-  };
+  const filteredMessages = messages.filter((msg) => {
+    const matchesFilter = filterType === "all" || msg.type === filterType;
+    const matchesSearch =
+      msg.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      msg.content.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
+
+  const EmptyState = () => (
+    <div className="text-center py-16">
+      <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <MessageSquare className="w-12 h-12 text-gray-400" />
+      </div>
+      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+        No messages yet
+      </h3>
+      <p className="text-gray-600 mb-6 max-w-md mx-auto">
+        Start communicating with your school community by sending your first
+        announcement or message.
+      </p>
+      <button
+        onClick={() => setShowCreateModal(true)}
+        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center mx-auto"
+      >
+        <Plus className="w-5 h-5 mr-2" />
+        Send First Message
+      </button>
+    </div>
+  );
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading messages...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen ">
       {/* Header */}
-      <div className="">
-        <div className="container mx-auto px-6 py-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">
-                Communication Center
-              </h1>
-              <p className="text-muted-foreground mt-2">
-                Send events and newsletters to parents, students, and teachers
-              </p>
+      <div className="   ">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <Megaphone className="w-8 h-8 text-blue-600 mr-3" />
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  Communication Center
+                </h1>
+                <p className="text-sm text-gray-600">
+                  Broadcast messages to your school community
+                </p>
+              </div>
             </div>
-            <div className="flex gap-3">
-              <Button
-                onClick={() => setShowCreateEvent(true)}
-                variant="default"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Create Event
-              </Button>
-              <Button
-                onClick={() => setShowCreateNewsletter(true)}
-                variant="destructive"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Create Newsletter
-              </Button>
-            </div>
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Message
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="container mx-auto p-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="events" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Events
-            </TabsTrigger>
-            <TabsTrigger
-              value="newsletters"
-              className="flex items-center gap-2"
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Filters and Search */}
+        <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="w-5 h-5 absolute left-3 top-3 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search messages..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
+              />
+            </div>
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <FileText className="h-4 w-4" />
-              Newsletters
-            </TabsTrigger>
-          </TabsList>
+              <option value="all">All Types</option>
+              {messageTypes.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <TabsContent value="events" className="space-y-4">
-            {events.map((event) => (
-              <Card
-                key={event.id}
-                className="hover:shadow-md transition-shadow"
-              >
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <CardTitle className="text-lg">{event.title}</CardTitle>
-                        <Badge
-                          variant={getStatusVariant(event.status)}
-                          className="flex items-center gap-1"
-                        >
-                          <StatusIcon status={event.status} />
-                          {event.status}
-                        </Badge>
-                        <Badge variant={getPriorityVariant(event.priority)}>
-                          {event.priority} priority
-                        </Badge>
-                      </div>
-                      <p className="text-muted-foreground">
-                        {event.description}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <Edit3 className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex items-center gap-6 text-sm text-muted-foreground mb-4">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      {event.date}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      {event.time}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {event.location}
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {event.recipients.map((recipient) => (
-                      <Badge key={recipient} variant="outline">
-                        <Users className="h-3 w-3 mr-1" />
-                        {recipient}
-                      </Badge>
-                    ))}
-                  </div>
-                  {event.sentDate && (
-                    <p className="text-xs text-muted-foreground">
-                      Sent on {event.sentDate}
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </TabsContent>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <span>{filteredMessages.length} messages</span>
+          </div>
+        </div>
 
-          <TabsContent value="newsletters" className="space-y-4">
-            {newsletters.map((newsletter) => (
-              <Card
-                key={newsletter.id}
-                className="hover:shadow-md transition-shadow"
+        {/* Messages List */}
+        {filteredMessages.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="space-y-4">
+            {filteredMessages.map((message) => (
+              <div
+                key={message.id}
+                className="bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow"
               >
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <CardTitle className="text-lg">
-                          {newsletter.title}
-                        </CardTitle>
-                        <Badge
-                          variant={getStatusVariant(newsletter.status)}
-                          className="flex items-center gap-1"
-                        >
-                          <StatusIcon status={newsletter.status} />
-                          {newsletter.status}
-                        </Badge>
-                        {newsletter.hasAttachment && (
-                          <Badge variant="secondary">
-                            <FileText className="h-3 w-3 mr-1" />
-                            Attachment
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-muted-foreground line-clamp-3">
-                        {newsletter.content}
-                      </p>
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {message.title}
+                      </h3>
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${getTypeColor(
+                          message.type
+                        )}`}
+                      >
+                        {
+                          messageTypes.find((t) => t.value === message.type)
+                            ?.label
+                        }
+                      </span>
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(
+                          message.priority
+                        )}`}
+                      >
+                        {message.priority} priority
+                      </span>
+                      {message.hasAttachment && (
+                        <span className="flex items-center text-xs text-gray-500">
+                          <Paperclip className="w-3 h-3 mr-1" />
+                          Attachment
+                        </span>
+                      )}
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <Edit3 className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {newsletter.recipients.map((recipient) => (
-                      <Badge key={recipient} variant="outline">
-                        <Users className="h-3 w-3 mr-1" />
-                        {recipient}
-                      </Badge>
-                    ))}
-                  </div>
-                  {newsletter.hasAttachment && newsletter.attachmentName && (
-                    <div className="flex items-center text-sm text-muted-foreground mb-2">
-                      <FileText className="h-4 w-4 mr-1" />
-                      {newsletter.attachmentName}
-                    </div>
-                  )}
-                  {newsletter.sentDate && (
-                    <p className="text-xs text-muted-foreground">
-                      Sent on {newsletter.sentDate}
+
+                    <p className="text-gray-600 mb-4 line-clamp-2">
+                      {message.content}
                     </p>
-                  )}
-                </CardContent>
-              </Card>
+
+                    <div className="flex items-center gap-6 text-sm text-gray-500 mb-3">
+                      <div className="flex items-center">
+                        <Clock className="w-4 h-4 mr-1" />
+                        {new Date(message.createdAt).toLocaleDateString()}
+                      </div>
+                      <div className="flex items-center">
+                        <Users className="w-4 h-4 mr-1" />
+                        {message.recipientCount} recipients
+                      </div>
+                      <div className="flex items-center">
+                        <Eye className="w-4 h-4 mr-1" />
+                        {message.readCount} read
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {message.recipients.map((recipient) => (
+                        <span
+                          key={recipient}
+                          className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
+                        >
+                          {recipient}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 ml-4">
+                    <button
+                      onClick={() => setSelectedMessage(message)}
+                      className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => deleteMessageMutation.mutate(message.id)}
+                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
             ))}
-          </TabsContent>
-        </Tabs>
+          </div>
+        )}
       </div>
 
-      {/* Modals */}
-      <CreateEventModal
-        isOpen={showCreateEvent}
-        onClose={() => setShowCreateEvent(false)}
-        onSubmit={handleCreateEvent}
-        form={eventForm}
-        setForm={setEventForm}
-        recipientOptions={recipientOptions}
-        handleRecipientToggle={handleRecipientToggle}
-      />
+      {/* Create Message Modal */}
+      {showCreateModal && (
+        <CreateMessageDialog
+          open={showCreateModal}
+          setOpen={setShowCreateModal}
+          formData={formData}
+          setFormData={setFormData}
+          formErrors={formErrors}
+          messageTypes={messageTypes}
+          handleFileUpload={handleFileUpload}
+          handleRecipientToggle={handleRecipientToggle}
+          handleSubmit={handleSubmit}
+          recipientOptions={recipientOptions}
+          createMessageMutation={createMessageMutation}
+        />
+      )}
 
-      <CreateNewsletterModal
-        isOpen={showCreateNewsletter}
-        onClose={() => setShowCreateNewsletter(false)}
-        onSubmit={handleCreateNewsletter}
-        form={newsletterForm}
-        setForm={setNewsletterForm}
-        recipientOptions={recipientOptions}
-        handleRecipientToggle={handleRecipientToggle}
-      />
+      {/* Message Detail Modal */}
+      {selectedMessage && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {selectedMessage.title}
+                </h2>
+                <button
+                  onClick={() => setSelectedMessage(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <span
+                  className={`px-3 py-1 text-sm font-medium rounded-full ${getTypeColor(
+                    selectedMessage.type
+                  )}`}
+                >
+                  {
+                    messageTypes.find((t) => t.value === selectedMessage.type)
+                      ?.label
+                  }
+                </span>
+                <span
+                  className={`px-3 py-1 text-sm font-medium rounded-full ${getPriorityColor(
+                    selectedMessage.priority
+                  )}`}
+                >
+                  {selectedMessage.priority} priority
+                </span>
+              </div>
+
+              <div className="prose max-w-none">
+                <p className="text-gray-700 whitespace-pre-wrap">
+                  {selectedMessage.content}
+                </p>
+              </div>
+
+              {selectedMessage.hasAttachment && (
+                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <FileText className="w-5 h-5 text-gray-400 mr-2" />
+                      <span className="text-sm text-gray-700">
+                        {selectedMessage.attachmentName}
+                      </span>
+                    </div>
+                    <button className="text-blue-600 hover:text-blue-800 text-sm flex items-center">
+                      <Download className="w-4 h-4 mr-1" />
+                      Download
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-6 pt-6 border-t">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-500">Sent to:</span>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {selectedMessage.recipients.map((recipient) => (
+                        <span
+                          key={recipient}
+                          className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
+                        >
+                          {recipient}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Statistics:</span>
+                    <div className="mt-1 space-y-1">
+                      <div>{selectedMessage.recipientCount} recipients</div>
+                      <div>{selectedMessage.readCount} read</div>
+                      <div>
+                        Sent on{" "}
+                        {new Date(selectedMessage.sentAt).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
