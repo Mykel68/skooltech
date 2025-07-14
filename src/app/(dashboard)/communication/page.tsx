@@ -223,7 +223,7 @@ const CommunicationCenter = () => {
       options: [
         { label: "All Students", value: "all-students" },
         ...classes.map((cls) => ({
-          label: `${cls.name} Students`,
+          label: `${cls.grade_level} Students`,
           value: cls.class_id,
         })),
       ],
@@ -233,7 +233,7 @@ const CommunicationCenter = () => {
       options: [
         { label: "All Parents", value: "all-parents" },
         ...classes.map((cls) => ({
-          label: `${cls.name} Parents`,
+          label: `${cls.grade_level} Parents`,
           value: cls.class_id,
         })),
       ],
@@ -243,7 +243,7 @@ const CommunicationCenter = () => {
       options: [
         { label: "All Teachers", value: "all-teachers" },
         ...classes.map((cls) => ({
-          label: `${cls.name} Teachers`,
+          label: `${cls.grade_level} Teachers`,
           value: cls.class_id,
         })),
       ],
@@ -308,8 +308,30 @@ const CommunicationCenter = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      createMessageMutation.mutate(formData);
+
+    // Extract recipients from recipientSelections
+    const recipientsFromSelections = Object.values(
+      formData.recipientSelections || {}
+    ).filter((val) => val && val.trim() !== "");
+
+    const submissionData = {
+      ...formData,
+      recipients: recipientsFromSelections,
+    };
+
+    // Validate with Zod
+    try {
+      messageSchema.parse(submissionData);
+      setFormErrors({});
+      createMessageMutation.mutate(submissionData);
+    } catch (error: any) {
+      if (error?.errors) {
+        const errors: FormErrors = {};
+        error.errors.forEach((err: any) => {
+          errors[err.path[0] as keyof MessageFormData] = err.message;
+        });
+        setFormErrors(errors);
+      }
     }
   };
 

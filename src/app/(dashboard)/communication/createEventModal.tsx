@@ -209,11 +209,13 @@ export default function CreateMessageDialog({
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                   >
                     <option value="">Select...</option>
-                    {group.options.map((option: string) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
+                    {group.options.map(
+                      (option: { label: string; value: string }) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      )
+                    )}
                   </select>
                 </div>
               ))}
