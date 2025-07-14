@@ -154,50 +154,52 @@ export default function CreateMessageDialog({
             </TabsContent>
           </Tabs>
 
-          {/* Optional Attachment */}
-          <div>
-            <label className="block text-sm font-medium text-muted-foreground mb-1">
-              Attachment (Optional)
-            </label>
-            <Input
-              type="file"
-              className="bg-transparent"
-              onChange={(e) =>
-                setFormData((prev: any) => ({
-                  ...prev,
-                  attachment: e.target.files?.[0] || null,
-                }))
-              }
-              accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
-              id="attachment-upload"
-            />
-            {formData.attachment && (
-              <p className="text-sm text-gray-600 mt-2 flex items-center">
-                <FileText className="w-4 h-4 mr-1" />
-                {formData.attachment.name}
-              </p>
-            )}
-          </div>
+          <div className="grid grid-cols-2 gap-x-4 ">
+            {/* Optional Attachment */}
+            <div>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">
+                Attachment (Optional)
+              </label>
+              <Input
+                type="file"
+                className="bg-transparent"
+                onChange={(e) =>
+                  setFormData((prev: any) => ({
+                    ...prev,
+                    attachment: e.target.files?.[0] || null,
+                  }))
+                }
+                accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+                id="attachment-upload"
+              />
+              {formData.attachment && (
+                <p className="text-sm text-gray-600 mt-2 flex items-center">
+                  <FileText className="w-4 h-4 mr-1" />
+                  {formData.attachment.name}
+                </p>
+              )}
+            </div>
 
-          {/* Priority */}
-          <div>
-            <label className="block text-sm font-medium text-muted-foreground mb-1">
-              Priority
-            </label>
-            <select
-              value={formData.priority}
-              onChange={(e) =>
-                setFormData((prev: any) => ({
-                  ...prev,
-                  priority: e.target.value,
-                }))
-              }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
+            {/* Priority */}
+            <div>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">
+                Priority
+              </label>
+              <select
+                value={formData.priority}
+                onChange={(e) =>
+                  setFormData((prev: any) => ({
+                    ...prev,
+                    priority: e.target.value,
+                  }))
+                }
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
           </div>
 
           {/* Recipients */}
@@ -205,28 +207,41 @@ export default function CreateMessageDialog({
             <label className="block text-sm font-medium text-muted-foreground mb-1">
               Recipients
             </label>
-            <div className="border border-gray-300 rounded-lg p-4 max-h-64 overflow-y-auto">
+            <p className="text-xs text-gray-500 mb-3">
+              Select who should receive this message. You can choose specific
+              classes or all.
+            </p>
+
+            <div className=" grid grid-cols-2 gap-x-4 space-y-4">
               {recipientOptions.map((group: any) => (
-                <div key={group.group} className="mb-4">
-                  <h4 className="font-medium text-gray-800 mb-2">
+                <div key={group.group}>
+                  <label className="block text-sm font-medium text-gray-800 mb-1">
                     {group.group}
-                  </h4>
-                  <div className="space-y-2">
+                  </label>
+                  <select
+                    value={formData.recipientSelections?.[group.group] || ""}
+                    onChange={(e) =>
+                      setFormData((prev: any) => ({
+                        ...prev,
+                        recipientSelections: {
+                          ...prev.recipientSelections,
+                          [group.group]: e.target.value,
+                        },
+                      }))
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  >
+                    <option value="">Select...</option>
                     {group.options.map((option: string) => (
-                      <label key={option} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={formData.recipients.includes(option)}
-                          onChange={() => handleRecipientToggle(option)}
-                          className="mr-3 h-4 w-4 text-green-600 border-gray-300"
-                        />
-                        <span className="text-sm text-gray-700">{option}</span>
-                      </label>
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
                     ))}
-                  </div>
+                  </select>
                 </div>
               ))}
             </div>
+
             {formErrors.recipients && (
               <p className="text-red-500 text-sm mt-1">
                 {formErrors.recipients}
