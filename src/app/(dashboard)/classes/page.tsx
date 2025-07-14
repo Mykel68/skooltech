@@ -22,7 +22,7 @@ import { getDefaultClasses, useClasses, useCreateClass } from "./useClass";
 import { useUserStore } from "@/stores/userStore";
 import { CreateClassDialog } from "./createClassDialog";
 
-type Grade = "JSS1" | "JSS2" | "JSS3" | "SS1" | "SS2" | "SS3";
+// type Grade = "JSS1" | "JSS2" | "JSS3" | "SS1" | "SS2" | "SS3";
 
 export default function EnhancedClassDisplay() {
   const schoolId = useUserStore((s) => s.schoolId!);

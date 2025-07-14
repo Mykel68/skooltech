@@ -28,6 +28,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import CreateMessageDialog from "./createEventModal";
+import { useUserStore } from "@/stores/userStore";
+import { useClasses } from "../classes/useClass";
 
 // ----------------------
 // Zod schema and types
@@ -82,6 +84,9 @@ const CommunicationCenter = () => {
   const [filterType, setFilterType] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const queryClient = useQueryClient();
+  const schoolId = useUserStore((s) => s.schoolId!);
+  const sessionId = useUserStore((s) => s.session_id!);
+  const termId = useUserStore((s) => s.term_id!);
 
   const [formData, setFormData] = useState<MessageFormData>({
     title: "",
@@ -160,6 +165,8 @@ const CommunicationCenter = () => {
     },
   });
 
+  const { data: classes = [] } = useClasses(schoolId, sessionId, termId);
+
   const createMessageMutation = useMutation<Message, Error, MessageFormData>({
     mutationFn: async (newMessage) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -213,15 +220,33 @@ const CommunicationCenter = () => {
   const recipientOptions = [
     {
       group: "Students",
-      options: ["All Students", "Grade 1 Students", "Grade 2 Students"],
+      options: [
+        { label: "All Students", value: "all-students" },
+        ...classes.map((cls) => ({
+          label: `${cls.name} Students`,
+          value: cls.class_id,
+        })),
+      ],
     },
     {
       group: "Parents",
-      options: ["All Parents", "Grade 1 Parents", "Grade 2 Parents"],
+      options: [
+        { label: "All Parents", value: "all-parents" },
+        ...classes.map((cls) => ({
+          label: `${cls.name} Parents`,
+          value: cls.class_id,
+        })),
+      ],
     },
     {
       group: "Teachers",
-      options: ["All Teachers", "Grade 1 Teachers", "Grade 2 Teachers"],
+      options: [
+        { label: "All Teachers", value: "all-teachers" },
+        ...classes.map((cls) => ({
+          label: `${cls.name} Teachers`,
+          value: cls.class_id,
+        })),
+      ],
     },
   ];
 
@@ -362,7 +387,7 @@ const CommunicationCenter = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading messages...</p>
         </div>
       </div>

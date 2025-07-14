@@ -154,52 +154,29 @@ export default function CreateMessageDialog({
             </TabsContent>
           </Tabs>
 
-          <div className="grid grid-cols-2 gap-x-4 ">
-            {/* Optional Attachment */}
-            <div>
-              <label className="block text-sm font-medium text-muted-foreground mb-1">
-                Attachment (Optional)
-              </label>
-              <Input
-                type="file"
-                className="bg-transparent"
-                onChange={(e) =>
-                  setFormData((prev: any) => ({
-                    ...prev,
-                    attachment: e.target.files?.[0] || null,
-                  }))
-                }
-                accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
-                id="attachment-upload"
-              />
-              {formData.attachment && (
-                <p className="text-sm text-gray-600 mt-2 flex items-center">
-                  <FileText className="w-4 h-4 mr-1" />
-                  {formData.attachment.name}
-                </p>
-              )}
-            </div>
-
-            {/* Priority */}
-            <div>
-              <label className="block text-sm font-medium text-muted-foreground mb-1">
-                Priority
-              </label>
-              <select
-                value={formData.priority}
-                onChange={(e) =>
-                  setFormData((prev: any) => ({
-                    ...prev,
-                    priority: e.target.value,
-                  }))
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-            </div>
+          {/* Optional Attachment */}
+          <div>
+            <label className="block text-sm font-medium text-muted-foreground mb-1">
+              Attachment (Optional)
+            </label>
+            <Input
+              type="file"
+              className="bg-transparent"
+              onChange={(e) =>
+                setFormData((prev: any) => ({
+                  ...prev,
+                  attachment: e.target.files?.[0] || null,
+                }))
+              }
+              accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+              id="attachment-upload"
+            />
+            {formData.attachment && (
+              <p className="text-sm text-gray-600 mt-2 flex items-center">
+                <FileText className="w-4 h-4 mr-1" />
+                {formData.attachment.name}
+              </p>
+            )}
           </div>
 
           {/* Recipients */}
