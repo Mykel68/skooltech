@@ -192,11 +192,8 @@ const CommunicationCenter = () => {
 
       return data;
     },
-    onSuccess: (newMessage) => {
-      queryClient.setQueryData<Message[]>(["messages"], (old = []) => [
-        newMessage,
-        ...old,
-      ]);
+    onSuccess: () => {
+      queryClient.invalidateQueries(["messages", schoolId]);
       toast.success("Message sent successfully!");
       setShowCreateModal(false);
       resetForm();
