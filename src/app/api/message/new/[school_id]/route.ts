@@ -6,7 +6,7 @@ import { backendClient } from "@/lib/backendClient";
 
 // ✅ GET school profile
 export async function POST(
-  _request: Request,
+  request: Request,
   context: {
     params: Promise<{
       school_id: string;
@@ -14,13 +14,14 @@ export async function POST(
   }
 ) {
   try {
+    console.log("Hello at message route");
     const { school_id } = await context.params;
     const backendUrl = process.env.MAIN_BACKEND_URL;
     if (!backendUrl) {
       throw new Error("MAIN_BACKEND_URL is not set");
     }
 
-    const body = await _request.json();
+    const body = await request.json();
 
     const cookieStore = await cookies();
     const token = cookieStore.get("user_id")?.value;

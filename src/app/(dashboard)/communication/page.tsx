@@ -170,23 +170,42 @@ const CommunicationCenter = () => {
 
   const createMessageMutation = useMutation<Message, Error, MessageFormData>({
     mutationFn: async (newMessage) => {
-      const formData = new FormData();
+      if (!newMessage.recipients || newMessage.recipients.length === 0) {
+        throw new Error("No recipients selected");
+      }
 
-      formData.append("title", newMessage.title);
-      formData.append("content", newMessage.content);
-      formData.append("type", newMessage.type);
-      newMessage.recipients.forEach((recipient, idx) =>
-        formData.append(`recipients[${idx}]`, recipient)
+      const rawRecipient = newMessage.recipients[0]; // assuming single target for simplicity
+      const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+      let target_role: "Student" | "Teacher" | "Parent" | "All" = "All";
+      let class_id: string | undefined = undefined;
+
+      if (rawRecipient.startsWith("all-")) {
+        target_role = capitalize(rawRecipient.split("-")[1]) as
+          | "Student"
+          | "Teacher"
+          | "Parent"
+          | "All";
+      } else {
+        target_role = "Student"; // or infer it some other way
+        class_id = rawRecipient;
+      }
+
+      const payload = {
+        school_id: schoolId,
+        title: newMessage.title,
+        content: newMessage.content,
+        message_type: newMessage.type,
+        target_role,
+        class_id,
+      };
+
+      const { data } = await axios.post<Message>(
+        `/api/message/new/${schoolId}`,
+        payload
       );
 
-      if (newMessage.attachment) {
-        formData.append("attachment", newMessage.attachment);
-      }
-      if (newMessage.scheduleDate) {
-        formData.append("scheduleDate", newMessage.scheduleDate);
-      }
-
-      const response = await axios.post(`/api/message/${schoolId}`, formData);
+      return data;
     },
     onSuccess: (newMessage) => {
       queryClient.setQueryData<Message[]>(["messages"], (old = []) => [
