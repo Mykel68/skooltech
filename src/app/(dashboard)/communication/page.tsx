@@ -157,12 +157,44 @@ const CommunicationCenter = () => {
   // ----------------------
   // React Query
   // ----------------------
-
-  const { data: messages = [], isLoading } = useQuery<Message[]>({
-    queryKey: ["messages"],
+  const {
+    data: messages = [],
+    isLoading,
+    error,
+  } = useQuery<Message[]>({
+    queryKey: ["messages", schoolId],
+    enabled: !!schoolId,
     queryFn: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      return mockMessages;
+      const { data } = await axios.get(`/api/message/get/${schoolId}`);
+      const apiMessages = data?.data?.messages ?? [];
+
+      return apiMessages.map((apiMsg: any, index: number) => {
+        let recipients: string[] = [];
+
+        if (apiMsg.class_id) {
+          // It's a targeted class message
+          recipients = [apiMsg.class_id];
+        } else if (apiMsg.target_role) {
+          recipients = [`all-${apiMsg.target_role.toLowerCase()}`];
+        }
+
+        return {
+          id: apiMsg.message_id ?? index,
+          title: apiMsg.title ?? "Untitled",
+          content: apiMsg.content ?? "",
+          recipients,
+          type: apiMsg.message_type ?? "message",
+          priority: "medium", // default or adapt if you add it to your API
+          status: apiMsg.status ?? "sent",
+          createdAt: apiMsg.created_at ?? new Date().toISOString(),
+          sentAt: apiMsg.sent_at ?? new Date().toISOString(),
+          author: "Admin", // default until your API adds author
+          hasAttachment: apiMsg.has_attachment ?? false,
+          attachmentName: apiMsg.attachment_name ?? "",
+          recipientCount: apiMsg.recipient_count ?? 0,
+          readCount: apiMsg.read_count ?? 0,
+        };
+      });
     },
   });
 

@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { backendClient } from "@/lib/backendClient";
 
 // ✅ GET school profile
-export async function POST(
+export async function GET(
   request: Request,
   context: {
     params: Promise<{
@@ -20,7 +20,7 @@ export async function POST(
       throw new Error("MAIN_BACKEND_URL is not set");
     }
 
-    const body = await request.json();
+    // const body = await request.json();
 
     const cookieStore = await cookies();
     const token = cookieStore.get("user_id")?.value;
@@ -29,9 +29,8 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const response = await backendClient.post(
+    const response = await backendClient.get(
       `${backendUrl}/api/messages/${school_id}`,
-      body,
       {
         headers: {
           Authorization: `Bearer ${token}`,
