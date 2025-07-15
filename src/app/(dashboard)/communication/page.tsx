@@ -205,15 +205,16 @@ const CommunicationCenter = () => {
 
   const deleteMessageMutation = useMutation<number, Error, number>({
     mutationFn: async (messageId) => {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await axios.delete(`/api/message/remove/${messageId}`);
       return messageId;
     },
     onSuccess: (messageId) => {
-      queryClient.setQueryData<Message[]>(["messages"], (old = []) =>
+      queryClient.setQueryData<Message[]>(["messages", schoolId], (old = []) =>
         old.filter((msg) => msg.id !== messageId)
       );
       toast.success("Message deleted successfully!");
     },
+
     onError: () => {
       toast.error("Failed to delete message. Please try again.");
     },
@@ -396,7 +397,7 @@ const CommunicationCenter = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading messages...</p>
