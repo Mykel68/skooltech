@@ -102,59 +102,6 @@ const CommunicationCenter = () => {
   const [formErrors, setFormErrors] = useState<FormErrors>({});
 
   // ----------------------
-  // Mock Data
-  // ----------------------
-
-  const mockMessages: Message[] = [
-    {
-      id: 1,
-      title: "Annual Sports Day Announcement",
-      content: "We are excited to announce our annual sports day...",
-      recipients: ["All Students", "All Parents", "All Teachers"],
-      type: "announcement",
-      priority: "high",
-      status: "sent",
-      createdAt: "2024-07-10T10:30:00Z",
-      sentAt: "2024-07-10T10:35:00Z",
-      author: "Admin",
-      hasAttachment: false,
-      recipientCount: 1250,
-      readCount: 856,
-    },
-    {
-      id: 2,
-      title: "Monthly Newsletter - July 2024",
-      content: "Dear School Community, Here are the highlights...",
-      recipients: ["All Parents"],
-      type: "newsletter",
-      priority: "medium",
-      status: "sent",
-      createdAt: "2024-07-01T09:00:00Z",
-      sentAt: "2024-07-01T09:05:00Z",
-      author: "Admin",
-      hasAttachment: true,
-      attachmentName: "july_newsletter.pdf",
-      recipientCount: 800,
-      readCount: 650,
-    },
-    {
-      id: 3,
-      title: "Emergency School Closure Notice",
-      content: "Due to severe weather conditions...",
-      recipients: ["All Students", "All Parents", "All Teachers"],
-      type: "urgent",
-      priority: "high",
-      status: "sent",
-      createdAt: "2024-07-08T16:45:00Z",
-      sentAt: "2024-07-08T16:50:00Z",
-      author: "Admin",
-      hasAttachment: false,
-      recipientCount: 1250,
-      readCount: 1180,
-    },
-  ];
-
-  // ----------------------
   // React Query
   // ----------------------
   const {
@@ -171,11 +118,16 @@ const CommunicationCenter = () => {
       return apiMessages.map((apiMsg: any, index: number) => {
         let recipients: string[] = [];
 
-        if (apiMsg.class_id) {
-          // It's a targeted class message
-          recipients = [apiMsg.class_id];
-        } else if (apiMsg.target_role) {
-          recipients = [`all-${apiMsg.target_role.toLowerCase()}`];
+        // if (apiMsg.class_id) {
+        //   // It's a targeted class message
+        //   recipients = [apiMsg.class_id];
+        // } else if (apiMsg.target_role) {
+        //   recipients = [`all-${apiMsg.target_role.toLowerCase()}`];
+        // }
+
+        // target_description is recipient
+        if (apiMsg.target_description) {
+          recipients = [apiMsg.target_description];
         }
 
         return {
@@ -193,6 +145,7 @@ const CommunicationCenter = () => {
           attachmentName: apiMsg.attachment_name ?? "",
           recipientCount: apiMsg.recipient_count ?? 0,
           readCount: apiMsg.read_count ?? 0,
+          target_description: apiMsg.target_description ?? "",
         };
       });
     },
