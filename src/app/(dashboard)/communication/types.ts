@@ -1,5 +1,5 @@
-export type Priority = 'low' | 'medium' | 'high';
-export type Status = 'draft' | 'sent' | 'scheduled';
+export type Priority = "low" | "medium" | "high";
+export type Status = "draft" | "sent" | "scheduled";
 
 export interface RecipientGroup {
   group: string;
@@ -66,3 +66,4 @@ export interface NewsletterModalProps extends ModalProps {
   setForm: (form: NewsletterFormData) => void;
   recipientOptions: RecipientGroup[];
   handleRecipientToggle: (recipient: string, isEvent: boolean) => void;
+}

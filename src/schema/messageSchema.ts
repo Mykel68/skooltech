@@ -11,6 +11,8 @@ export const messageSchema = z
     type: z.enum(["announcement", "message", "urgent", "newsletter"]),
     recipientSelections: z.record(z.string().optional()).optional(),
     attachment: z.any().optional(),
+    recipients: z.array(z.string().optional()),
+    contentMode: z.enum(["write", "upload"]).optional(), // 👈 Add this line
   })
   .refine((data) => !!data.content || !!data.contentFile, {
     message: "Please write content or upload a file.",
@@ -26,5 +28,3 @@ export const messageSchema = z
   });
 
 export type MessageFormData = z.infer<typeof messageSchema>;
-
-export default messageSchema;

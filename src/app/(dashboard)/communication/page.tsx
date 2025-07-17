@@ -27,7 +27,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import { useState } from "react";
-import CreateMessageDialog from "./createEventModal";
+import CreateMessageDialog from "./createMessageDialog";
 import { useUserStore } from "@/stores/userStore";
 import { useClasses } from "../classes/useClass";
 import axios from "axios";
@@ -73,6 +73,10 @@ export interface Message {
   readCount: number;
 }
 
+type ExtendedFormData = MessageFormData & {
+  recipientSelections?: Record<string, string>;
+};
+
 type FormErrors = Partial<Record<keyof MessageFormData, string>>;
 
 // ----------------------
@@ -89,7 +93,7 @@ const CommunicationCenter = () => {
   const sessionId = useUserStore((s) => s.session_id!);
   const termId = useUserStore((s) => s.term_id!);
 
-  const [formData, setFormData] = useState<MessageFormData>({
+  const [formData, setFormData] = useState<ExtendedFormData>({
     title: "",
     content: "",
     recipients: [],
@@ -97,6 +101,7 @@ const CommunicationCenter = () => {
     priority: "medium",
     attachment: null,
     scheduleDate: "",
+    recipientSelections: {}, // <-- now defined
   });
 
   const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -193,7 +198,7 @@ const CommunicationCenter = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["messages", schoolId]);
+      queryClient.invalidateQueries({ queryKey: ["messages", schoolId] });
       toast.success("Message sent successfully!");
       setShowCreateModal(false);
       resetForm();
@@ -302,7 +307,7 @@ const CommunicationCenter = () => {
     // Extract recipients from recipientSelections
     const recipientsFromSelections = Object.values(
       formData.recipientSelections || {}
-    ).filter((val) => val && val.trim() !== "");
+    ).filter((val: any) => val && val.trim() !== "");
 
     const submissionData = {
       ...formData,
@@ -313,7 +318,7 @@ const CommunicationCenter = () => {
     try {
       messageSchema.parse(submissionData);
       setFormErrors({});
-      createMessageMutation.mutate(submissionData);
+      createMessageMutation.mutate(submissionData as MessageFormData);
     } catch (error: any) {
       if (error?.errors) {
         const errors: FormErrors = {};

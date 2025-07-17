@@ -37,6 +37,7 @@ export default function CreateMessageDialog({
       recipients: [],
       type: "announcement",
       attachment: null,
+      contentMode: "write",
     },
   });
 
@@ -108,7 +109,9 @@ export default function CreateMessageDialog({
           {/* Tabs */}
           <Tabs
             defaultValue="write"
-            onValueChange={(v) => setValue("contentMode", v)}
+            onValueChange={(v) =>
+              setValue("contentMode", v as "write" | "upload")
+            }
           >
             <TabsList className="grid w-full grid-cols-2 mb-3 bg-muted rounded-lg gap-4">
               <TabsTrigger value="write">Write Content</TabsTrigger>
@@ -141,8 +144,8 @@ export default function CreateMessageDialog({
                   accept=".pdf,.doc,.docx,.txt"
                   {...register("contentFile")}
                 />
-                {errors.contentFile && (
-                  <p className="text-red-500 text-sm mt-1">
+                {typeof errors.contentFile?.message === "string" && (
+                  <p className="text-red-500 text-sm">
                     {errors.contentFile.message}
                   </p>
                 )}
