@@ -153,7 +153,7 @@ export default function TeacherTable() {
             className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             <RefreshCw className="w-4 h-4" />
-            Refresh
+            <span className="hidden md:block">Refresh</span>
           </button>
         </div>
       </div>
