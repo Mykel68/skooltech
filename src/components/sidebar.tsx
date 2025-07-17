@@ -3,7 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, ChevronDown, Crown, Zap, Users, Calendar } from "lucide-react";
+import {
+  Menu,
+  ChevronDown,
+  Crown,
+  Zap,
+  Users,
+  Calendar,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "./sidebar-provider";
@@ -103,12 +111,12 @@ export function Sidebar() {
             </div>
           </div>
           <Button
-            variant="ghost"
+            variant="destructive"
             size="icon"
             className="ml-auto text-white lg:hidden"
             onClick={toggle}
           >
-            <Menu className="h-6 w-6" />
+            <X className="h-6 w-6" />
           </Button>
         </div>
 
