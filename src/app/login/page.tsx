@@ -1,10 +1,11 @@
 import { GalleryVerticalEnd } from "lucide-react";
 
 import { LoginForm } from "@/components/forms/login-form";
+import Image from "next/image";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row justify-center items-center ">
+    <div className="min-h-screen flex flex-col lg:flex-row justify-center ">
       <div className="w-full lg:w-[40%] flex flex-col justify-center p-6 lg:p-12 bg-background relative">
         {/* <div className='flex justify-center gap-2 md:justify-start'>
 					<a
@@ -24,9 +25,10 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-[60%] relative overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0">
-          <img
+          <Image
             src="/images/reg-img.jpg"
             alt="Students collaborating"
+            fill
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/60"></div>
