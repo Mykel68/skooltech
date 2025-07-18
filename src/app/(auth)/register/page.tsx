@@ -1,4 +1,5 @@
 import SchoolRegistrationForm from "@/components/forms/school-registration-form";
+import Image from "next/image";
 
 export default function Page() {
   return (
@@ -17,10 +18,11 @@ export default function Page() {
             </div>
           </div>
         </div>
-        <img
+        <Image
           src="/images/login-img.jpg"
           alt="School community"
           className="fixed "
+          fill
         />
       </div>
     </main>
