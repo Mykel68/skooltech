@@ -2,6 +2,7 @@ import { GalleryVerticalEnd } from "lucide-react";
 
 import { LoginForm } from "@/components/forms/login-form";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function LoginPage() {
   return (
@@ -19,6 +20,14 @@ export default function LoginPage() {
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full ">
             <LoginForm />
+            <p className="text-center text-sm text-italic text-black/70 mt-5 ">
+              Not a member yet? Sign up{" "}
+              <span className="font-semibold underline underline-offset-2">
+                {" "}
+                <Link href={"/register"}>here</Link>{" "}
+              </span>{" "}
+              for free
+            </p>
           </div>
         </div>
       </div>
