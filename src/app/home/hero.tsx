@@ -118,7 +118,7 @@ export default function Hero() {
       />
 
       <div className="relative container mx-auto px-4 lg:px-8 z-10">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 ">
           {/* Left Content */}
           <motion.div
             variants={containerVariants}

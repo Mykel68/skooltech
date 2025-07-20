@@ -75,7 +75,7 @@ export default function ModernCTAUI() {
     {
       icon: MessageSquare,
       title: "Live Chat",
-      description: "Available Monday-Friday, 9am-5pm",
+      description: "Launching soon...",
       color: "from-purple-500 to-pink-500",
       action: "Start Chat",
     },

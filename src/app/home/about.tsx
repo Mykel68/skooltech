@@ -21,7 +21,7 @@ export default function About() {
       color: "from-blue-500 to-cyan-500",
     },
     {
-      value: "Built For",
+      value: "For",
       label: "Schools & Parents",
       icon: TrendingUp,
       color: "from-purple-500 to-pink-500",

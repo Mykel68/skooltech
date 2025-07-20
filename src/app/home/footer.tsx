@@ -125,14 +125,14 @@ export default function Footer() {
                 <MapPin className="h-5 w-5 text-blue-400" />
                 <span>Lagos, Nigeria</span>
               </div>
-              <div className="flex items-center space-x-3 text-slate-300 hover:text-blue-400 transition-colors">
+              {/* <div className="flex items-center space-x-3 text-slate-300 hover:text-blue-400 transition-colors">
                 <Phone className="h-5 w-5 text-blue-400" />
                 <span>+234 (0) 800 SKOOL-TECH</span>
-              </div>
-              <div className="flex items-center space-x-3 text-slate-300 hover:text-blue-400 transition-colors">
+              </div> */}
+              {/* <div className="flex items-center space-x-3 text-slate-300 hover:text-blue-400 transition-colors">
                 <Mail className="h-5 w-5 text-blue-400" />
                 <span>hello@skooltech.com</span>
-              </div>
+              </div> */}
             </div>
 
             {/* Newsletter */}
