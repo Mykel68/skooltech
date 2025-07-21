@@ -29,7 +29,7 @@ export async function DELETE(
     }
     if (axios.isAxiosError(err)) {
       return NextResponse.json(
-        { error: err.response?.data?.message || "Update failed" },
+        { error: err.response?.data?.message || "Delete user failed" },
         { status: err.response?.status || 500 }
       );
     }

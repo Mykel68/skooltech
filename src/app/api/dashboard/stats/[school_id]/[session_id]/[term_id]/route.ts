@@ -50,7 +50,7 @@ export async function GET(
       return NextResponse.json(
         {
           error:
-            error.response?.data?.message || "Failed to fetch school subjects",
+            error.response?.data?.message || "Failed to fetch dashboard stats",
         },
         { status: error.response?.status || 500 }
       );

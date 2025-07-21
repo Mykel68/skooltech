@@ -45,8 +45,7 @@ export async function POST(
     if (axios.isAxiosError(error)) {
       return NextResponse.json(
         {
-          error:
-            error.response?.data?.message || "Failed to fetch school profile",
+          error: error.response?.data?.message || "Failed to create message",
         },
         { status: error.response?.status || 500 }
       );

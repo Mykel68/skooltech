@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     }
     if (axios.isAxiosError(error)) {
       return NextResponse.json(
-        { error: error.response?.data?.message || "Backend request failed" },
+        { error: error.response?.data?.message || "Registration failed" },
         { status: error.response?.status || 500 }
       );
     }

@@ -42,7 +42,7 @@ export async function POST(
     if (axios.isAxiosError(err)) {
       console.log("Error:", err.message);
       return NextResponse.json(
-        { error: err.response?.data?.message || "Update failed" },
+        { error: err.response?.data?.message || "Failed to create class" },
         { status: err.response?.status || 500 }
       );
     }

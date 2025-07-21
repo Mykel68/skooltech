@@ -42,7 +42,7 @@ export async function POST(
     }
     if (axios.isAxiosError(err)) {
       return NextResponse.json(
-        { error: err.response?.data?.message || "Update failed" },
+        { error: err.response?.data?.message || "Failed to create subject" },
         { status: err.response?.status || 500 }
       );
     }
