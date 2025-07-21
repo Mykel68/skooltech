@@ -389,7 +389,7 @@ export default function StudentManagementAdmin() {
                           {student.is_approved ? "Approved" : "Pending"}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-600">
+                      <td className="p-2 text-sm text-slate-600">
                         {student.enrollment_date}
                       </td>
                       <td className="px-6 py-4">
