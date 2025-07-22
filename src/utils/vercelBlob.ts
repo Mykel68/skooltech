@@ -15,3 +15,23 @@ export async function uploadSchoolImage(file: File): Promise<string> {
   });
   return url;
 }
+
+export async function uploadAttachment(
+  file: File,
+  folder: string = "file"
+): Promise<string> {
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    throw new Error(
+      "Vercel Blob token is not configured. Please set BLOB_READ_WRITE_TOKEN."
+    );
+  }
+
+  const path = `${folder}/${Date.now()}-${file.name}`;
+
+  const { url } = await put(path, file, {
+    access: "public",
+    token: process.env.BLOB_READ_WRITE_TOKEN,
+  });
+
+  return url;
+}

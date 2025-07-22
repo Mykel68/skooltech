@@ -6,11 +6,11 @@ export const messageSchema = z
       .string()
       .min(1, "Title is required")
       .max(100, "Title must be less than 100 characters"),
-    content: z.string().optional(),
+    content: z.any().optional(),
     contentFile: z.any().optional(),
     type: z.enum(["announcement", "message", "urgent", "newsletter"]),
     recipientSelections: z.record(z.string().optional()).optional(),
-    attachment: z.any().optional(),
+    attachment_name: z.any().optional(),
     recipients: z.array(z.string().optional()),
     contentMode: z.enum(["write", "upload"]).optional(), // 👈 Add this line
   })

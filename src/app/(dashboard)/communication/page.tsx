@@ -188,6 +188,7 @@ const CommunicationCenter = () => {
         message_type: newMessage.type,
         target_role,
         class_id,
+        attachment: newMessage.attachment ?? null,
       };
 
       const { data } = await axios.post<Message>(
