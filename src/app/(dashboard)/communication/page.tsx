@@ -31,6 +31,7 @@ import CreateMessageDialog from "./createMessageDialog";
 import { useUserStore } from "@/stores/userStore";
 import { useClasses } from "../classes/useClass";
 import axios from "axios";
+import { getFileTypeLabel, isValidHttpUrl } from "@/utils/helper";
 
 // ----------------------
 // Zod schema and types
@@ -515,9 +516,15 @@ const CommunicationCenter = () => {
                       )}
                     </div>
 
-                    <p className="text-gray-600 mb-4 line-clamp-2">
-                      {message.content}
-                    </p>
+                    {isValidHttpUrl(message.content) ? (
+                      <span className="text-green-600 underline">
+                        [{getFileTypeLabel(message.content)}]
+                      </span>
+                    ) : (
+                      <p className="text-gray-600 mb-4 line-clamp-2">
+                        {message.content}
+                      </p>
+                    )}
 
                     <div className="flex items-center gap-6 text-sm text-gray-500 mb-3">
                       <div className="flex items-center">
@@ -626,13 +633,17 @@ const CommunicationCenter = () => {
                 </span>
               </div>
 
-              <div className="prose max-w-none">
-                <p className="text-gray-700 whitespace-pre-wrap">
-                  {selectedMessage.content}
-                </p>
+              <div className="mt-4">
+                {isValidHttpUrl(selectedMessage.content) ? (
+                  renderPreview(selectedMessage.content)
+                ) : (
+                  <p className="text-gray-700 whitespace-pre-wrap">
+                    {selectedMessage.content}
+                  </p>
+                )}
               </div>
 
-              {selectedMessage.hasAttachment && (
+              {/* {selectedMessage.hasAttachment && (
                 <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
@@ -647,7 +658,53 @@ const CommunicationCenter = () => {
                     </button>
                   </div>
                 </div>
-              )}
+              )} */}
+
+              {selectedMessage.hasAttachment &&
+                selectedMessage.attachmentName && (
+                  <div className="mt-6 p-4 bg-gray-50 rounded-lg space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <FileText className="w-5 h-5 text-gray-400 mr-2" />
+                        <span className="text-sm text-gray-700 break-all">
+                          {selectedMessage.attachmentName}
+                        </span>
+                      </div>
+                    </div>
+
+                    {selectedMessage.attachmentName.startsWith("http") ? (
+                      <>
+                        {/* Show preview for images */}
+                        {/\.(jpg|jpeg|png|gif|webp)$/i.test(
+                          selectedMessage.attachmentName
+                        ) ? (
+                          <img
+                            src={selectedMessage.attachmentName}
+                            alt="attachment"
+                            className="w-full rounded-lg border"
+                          />
+                        ) : (
+                          <a
+                            href={selectedMessage.attachmentName}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-green-600 hover:underline text-sm"
+                          >
+                            View Attachment
+                          </a>
+                        )}
+                      </>
+                    ) : (
+                      <a
+                        href={`/api/message/download/${selectedMessage.id}`}
+                        className="text-green-600 hover:underline text-sm flex items-center"
+                      >
+                        <Download className="w-4 h-4 mr-1" />
+                        Download
+                      </a>
+                    )}
+                  </div>
+                )}
 
               <div className="mt-6 pt-6 border-t">
                 <div className="grid grid-cols-2 gap-4 text-sm">
@@ -682,6 +739,56 @@ const CommunicationCenter = () => {
         </div>
       )}
     </div>
+  );
+};
+
+const renderPreview = (url: string) => {
+  const extension = url.split(".").pop()?.toLowerCase();
+
+  if (!extension) return null;
+
+  if (["jpg", "jpeg", "png", "webp", "gif"].includes(extension)) {
+    return (
+      <img
+        src={url}
+        alt="attachment"
+        className="max-w-full rounded-lg border"
+      />
+    );
+  }
+
+  if (extension === "pdf") {
+    return (
+      <iframe
+        src={url}
+        className="w-full h-[500px] border rounded-lg"
+        title="PDF Viewer"
+      />
+    );
+  }
+
+  if (["doc", "docx", "ppt", "pptx", "xls", "xlsx"].includes(extension)) {
+    return (
+      <iframe
+        src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(
+          url
+        )}`}
+        className="w-full h-[500px] border rounded-lg"
+        title="Office Document Viewer"
+      />
+    );
+  }
+
+  // Default fallback
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-green-600 hover:underline break-all"
+    >
+      {url}
+    </a>
   );
 };
 
