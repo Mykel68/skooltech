@@ -1,8 +1,7 @@
-import { GalleryVerticalEnd } from "lucide-react";
-
 import { LoginForm } from "@/components/forms/login-form";
 import Image from "next/image";
 import Link from "next/link";
+import RegImg from "/images/reg-img.jpg";
 
 export default function LoginPage() {
   return (
@@ -37,6 +36,7 @@ export default function LoginPage() {
           <Image
             src="/images/reg-img.jpg"
             alt="Students collaborating"
+            priority
             fill
             className="w-full h-full object-cover"
           />
