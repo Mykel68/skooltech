@@ -10,7 +10,7 @@ export const schoolRegistrationFormSchema = z.object({
     .min(2, "First name must be at least 2 characters"),
   admin_last_name: z.string().min(2, "Last name must be at least 2 characters"),
   phone_number: z.string().min(10, "Invalid phone number").optional(),
-  schol_image: z.string().url().nullable().optional(),
+  school_image: z.string().url().nullable().optional(),
   // school_image: z
   //   .instanceof(File)
   //   .optional()
