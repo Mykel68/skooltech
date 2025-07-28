@@ -38,7 +38,7 @@ export default function SchoolRegistrationPage() {
       admin_last_name: "",
       phone_number: "",
       school_image: undefined,
-      admin_gender: "male",
+      gender: "Male",
     },
   });
 
@@ -124,12 +124,12 @@ export default function SchoolRegistrationPage() {
             </div>
             <div className="grid grid-cols-1 gap-4">
               <div className="space-y-2">
-                <label htmlFor="admin_gender" className="text-sm font-medium">
+                <label htmlFor="gender" className="text-sm font-medium">
                   Gender
                 </label>
                 <Select
                   onValueChange={(value) =>
-                    setValue("admin_gender", value as "male" | "female", {
+                    setValue("gender", value as "Male" | "Female", {
                       shouldValidate: true,
                     })
                   }
@@ -138,13 +138,13 @@ export default function SchoolRegistrationPage() {
                     <SelectValue placeholder="Select gender" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="male">Male</SelectItem>
-                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
                   </SelectContent>
                 </Select>
-                {errors.admin_gender && (
+                {errors.gender && (
                   <p className="text-sm text-red-600">
-                    {errors.admin_gender.message}
+                    {errors.gender.message}
                   </p>
                 )}
               </div>

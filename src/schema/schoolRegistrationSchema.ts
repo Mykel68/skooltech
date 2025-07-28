@@ -10,14 +10,15 @@ export const schoolRegistrationFormSchema = z.object({
     .min(2, "First name must be at least 2 characters"),
   admin_last_name: z.string().min(2, "Last name must be at least 2 characters"),
   phone_number: z.string().min(10, "Invalid phone number").optional(),
-  school_image: z
-    .instanceof(File)
-    .optional()
-    .refine(
-      (file) => !file || file.size <= 5 * 1024 * 1024,
-      "Image must be less than 5MB"
-    ),
-  admin_gender: z.enum(["male", "female"], {
+  schol_image: z.string().url().nullable().optional(),
+  // school_image: z
+  //   .instanceof(File)
+  //   .optional()
+  //   .refine(
+  //     (file) => !file || file.size <= 5 * 1024 * 1024,
+  //     "Image must be less than 5MB"
+  //   ),
+  gender: z.enum(["Male", "Female"], {
     required_error: "Gender is required",
   }),
 });
@@ -31,5 +32,5 @@ export const schoolRegistrationApiSchema = z.object({
   admin_last_name: z.string().min(2),
   phone_number: z.string().min(10).optional(),
   school_image: z.string().url().nullable().optional(),
-  admin_gender: z.enum(["male", "female"]),
+  gender: z.enum(["Male", "Female"]),
 });
