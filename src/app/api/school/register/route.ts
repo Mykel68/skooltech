@@ -5,11 +5,11 @@ import { schoolRegistrationApiSchema } from "@/schema/schoolRegistrationSchema";
 
 export async function POST(request: Request) {
   try {
-    console.log("[POST] Body:");
+    // console.log("[POST] Body:");
     const body = await request.json();
     const validatedData = schoolRegistrationApiSchema.parse(body);
 
-    console.log(validatedData);
+    // console.log(validatedData);
 
     const backendUrl = process.env.MAIN_BACKEND_URL;
     if (!backendUrl) {
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       `${backendUrl}/api/schools/register`,
       validatedData
     );
-    console.log(response.data);
+    // console.log(response.data);
 
     return NextResponse.json(response.data, { status: 201 });
   } catch (error) {
