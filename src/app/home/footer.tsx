@@ -92,8 +92,9 @@ export default function Footer() {
             <div className="group">
               <a
                 href="/"
-                className="flex items-center space-x-3 transition-transform group-hover:scale-105"
+                className="flex items-center space-x-3 transition-transform "
               >
+                {/* group-hover:scale-105 */}
                 {/* <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl p-2 shadow-lg">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -116,9 +117,9 @@ export default function Footer() {
                 <Image
                   src="/images/logo-3.png"
                   alt="Logo"
-                  width={300}
-                  height={5}
-                  className=""
+                  width={1000}
+                  height={1000}
+                  className="h-12 w-fit"
                 />
               </a>
               <p className="text-slate-300 mb-8 text-md leading-relaxed">

@@ -17,6 +17,9 @@ export const schoolRegistrationFormSchema = z.object({
       (file) => !file || file.size <= 5 * 1024 * 1024,
       "Image must be less than 5MB"
     ),
+  admin_gender: z.enum(["male", "female"], {
+    required_error: "Gender is required",
+  }),
 });
 
 export const schoolRegistrationApiSchema = z.object({
@@ -28,4 +31,5 @@ export const schoolRegistrationApiSchema = z.object({
   admin_last_name: z.string().min(2),
   phone_number: z.string().min(10).optional(),
   school_image: z.string().url().nullable().optional(),
+  admin_gender: z.enum(["male", "female"]),
 });
