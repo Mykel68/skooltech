@@ -18,6 +18,7 @@ import { motion } from "framer-motion";
 import { ModeToggle } from "./mode-toggle";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Navbar() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function Navbar() {
     >
       <div className="container flex h-20 items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
-          <motion.div
+          {/* <motion.div
             className="bg-[#7A2CF9] rounded-md p-1"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -48,8 +49,15 @@ export default function Navbar() {
               <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
               <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
             </svg>
-          </motion.div>
-          <span className="font-bold text-2xl">SkoolTech</span>
+          </motion.div> */}
+
+          <Image
+            src="/images/logo-3.png"
+            alt="Logo"
+            width={1000}
+            height={1000}
+            className="h-64 w-full"
+          />
         </Link>
 
         {/* Desktop Navigation */}

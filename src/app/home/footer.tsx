@@ -12,6 +12,7 @@ import {
   Send,
   ArrowUp,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -91,9 +92,9 @@ export default function Footer() {
             <div className="group">
               <a
                 href="/"
-                className="flex items-center space-x-3 mb-6 transition-transform group-hover:scale-105"
+                className="flex items-center space-x-3 transition-transform group-hover:scale-105"
               >
-                <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl p-2 shadow-lg">
+                {/* <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl p-2 shadow-lg">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -110,7 +111,15 @@ export default function Footer() {
                 </div>
                 <span className="font-bold text-2xl bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                   SkoolTech
-                </span>
+                </span> */}
+
+                <Image
+                  src="/images/logo-3.png"
+                  alt="Logo"
+                  width={300}
+                  height={5}
+                  className=""
+                />
               </a>
               <p className="text-slate-300 mb-8 text-md leading-relaxed">
                 Revolutionizing school management with innovative technology
