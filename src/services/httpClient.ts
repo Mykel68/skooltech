@@ -55,16 +55,18 @@ export class HttpClient {
   async registerSchool(data: SchoolFormData): Promise<unknown> {
     try {
       let imageUrl: string | null = null;
-      // if (data.school_image) {
-      //   imageUrl = await uploadSchoolImage(data.school_image);
-      // }
+
       if (
         data.school_image &&
         typeof data.school_image === "object" &&
         "name" in data.school_image &&
         "type" in data.school_image
       ) {
+        // It's a File, upload it
         imageUrl = await uploadSchoolImage(data.school_image as File);
+      } else if (typeof data.school_image === "string") {
+        // Already a URL
+        imageUrl = data.school_image;
       }
 
       const response = await this.client.post("/school/register", {
