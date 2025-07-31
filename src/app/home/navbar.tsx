@@ -56,7 +56,7 @@ export default function Navbar() {
             alt="Logo"
             width={1000}
             height={1000}
-            className="h-16 w-full"
+            className="h-9 w-fit"
           />
         </Link>
 

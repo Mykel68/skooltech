@@ -76,7 +76,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative md:px-6 lg:px-12 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
+    <footer className="relative md:px-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent"></div>
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
@@ -119,7 +119,7 @@ export default function Footer() {
                   alt="Logo"
                   width={1000}
                   height={1000}
-                  className="h-12 w-fit"
+                  className="h-9 w-fit"
                 />
               </a>
               <p className="text-slate-300 mb-8 text-md leading-relaxed">
