@@ -414,35 +414,33 @@ const CommunicationCenter = () => {
   }
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen md:pt-0 pt-6  ">
       {/* Header */}
-      <div className="   ">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <Megaphone className="w-8 h-8 text-green-600 mr-3" />
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  Communication Center
-                </h1>
-                <p className="text-sm text-gray-600">
-                  Broadcast messages to your school community
-                </p>
-              </div>
+      <div className=" w-full md:max-w-7xl ">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <Megaphone className="w-8 h-8 text-green-600 mr-3" />
+            <div>
+              <h1 className="md:text-3xl text-2xl font-bold text-gray-900">
+                Communication Center
+              </h1>
+              <p className="text-sm text-gray-600">
+                Broadcast messages to your school community
+              </p>
             </div>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              New Message
-            </button>
           </div>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            New Message
+          </button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="md:max-w-7xl w-full mt-8  ">
         {/* Filters and Search */}
         <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
           <div className="flex items-center gap-4">
@@ -453,13 +451,13 @@ const CommunicationCenter = () => {
                 placeholder="Search messages..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 w-64"
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 md:w-64"
               />
             </div>
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="px-4 py-2 w-20 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               <option value="all">All Types</option>
               {messageTypes.map((type) => (
@@ -485,14 +483,14 @@ const CommunicationCenter = () => {
                 key={message.id}
                 className="bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow"
               >
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
                       <h3 className="text-lg font-semibold text-gray-900">
                         {message.title}
                       </h3>
                       <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${getTypeColor(
+                        className={`px-2 py-1 w-fit text-xs font-medium rounded-full ${getTypeColor(
                           message.type
                         )}`}
                       >
@@ -502,7 +500,7 @@ const CommunicationCenter = () => {
                         }
                       </span>
                       <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(
+                        className={`px-2 py-1 w-fit text-xs font-medium rounded-full ${getPriorityColor(
                           message.priority
                         )}`}
                       >

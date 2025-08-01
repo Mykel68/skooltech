@@ -78,7 +78,7 @@ const StudentReports: React.FC<StudentReportsProps> = ({
               setSelectedClassId(value);
             }}
           >
-            <SelectTrigger className="w-full md:w-[300px]">
+            <SelectTrigger className="w-fit md:w-[300px]">
               <SelectValue placeholder="Select a class" />
             </SelectTrigger>
             <SelectContent>
@@ -98,18 +98,19 @@ const StudentReports: React.FC<StudentReportsProps> = ({
       ) : (
         students.map((student) => (
           <Card key={student.id}>
-            <CardContent className="p-6">
-              <div className="flex justify-between items-start">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                {/* Left Side */}
                 <div className="flex-1">
-                  <div className="flex items-center gap-4 mb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                     <div>
                       <h3 className="text-lg font-semibold">{student.name}</h3>
-                      <p className="text-gray-600">
+                      <p className="text-gray-600 text-sm">
                         {student.class} | {student.admissionNumber} |{" "}
                         {student.session} - {student.term}
                       </p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <Badge variant="outline">
                         Position: {student.position}
                         {student.position === 1
@@ -134,7 +135,7 @@ const StudentReports: React.FC<StudentReportsProps> = ({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                     {student.subjects.slice(0, 5).map((subject, i) => (
                       <div key={i} className="bg-gray-50 p-3 rounded-lg">
                         <h4 className="font-medium text-xs">{subject.name}</h4>
@@ -167,16 +168,21 @@ const StudentReports: React.FC<StudentReportsProps> = ({
                   </div>
                 </div>
 
-                <div className="ml-6 flex flex-col gap-2">
+                {/* Right Side: Action Buttons */}
+                <div className="w-full sm:w-auto flex sm:flex-col gap-2">
                   <Button
                     onClick={() => handleViewReport(student)}
                     disabled={generateReportPending}
-                    className="flex items-center gap-2"
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2"
                   >
                     <Eye className="w-4 h-4" />
                     {generateReportPending ? "Loading..." : "View Report"}
                   </Button>
-                  <Button variant="outline" size="sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2"
+                  >
                     <Download className="w-4 h-4" />
                     Download PDF
                   </Button>

@@ -450,7 +450,7 @@ export default function EnhancedSubjectsUI() {
       <Card className="bg-white shadow-sm">
         <CardContent className="p-6">
           <div className="flex flex-col lg:flex-row gap-4 items-center">
-            <div className="relative flex-1">
+            <div className="relative flex-1 w-full md:w-fit">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 placeholder="Search subjects, teachers, or classes..."
@@ -468,7 +468,7 @@ export default function EnhancedSubjectsUI() {
                 setStatusFilter(value)
               }
             >
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-40 w-full md:w-fit">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -479,7 +479,7 @@ export default function EnhancedSubjectsUI() {
             </Select>
 
             <Select value={gradeFilter} onValueChange={setGradeFilter}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-40 w-full md:w-fit">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

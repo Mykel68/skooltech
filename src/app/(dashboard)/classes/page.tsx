@@ -180,9 +180,9 @@ export default function EnhancedClassDisplay() {
 
       {/* Filters and Controls */}
       <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col lg:flex-row gap-4 items-center">
-            <div className="relative flex-1">
+        <CardContent className="p-6 ">
+          <div className="flex flex-col lg:flex-row gap-4 items-center ">
+            <div className="relative flex-1 w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 placeholder="Search classes, teachers, or IDs..."
@@ -195,7 +195,7 @@ export default function EnhancedClassDisplay() {
             <select
               value={selectedGrade}
               onChange={(e) => setSelectedGrade(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 w-full md:w-fit py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Grades</option>
               {getGradeLevels().map((grade) => (
@@ -208,14 +208,14 @@ export default function EnhancedClassDisplay() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 w-full md:w-fit py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="name">Sort by Name</option>
               <option value="students">Sort by Students</option>
               <option value="grade">Sort by Grade</option>
             </select>
 
-            <div className="flex bg-gray-100 rounded-lg p-1">
+            <div className="flex bg-gray-100 rounded-lg p-1 w-full md:w-fit justify-between md:justify-end">
               <Button
                 variant={viewMode === "grid" ? "default" : "ghost"}
                 size="sm"

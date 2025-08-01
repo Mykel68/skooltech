@@ -345,7 +345,7 @@ const TermsView: React.FC<TermsViewProps> = ({ session, onBack }) => {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto ">
         <div className="mb-8">
           <button
             onClick={onBack}
@@ -574,7 +574,7 @@ export default function SessionManagementUI() {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto ">
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-slate-900 mb-2">
@@ -589,7 +589,8 @@ export default function SessionManagementUI() {
             className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl font-medium transition-all shadow-lg hover:shadow-xl hover:scale-105"
           >
             <Plus className="w-5 h-5" />
-            Create New Session
+            <span className="hidden md:block">Create </span>
+            <span className="">New Session</span>
           </button>
         </div>
 
