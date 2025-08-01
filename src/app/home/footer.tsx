@@ -119,7 +119,7 @@ export default function Footer() {
                   alt="Logo"
                   width={1000}
                   height={1000}
-                  className="h-9 w-fit"
+                  className="h-12 w-fit"
                 />
               </a>
               <p className="text-slate-300 mb-8 text-md leading-relaxed">
