@@ -497,6 +497,14 @@ export default function StudentManagementAdmin() {
                           {student.enrollment_date}
                         </p>
                       </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">
+                          Admission Number
+                        </label>
+                        <p className="text-sm text-slate-900">
+                          {student.admission_number}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 ) : null;
