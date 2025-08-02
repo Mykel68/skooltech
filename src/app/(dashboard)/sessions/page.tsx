@@ -345,7 +345,7 @@ const TermsView: React.FC<TermsViewProps> = ({ session, onBack }) => {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto ">
+      <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <button
             onClick={onBack}
