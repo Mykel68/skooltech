@@ -48,8 +48,14 @@ type ClassTeacher = {
   };
 };
 
-const fetchTeachers = async (schoolId: string): Promise<Teacher[]> => {
-  const { data } = await axios.get(`/api/user/get-teachers/${schoolId}`);
+const fetchTeachers = async (
+  schoolId: string,
+  sessionId: string,
+  termId: string
+): Promise<Teacher[]> => {
+  const { data } = await axios.get(
+    `/api/user/get-teachers/${schoolId}/${sessionId}/${termId}`
+  );
   if (!data.success) throw new Error("Failed to fetch teachers");
   return data.data;
 };
@@ -81,8 +87,8 @@ export default function TeacherTable() {
     error,
   } = useQuery({
     queryKey: ["teachers", schoolId],
-    queryFn: () => fetchTeachers(schoolId),
-    enabled: !!schoolId,
+    queryFn: () => fetchTeachers(schoolId, sessionId!, termId!),
+    enabled: !!schoolId && !!sessionId && !!termId,
   });
 
   const { data: fetchedClasses } = useQuery({
