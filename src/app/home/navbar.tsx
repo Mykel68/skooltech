@@ -163,7 +163,7 @@ export default function Navbar() {
                     router.push("/login");
                   }}
                 >
-                  <Link href="#contact">Get Started</Link>
+                  <Link href="/login">Get Started</Link>
                 </Button>
               </nav>
             </SheetContent>
