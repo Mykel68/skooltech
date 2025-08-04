@@ -57,6 +57,7 @@ export function transformToStudents(apiData: any): Student[] {
       class: cs?.Class?.name ?? "",
       grade_level: cs?.Class?.grade_level ?? "",
       session: cs?.Session?.name ?? "",
+      gender: stu.gender ?? "",
       term: cs?.Term?.name ?? "",
       admissionNumber: stu.admission_number ?? "",
       average,

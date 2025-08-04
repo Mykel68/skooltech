@@ -297,7 +297,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Today's Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {quickStats.map((stat, index) => (
             <div
               key={index}
@@ -322,7 +322,7 @@ export default function AdminDashboardPage() {
               <p className="text-xs text-gray-500 mt-1">{stat.subtitle}</p>
             </div>
           ))}
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Recent Activities */}

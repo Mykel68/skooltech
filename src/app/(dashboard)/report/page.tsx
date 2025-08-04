@@ -40,6 +40,7 @@ export type Student = {
   firstName: string;
   class: string;
   grade_level: string;
+  gender: string;
   session: string;
   term: string;
   admissionNumber: string;
