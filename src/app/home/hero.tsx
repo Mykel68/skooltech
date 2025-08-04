@@ -241,7 +241,7 @@ export default function Hero() {
                         <IconComponent className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                        <div className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
                           {stat.value}
                         </div>
                         <div className="text-sm text-slate-600 dark:text-slate-400">
