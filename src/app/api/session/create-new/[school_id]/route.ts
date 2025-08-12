@@ -36,13 +36,17 @@ export async function POST(
     );
 
     return NextResponse.json(resp.data, { status: 200 });
-  } catch (err) {
+  } catch (err: any) {
+    console.log("err", err.response);
     if (err instanceof z.ZodError) {
       return NextResponse.json({ errors: err.errors }, { status: 400 });
     }
     if (axios.isAxiosError(err)) {
       return NextResponse.json(
-        { error: err.response?.data?.message || "Failed to create session" },
+        {
+          error:
+            err.response?.data?.data?.message || "Failed to create session",
+        },
         { status: err.response?.status || 500 }
       );
     }

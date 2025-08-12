@@ -10,6 +10,8 @@ interface DecodedToken {
   user_id: string;
   username: string;
   role: string;
+  role_id: number;
+  role_name: string;
   school_id: string;
   email: string;
   first_name: string;

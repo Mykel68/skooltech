@@ -45,7 +45,7 @@ export function LoginForm() {
       setUser({
         userId: data.decoded.user_id,
         username: data.decoded.username,
-        role: data.decoded.role,
+        role: data.decoded.role_name,
         schoolId: data.decoded.school_id,
         firstName: data.decoded.first_name,
         lastName: data.decoded.last_name,
