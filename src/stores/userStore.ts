@@ -23,7 +23,7 @@ const safeStorage = {
 interface UserState {
   userId: string | null;
   username: string | null;
-  role: string | null;
+  role: string | string[] | null; // <-- updated
   schoolId: string | null;
   firstName: string | null;
   lastName: string | null;
@@ -34,25 +34,10 @@ interface UserState {
   is_school_active: boolean | null;
   session_id: string | null;
   term_id: string | null;
-  role_id: number | null;
-  role_name: string | null;
-  setUser: (user: {
-    userId?: string;
-    username?: string;
-    role?: string;
-    schoolId?: string;
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    schoolName?: string;
-    schoolImage?: string;
-    schoolCode?: string;
-    is_school_active?: boolean;
-    session_id?: string;
-    term_id?: string;
-    role_id?: number;
-    role_name?: string;
-  }) => void;
+  role_ids: number[] | null;
+  role_names: string[] | string | null;
+
+  setUser: (user: Partial<UserState>) => void;
   clearUser: () => void;
 }
 
@@ -72,8 +57,8 @@ export const useUserStore = create<UserState>()(
       is_school_active: null,
       session_id: null,
       term_id: null,
-      role_id: null,
-      role_name: null,
+      role_ids: null,
+      role_names: null,
       setUser: (user) => {
         console.log("[UserStore] Updating user store:", user);
         set({ ...user });
@@ -94,8 +79,8 @@ export const useUserStore = create<UserState>()(
           is_school_active: null,
           session_id: null,
           term_id: null,
-          role_id: null,
-          role_name: null,
+          role_ids: null,
+          role_names: null,
         });
       },
     }),
