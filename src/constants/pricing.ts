@@ -9,7 +9,7 @@ export const RAW_PLANS = [
   {
     name: "Reports Only",
     subtitle: "Basic reporting for small schools",
-    termPrice: 1000,
+    termPrice: 3000, // updated from 1000
     minStudents: 1,
     maxStudents: 200,
     color: "border-blue-200 bg-blue-50",
@@ -35,7 +35,7 @@ export const RAW_PLANS = [
   {
     name: "Reports + Payment",
     subtitle: "Reports with payment management",
-    termPrice: 1600,
+    termPrice: 4800, // keeping original gap (1600 was 1.6× original lowest)
     minStudents: 1,
     maxStudents: 500,
     color: "border-green-200 bg-green-50",
@@ -62,7 +62,7 @@ export const RAW_PLANS = [
   {
     name: "Complete School",
     subtitle: "Full school management system",
-    termPrice: 2500,
+    termPrice: 7500, // keeping same increment from previous ratio
     minStudents: 1,
     maxStudents: 1000,
     color: "border-purple-200 bg-purple-50",
@@ -88,7 +88,7 @@ export const RAW_PLANS = [
   {
     name: "Enterprise",
     subtitle: "Advanced features for large institutions",
-    termPrice: 5000,
+    termPrice: 15000, // updated from 5000 using same scale
     minStudents: 100,
     maxStudents: 5000,
     color: "border-orange-200 bg-orange-50",

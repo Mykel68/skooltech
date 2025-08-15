@@ -103,7 +103,7 @@ export function AnimatedUpgradeFooter({
                 </Button>
               </Link>
               <div className="mt-2 text-[10px] text-white/80">
-                Starting from ₦1000 per student
+                Starting from ₦3000 per student
               </div>
             </div>
           </motion.div>
