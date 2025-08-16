@@ -42,7 +42,7 @@ export function AnimatedUpgradeFooter({
             className="flex items-center justify-center h-14 text-xs text-green-100 px-4"
           >
             <Zap className="h-4 w-4 mr-1 text-yellow-400" />
-            <span>Upgrade Now — ₦1000 per student</span>
+            <span>Upgrade Now — ₦3000 per student</span>
           </motion.div>
         ) : (
           <motion.div
