@@ -1,11 +1,9 @@
 import type React from "react";
 // import { Sidebar } from "@/components/sidebar";
 import { SidebarProvider } from "@/components/sidebar-provider";
-import { Header } from "@/components/Header";
-import { Sidebar } from "@/components/sidebar";
-import Head from "@/components/Head";
 import InstallPrompt from "@/components/InstallPrompt";
 import { Metadata, Viewport } from "next";
+import ClientDashboardLayout from "@/components/client-dashboard";
 // import ClientLayout from "./client-layout";
 
 const APP_NAME = "SkoolTech";
@@ -61,17 +59,7 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      <div className="min-h-screen bg-background">
-        <Sidebar />
-        <div className="lg:pl-72">
-          <Head />
-          <main className="p-4 md:p-6 lg:p-8">
-            {/* <ClientLayout> */}
-            {children}
-            {/* </ClientLayout> */}
-          </main>
-        </div>
-      </div>
+      <ClientDashboardLayout>{children}</ClientDashboardLayout>
       <InstallPrompt />
     </SidebarProvider>
   );

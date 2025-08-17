@@ -3,15 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  Menu,
-  ChevronDown,
-  Crown,
-  Zap,
-  Users,
-  Calendar,
-  X,
-} from "lucide-react";
+import { ChevronDown, Crown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "./sidebar-provider";

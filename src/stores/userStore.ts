@@ -20,10 +20,12 @@ const safeStorage = {
   },
 };
 
+type Role = "Super Admin" | "Admin";
+
 interface UserState {
   userId: string | null;
   username: string | null;
-  role: string | string[] | null; // <-- updated
+  role: Role | null;
   schoolId: string | null;
   firstName: string | null;
   lastName: string | null;
