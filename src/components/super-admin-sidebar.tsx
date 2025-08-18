@@ -23,12 +23,12 @@ export default function SuperAdminSidebar() {
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "All Schools", href: "/superadmin/schools", icon: Building },
-    { name: "All Users", href: "/superadmin/users", icon: Users },
-    { name: "Billing", href: "/superadmin/billing", icon: DollarSign },
-    { name: "Reports", href: "/superadmin/reports", icon: BarChart3 },
-    { name: "Audit Logs", href: "/superadmin/audit-logs", icon: FileText },
-    { name: "System Settings", href: "/superadmin/settings", icon: Settings },
+    { name: "All Schools", href: "/admin/schools", icon: Building },
+    { name: "All Users", href: "/admin/users", icon: Users },
+    { name: "Billing", href: "/admin/billing", icon: DollarSign },
+    { name: "Reports", href: "/admin/reports", icon: BarChart3 },
+    { name: "Audit Logs", href: "/admin/audit-logs", icon: FileText },
+    { name: "System Settings", href: "/admin/settings", icon: Settings },
   ];
 
   return (
