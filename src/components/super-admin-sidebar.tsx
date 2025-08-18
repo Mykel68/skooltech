@@ -22,7 +22,7 @@ export default function SuperAdminSidebar() {
   const { isOpen, toggle } = useSidebar();
 
   const navItems = [
-    { name: "Dashboard", href: "/superadmin", icon: LayoutDashboard },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "All Schools", href: "/superadmin/schools", icon: Building },
     { name: "All Users", href: "/superadmin/users", icon: Users },
     { name: "Billing", href: "/superadmin/billing", icon: DollarSign },
@@ -88,10 +88,10 @@ export default function SuperAdminSidebar() {
             <Crown className="w-4 h-4 text-primary-foreground" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-sidebar-foreground truncate">
+            <p className="text-sm text-white font-medium text-sidebar-foreground truncate">
               Super Admin
             </p>
-            <p className="text-xs text-sidebar-foreground/70 truncate">
+            <p className="text-xs text-white/70 text-sidebar-foreground/70 truncate">
               Global Access
             </p>
           </div>

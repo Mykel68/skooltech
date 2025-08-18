@@ -25,6 +25,9 @@ export default function Head() {
   const schoolId = useUserStore((s) => s.schoolId);
   const firstName = useUserStore((s) => s.firstName);
   const lastName = useUserStore((s) => s.lastName);
+  const role_names = useUserStore((s) => s.role_names);
+
+  const isSuperAdmin = role_names?.includes("Super Admin");
 
   const [ready, setReady] = useState(false);
   const [currentSession, setCurrentSession] = useState<any>(null);
@@ -155,30 +158,32 @@ export default function Head() {
           {/* Right side - Controls */}
           <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
             {/* Session/Term selectors - Stack on mobile */}
-            <div className="flex flex-col sm:flex-row items-end sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
-              <select
-                value={currentSession?.session_id || ""}
-                onChange={handleSessionChange}
-                className="px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 w-full sm:w-auto min-w-0"
-              >
-                {sessions.map((session) => (
-                  <option key={session.session_id} value={session.session_id}>
-                    {session.name}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={currentTerm?.term_id || ""}
-                onChange={handleTermChange}
-                className="px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 w-full sm:w-auto min-w-0"
-              >
-                {currentSession?.terms?.map((term: any) => (
-                  <option key={term.term_id} value={term.term_id}>
-                    {term.name}
-                  </option>
-                )) ?? <option disabled>No Term</option>}
-              </select>
-            </div>
+            {!isSuperAdmin && (
+              <div className="flex flex-col sm:flex-row items-end sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                <select
+                  value={currentSession?.session_id || ""}
+                  onChange={handleSessionChange}
+                  className="px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 w-full sm:w-auto min-w-0"
+                >
+                  {sessions.map((session) => (
+                    <option key={session.session_id} value={session.session_id}>
+                      {session.name}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={currentTerm?.term_id || ""}
+                  onChange={handleTermChange}
+                  className="px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 w-full sm:w-auto min-w-0"
+                >
+                  {currentSession?.terms?.map((term: any) => (
+                    <option key={term.term_id} value={term.term_id}>
+                      {term.name}
+                    </option>
+                  )) ?? <option disabled>No Term</option>}
+                </select>
+              </div>
+            )}
 
             {/* Notification and Settings - Hidden on mobile */}
             <div className="relative hidden md:block">
