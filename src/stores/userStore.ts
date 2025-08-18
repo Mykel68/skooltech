@@ -25,7 +25,7 @@ type Role = "Super Admin" | "Admin";
 interface UserState {
   userId: string | null;
   username: string | null;
-  role: Role | null;
+  role: string | string[] | null;
   schoolId: string | null;
   firstName: string | null;
   lastName: string | null;
