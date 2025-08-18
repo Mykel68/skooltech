@@ -11,8 +11,8 @@ export default function ClientDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { role } = useUserStore();
-  const isSuperAdmin = role === "Super Admin";
+  const { role_names } = useUserStore();
+  const isSuperAdmin = role_names?.includes("Super Admin");
 
   return (
     <div className="min-h-screen bg-background">

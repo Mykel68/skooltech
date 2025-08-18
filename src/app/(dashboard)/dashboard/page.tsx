@@ -1,21 +1,28 @@
-'use client';
+"use client";
 
-import { useUserStore } from '@/stores/userStore';
-import SessionSetupForm from './SessionSetupForm';
-import AdminDashboardPage from './dashboard';
+import { useUserStore } from "@/stores/userStore";
+import SessionSetupForm from "./SessionSetupForm";
+import AdminDashboardPage from "./dashboard";
+import SuperAdminDashboard from "./SuperAdminDashboard";
 // import AdminWelcomeDashboard from "./AdminWelcomeDashboard";
 
 const AdminDashboard = () => {
-	const session_id = useUserStore((s) => s.session_id);
-	const term_id = useUserStore((s) => s.term_id);
+  const { role_names, session_id, term_id } = useUserStore();
+  const isSuperAdmin = role_names?.includes("Super Admin");
 
-	const isSchoolSetupComplete = !!session_id && !!term_id;
+  const isSchoolSetupComplete = !!session_id && !!term_id;
 
-	return isSchoolSetupComplete ? (
-		<AdminDashboardPage />
-	) : (
-		<SessionSetupForm />
-	);
+  return (
+    <div className="min-h-screen bg-background">
+      {isSuperAdmin ? (
+        <SuperAdminDashboard />
+      ) : isSchoolSetupComplete ? (
+        <AdminDashboardPage />
+      ) : (
+        <SessionSetupForm />
+      )}
+    </div>
+  );
 };
 
 export default AdminDashboard;
