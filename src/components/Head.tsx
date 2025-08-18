@@ -14,11 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { logout } from "@/utils/logout";
 import { useSidebar } from "./sidebar-provider";
+import { useLogout } from "@/hooks/use-auth";
 
 export default function Head() {
   const router = useRouter();
+  const logout = useLogout();
 
   const userId = useUserStore((s) => s.userId);
   const setUser = useUserStore((s) => s.setUser);
@@ -35,11 +36,6 @@ export default function Head() {
   const [sessions, setSessions] = useState<Session[]>([]);
 
   const { toggle } = useSidebar();
-
-  const handleLogout = () => {
-    logout();
-    router.push("/login");
-  };
 
   type Term = {
     term_id: string;
@@ -224,9 +220,7 @@ export default function Head() {
                   </DropdownMenuItem>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                  Logout
-                </DropdownMenuItem>
+                <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
