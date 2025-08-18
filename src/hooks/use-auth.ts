@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/store/userStore";
 import axios from "axios";
+import { useUserStore } from "@/stores/userStore";
 
 export function useLogout() {
   const router = useRouter();
