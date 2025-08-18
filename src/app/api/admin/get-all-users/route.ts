@@ -18,7 +18,7 @@ export async function GET(_request: Request) {
     }
 
     const response = await backendClient.get(
-      `${backendUrl}/api/superadmin/schools`,
+      `${backendUrl}/api/superadmin/users`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -33,7 +33,7 @@ export async function GET(_request: Request) {
     if (axios.isAxiosError(error)) {
       return NextResponse.json(
         {
-          error: error.response?.data?.message || "Failed to fetch schools",
+          error: error.response?.data?.message || "Failed to fetch users",
         },
         { status: error.response?.status || 500 }
       );

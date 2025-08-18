@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -98,7 +98,7 @@ export default function page() {
                 <CheckCircle className="w-8 h-8 text-success" />
                 <div>
                   <p className="text-2xl font-bold">
-                    {schools.filter((s) => s.status === "active").length}
+                    {schools.filter((s: any) => s.status === "active").length}
                   </p>
                   <p className="text-sm text-muted-foreground">Active</p>
                 </div>
@@ -112,7 +112,7 @@ export default function page() {
                 <div>
                   <p className="text-2xl font-bold">
                     {schools
-                      .reduce((sum, s) => sum + s.totalUsers, 0)
+                      .reduce((sum: number, s: any) => sum + s.totalUsers, 0)
                       .toLocaleString()}
                   </p>
                   <p className="text-sm text-muted-foreground">Total Users</p>
@@ -128,7 +128,7 @@ export default function page() {
                   <p className="text-2xl font-bold">
                     $
                     {schools
-                      .reduce((sum, s) => sum + s.totalRevenue, 0)
+                      .reduce((sum: number, s: any) => sum + s.totalRevenue, 0)
                       .toLocaleString()}
                   </p>
                   <p className="text-sm text-muted-foreground">Total Revenue</p>
@@ -144,21 +144,22 @@ export default function page() {
             <CardTitle>All Schools</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="space-y-0">
-              {schools.map((school) => (
+            <div className="space-y-1">
+              {schools.map((school: any) => (
                 <div
                   key={school.id}
-                  className="flex items-center justify-between p-6 border-b last:border-b-0 hover:bg-accent/50 transition-colors"
+                  className="flex items-center cursor-pointer justify-between p-6 border-b last:border-b-0 hover:bg-accent/50 transition-colors"
                 >
                   <div className="flex items-center gap-4 flex-1">
                     <Avatar className="w-12 h-12">
                       <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                         {school.name
                           .split(" ")
-                          .map((n) => n[0])
+                          .map((n: string) => n[0])
                           .join("")
                           .slice(0, 2)}
                       </AvatarFallback>
+                      <AvatarImage src={school.logo} alt={school.name} />
                     </Avatar>
 
                     <div className="flex-1 min-w-0">
