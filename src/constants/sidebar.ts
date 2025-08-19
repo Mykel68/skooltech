@@ -94,6 +94,10 @@ export const footerItems = [
         name: "Admin",
         href: "/settings/profile/admin",
       },
+      {
+        name: "App",
+        href: "/settings/app",
+      },
     ],
   },
   {
