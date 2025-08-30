@@ -84,7 +84,7 @@ export function Sidebar() {
 
           <div className="flex flex-col flex-1">
             {schoolName ? (
-              <p className="text-lg md:text-xl font-semibold text-white truncate">
+              <p className="text-[1rem] md:text-xl font-semibold text-wrap text-white truncate">
                 {schoolName}
               </p>
             ) : (
