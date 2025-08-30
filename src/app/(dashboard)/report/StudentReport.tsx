@@ -150,6 +150,12 @@ const StudentReports: React.FC<StudentReportsProps> = ({
                                 ? "text-green-700"
                                 : subject.grade.startsWith("B")
                                 ? "text-blue-700"
+                                : subject.grade.startsWith("C")
+                                ? "text-yellow-700"
+                                : subject.grade.startsWith("D")
+                                ? "text-orange-700"
+                                : subject.grade === "E"
+                                ? "text-red-500"
                                 : "text-orange-700"
                             }`}
                           >
