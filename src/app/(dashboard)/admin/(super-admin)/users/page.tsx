@@ -70,7 +70,7 @@ export default function Page() {
   return (
     <div className="space-y-6">
       {/* Role Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
         {Object.entries(roleConfig).map(([role, config]) => (
           <Card key={role}>
             <CardContent className="p-4">
@@ -95,16 +95,16 @@ export default function Page() {
         </CardHeader>
         <CardContent className="p-0">
           <div className="space-y-0">
-            {users.map((user) => {
+            {/* {users.map((user: any) => {
               const roleInfo = roleConfig[user.role?.toLowerCase()];
               return (
                 <div
                   key={user.id}
-                  className="flex items-center justify-between p-6 border-b last:border-b-0 hover:bg-accent/50 transition-colors"
+                  className="flex items-center justify-between p-6 transition-colors border-b last:border-b-0 hover:bg-accent/50"
                 >
-                  <div className="flex items-center gap-4 flex-1">
+                  <div className="flex items-center flex-1 gap-4">
                     <Avatar className="w-12 h-12">
-                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                      <AvatarFallback className="font-semibold bg-primary/10 text-primary">
                         {user.name
                           .split(" ")
                           .map((n: string) => n[0])
@@ -115,7 +115,7 @@ export default function Page() {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-1">
-                        <h3 className="font-semibold text-foreground truncate">
+                        <h3 className="font-semibold truncate text-foreground">
                           {user.name}
                         </h3>
                         <Badge variant="outline">{user.status}</Badge>
@@ -189,7 +189,7 @@ export default function Page() {
                   </DropdownMenu>
                 </div>
               );
-            })}
+            })} */}
           </div>
         </CardContent>
       </Card>
