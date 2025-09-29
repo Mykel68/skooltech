@@ -20,7 +20,7 @@ export default function ModernTestimonialsUI() {
   const testimonials = [
     {
       quote:
-        "SkoolTech has helped us move from paper-based report cards to digital ones — parents now receive results instantly.",
+        "Zuvia has helped us move from paper-based report cards to digital ones — parents now receive results instantly.",
       author: "Mrs. Adeola James",
       role: "Principal, Bright Future School, Ibadan",
       avatar: "AJ",
@@ -38,7 +38,7 @@ export default function ModernTestimonialsUI() {
     },
     {
       quote:
-        "Setting up exams and generating results is now so simple. SkoolTech saved us hours of admin work.",
+        "Setting up exams and generating results is now so simple. Zuvia saved us hours of admin work.",
       author: "Mrs. Amina Bello",
       role: "Admin Officer, Harmony School, Abuja",
       avatar: "AB",
@@ -120,7 +120,7 @@ export default function ModernTestimonialsUI() {
           </h1>
 
           <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Hear from real school leaders using SkoolTech to simplify results,
+            Hear from real school leaders using Zuvia to simplify results,
             engage parents, and manage academics better — with less stress.
           </p>
         </div>

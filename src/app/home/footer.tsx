@@ -111,15 +111,15 @@ export default function Footer() {
                   </svg>
                 </div>
                 <span className="font-bold text-2xl bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  SkoolTech
+                  Zuvia
                 </span> */}
 
                 <Image
-                  src="/images/logo-3.png"
+                  src="/images/logo-white-2.png"
                   alt="Logo"
                   width={1000}
                   height={1000}
-                  className="h-12 w-fit"
+                  className="h-20 w-fit"
                 />
               </a>
               <p className="text-slate-300 mb-8 text-md leading-relaxed">
@@ -141,7 +141,7 @@ export default function Footer() {
               </div> */}
               {/* <div className="flex items-center space-x-3 text-slate-300 hover:text-blue-400 transition-colors">
                 <Mail className="h-5 w-5 text-blue-400" />
-                <span>hello@skooltech.com</span>
+                <span>hello@Zuvia.com</span>
               </div> */}
             </div>
 
@@ -254,7 +254,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-8">
             <p className="text-slate-400 text-sm">
-              © {currentYear} SkoolTech. All rights reserved.
+              © {currentYear} Zuvia. All rights reserved.
             </p>
             <p className="text-slate-400 text-sm flex items-center">
               Designed and developed with

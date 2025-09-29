@@ -134,7 +134,7 @@ export default function ModernCTAUI() {
           </h1>
 
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-12">
-            Be among the first to transform your institution with SkoolTech — a
+            Be among the first to transform your institution with Zuvia — a
             smarter way to manage schools in Nigeria.
           </p>
 

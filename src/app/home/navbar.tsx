@@ -29,8 +29,8 @@ export default function Navbar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="container flex h-20 items-center justify-between">
-        <Link href="/" className="flex items-center space-x-2">
+      <div className="container flex h-20 items-center justify-between mx-auto ">
+        <Link href="/" className="flex items-center">
           {/* <motion.div
             className="bg-[#7A2CF9] rounded-md p-1"
             whileHover={{ scale: 1.05 }}
@@ -52,11 +52,11 @@ export default function Navbar() {
           </motion.div> */}
 
           <Image
-            src="/images/logo-3.png"
+            src="/images/logo-sm.png"
             alt="Logo"
-            width={1000}
+            width={500}
             height={1000}
-            className="h-12 w-fit"
+            className="h-24 w-full"
           />
         </Link>
 

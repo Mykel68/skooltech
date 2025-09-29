@@ -27,17 +27,17 @@ export default function ModernFAQUI() {
 
   const faqs = [
     {
-      question: "What exactly is SkoolTech?",
+      question: "What exactly is Zuvia?",
       answer:
-        "SkoolTech is a digital management platform designed for Nigerian schools. It simplifies student records, results, staff accounts, and school-wide communication — all in one place.",
+        "Zuvia is a digital management platform designed for Nigerian schools. It simplifies student records, results, staff accounts, and school-wide communication — all in one place.",
       category: "General",
       icon: School,
       color: "from-blue-500 to-cyan-500",
     },
     {
-      question: "Can SkoolTech work with our existing school processes?",
+      question: "Can Zuvia work with our existing school processes?",
       answer:
-        "Yes. SkoolTech is flexible enough to work with your current structure. Whether you’re fully digital or still partly on paper, we’ll help you transition smoothly.",
+        "Yes. Zuvia is flexible enough to work with your current structure. Whether you’re fully digital or still partly on paper, we’ll help you transition smoothly.",
       category: "Onboarding",
       icon: Workflow,
       color: "from-indigo-500 to-purple-500",
@@ -51,9 +51,9 @@ export default function ModernFAQUI() {
       color: "from-orange-500 to-red-500",
     },
     {
-      question: "What devices can we use SkoolTech on?",
+      question: "What devices can we use Zuvia on?",
       answer:
-        "SkoolTech works on desktops, tablets, and smartphones — as long as there’s internet. There’s nothing to install, just log in and go.",
+        "Zuvia works on desktops, tablets, and smartphones — as long as there’s internet. There’s nothing to install, just log in and go.",
       category: "Access",
       icon: Laptop,
       color: "from-green-500 to-emerald-500",
@@ -67,9 +67,9 @@ export default function ModernFAQUI() {
       color: "from-purple-500 to-pink-500",
     },
     {
-      question: "Is SkoolTech only for private schools?",
+      question: "Is Zuvia only for private schools?",
       answer:
-        "No. SkoolTech is designed for both public and private schools. Our pricing and features scale with your needs, not your label.",
+        "No. Zuvia is designed for both public and private schools. Our pricing and features scale with your needs, not your label.",
       category: "General",
       icon: Users,
       color: "from-blue-500 to-cyan-500",
@@ -77,7 +77,7 @@ export default function ModernFAQUI() {
     {
       question: "What happens if we lose internet connection?",
       answer:
-        "SkoolTech requires internet access, but we’re working on offline-friendly features for specific actions like score entry. For now, your data remains safe and synced once you're back online.",
+        "Zuvia requires internet access, but we’re working on offline-friendly features for specific actions like score entry. For now, your data remains safe and synced once you're back online.",
       category: "Access",
       icon: WifiOff,
       color: "from-green-500 to-emerald-500",
@@ -170,8 +170,8 @@ export default function ModernFAQUI() {
           </h1>
 
           <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed mb-8">
-            Find answers to common questions about SkoolTech and how it can
-            benefit your institution
+            Find answers to common questions about Zuvia and how it can benefit
+            your institution
           </p>
 
           {/* Search bar */}
