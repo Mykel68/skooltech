@@ -80,7 +80,7 @@ export default function page() {
     <div>
       <div className="space-y-6">
         {/* Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
@@ -148,11 +148,11 @@ export default function page() {
               {schools.map((school: any) => (
                 <div
                   key={school.id}
-                  className="flex items-center cursor-pointer justify-between p-6 border-b last:border-b-0 hover:bg-accent/50 transition-colors"
+                  className="flex items-center justify-between p-6 transition-colors border-b cursor-pointer last:border-b-0 hover:bg-accent/50"
                 >
-                  <div className="flex items-center gap-4 flex-1">
+                  <div className="flex items-center flex-1 gap-4">
                     <Avatar className="w-12 h-12">
-                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                      <AvatarFallback className="font-semibold bg-primary/10 text-primary">
                         {school.name
                           .split(" ")
                           .map((n: string) => n[0])
@@ -164,17 +164,18 @@ export default function page() {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-1">
-                        <h3 className="font-semibold text-foreground truncate">
+                        <h3 className="font-semibold truncate text-foreground">
                           {school.name}
                         </h3>
                         <Badge
-                          variant={statusConfig[school.status].variant}
-                          className={cn(
-                            "text-xs",
-                            statusConfig[school.status].color
-                          )}
+                        // variant={statusConfig[school.status].variant}
+                        // className={cn(
+                        //   "text-xs",
+                        //   statusConfig[school.status].color
+                        // )}
                         >
-                          {statusConfig[school.status].label}
+                          {/* {statusConfig[school.status].label} */}
+                          Active
                         </Badge>
                       </div>
 
@@ -182,9 +183,10 @@ export default function page() {
                         <span>{school.email}</span>
                         <span>•</span>
                         <span
-                          className={planConfig[school.subscriptionPlan].color}
+                        // className={planConfig[school.subscriptionPlan].color}
                         >
-                          {planConfig[school.subscriptionPlan].label} Plan
+                          {/* {planConfig[school.subscriptionPlan].label} Plan */}
+                          Basic Plan
                         </span>
                         <span>•</span>
                         <span>{school.totalUsers} users</span>
