@@ -112,7 +112,7 @@ export default function About() {
           <motion.div variants={itemVariants} className="space-y-6">
             <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium shadow-lg shadow-blue-500/25">
               <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-              About Zuvia
+              About Civerit
             </div>
 
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent leading-tight">
@@ -124,7 +124,7 @@ export default function About() {
             </h2>
 
             <p className="max-w-3xl mx-auto text-lg md:text-xl text-slate-600 text-balance text-wrap dark:text-slate-300 leading-relaxed">
-              Zuvia is a comprehensive school management system designed to
+              Civerit is a comprehensive school management system designed to
               streamline administrative tasks and enhance educational outcomes
               through cutting-edge technology.
             </p>

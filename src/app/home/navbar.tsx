@@ -24,12 +24,12 @@ export default function Navbar() {
   const router = useRouter();
   return (
     <motion.header
-      className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md px-4 md:px-6 lg:px-14"
+      className="sticky top-0 z-50 w-full px-4 border-b bg-background/80 backdrop-blur-md md:px-6 lg:px-14"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="container flex h-20 items-center justify-between mx-auto ">
+      <div className="container flex items-center justify-between h-20 mx-auto ">
         <Link href="/" className="flex items-center">
           {/* <motion.div
             className="bg-[#7A2CF9] rounded-md p-1"
@@ -44,7 +44,7 @@ export default function Navbar() {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="h-6 w-6 text-primary-foreground"
+              className="w-6 h-6 text-primary-foreground"
             >
               <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
               <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
@@ -52,11 +52,11 @@ export default function Navbar() {
           </motion.div> */}
 
           <Image
-            src="/images/logo-sm.png"
+            src="/images/logo-name.png"
             alt="Logo"
             width={500}
             height={1000}
-            className="h-24 w-full"
+            className="w-full h-14"
           />
         </Link>
 
@@ -122,16 +122,16 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Navigation */}
-        <div className="flex items-center md:hidden space-x-2">
+        <div className="flex items-center space-x-2 md:hidden">
           {/* <ModeToggle /> */}
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
+                <Menu className="w-6 h-6" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="p-6">
-              <nav className="flex flex-col space-y-4 mt-10">
+              <nav className="flex flex-col mt-10 space-y-4">
                 <Link
                   href="#about"
                   className="text-lg font-medium hover:text-primary"
@@ -190,7 +190,7 @@ const ListItem = React.forwardRef<
           {...props}
         >
           <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+          <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">
             {children}
           </p>
         </a>

@@ -76,53 +76,30 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative md:px-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
+    <footer className="relative overflow-hidden text-white md:px-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       {/* Background decorative elements */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent"></div>
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
 
       {/* Floating geometric shapes */}
-      <div className="absolute top-10 right-10 w-20 h-20 bg-blue-500/10 rounded-full blur-xl animate-pulse"></div>
-      <div className="absolute bottom-20 left-10 w-16 h-16 bg-purple-500/10 rounded-full blur-lg animate-bounce"></div>
+      <div className="absolute w-20 h-20 rounded-full top-10 right-10 bg-blue-500/10 blur-xl animate-pulse"></div>
+      <div className="absolute w-16 h-16 rounded-full bottom-20 left-10 bg-purple-500/10 blur-lg animate-bounce"></div>
 
-      <div className="relative container mx-auto px-6 py-16">
+      <div className="container relative px-6 py-16 mx-auto">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
           {/* Brand Section */}
-          <div className="lg:col-span-4 space-y-8">
+          <div className="space-y-8 lg:col-span-4">
             <div className="group">
-              <a
-                href="/"
-                className="flex items-center space-x-3 transition-transform "
-              >
-                {/* group-hover:scale-105 */}
-                {/* <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl p-2 shadow-lg">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-8 w-8 text-white"
-                  >
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
-                  </svg>
-                </div>
-                <span className="font-bold text-2xl bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  Zuvia
-                </span> */}
-
+              <a href="/" className="flex items-center transition-transform ">
                 <Image
-                  src="/images/logo-white-2.png"
+                  src="/images/logo-black.png"
                   alt="Logo"
                   width={1000}
                   height={1000}
-                  className="h-20 w-fit"
+                  className="h-14 w-fit"
                 />
               </a>
-              <p className="text-slate-300 mb-8 text-md leading-relaxed">
+              <p className="mb-8 leading-relaxed text-slate-300 text-md">
                 Revolutionizing school management with innovative technology
                 solutions for exam management, result processing, and
                 comprehensive educational administration.
@@ -131,17 +108,17 @@ export default function Footer() {
 
             {/* Contact Info */}
             <div className="space-y-4">
-              <div className="flex items-center space-x-3 text-slate-300 hover:text-blue-400 transition-colors">
-                <MapPin className="h-5 w-5 text-blue-400" />
+              <div className="flex items-center space-x-3 transition-colors text-slate-300 hover:text-blue-400">
+                <MapPin className="w-5 h-5 text-blue-400" />
                 <span>Lagos, Nigeria</span>
               </div>
-              {/* <div className="flex items-center space-x-3 text-slate-300 hover:text-blue-400 transition-colors">
-                <Phone className="h-5 w-5 text-blue-400" />
+              {/* <div className="flex items-center space-x-3 transition-colors text-slate-300 hover:text-blue-400">
+                <Phone className="w-5 h-5 text-blue-400" />
                 <span>+234 (0) 800 SKOOL-TECH</span>
               </div> */}
-              {/* <div className="flex items-center space-x-3 text-slate-300 hover:text-blue-400 transition-colors">
-                <Mail className="h-5 w-5 text-blue-400" />
-                <span>hello@Zuvia.com</span>
+              {/* <div className="flex items-center space-x-3 transition-colors text-slate-300 hover:text-blue-400">
+                <Mail className="w-5 h-5 text-blue-400" />
+                <span>hello@Civerit.com</span>
               </div> */}
             </div>
 
@@ -150,12 +127,12 @@ export default function Footer() {
 							<h3 className='text-lg font-semibold text-white'>
 								Stay Updated
 							</h3>
-							<p className='text-slate-300 text-sm'>
+							<p className='text-sm text-slate-300'>
 								Get the latest updates on new features and
 								educational insights.
 							</p>
 							<div className='flex gap-2'>
-								<div className='flex-1 relative'>
+								<div className='relative flex-1'>
 									<input
 										type='email'
 										value={email}
@@ -163,14 +140,14 @@ export default function Footer() {
 											setEmail(e.target.value)
 										}
 										placeholder='Enter your email'
-										className='w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all'
+										className='w-full px-4 py-3 text-white transition-all border rounded-lg bg-slate-800/50 border-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 										required
 									/>
 								</div>
 								<button
 									onClick={handleSubscribe}
 									disabled={isSubscribed}
-									className='px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2'
+									className='flex items-center px-6 py-3 space-x-2 font-medium text-white transition-all duration-300 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed'
 								>
 									{isSubscribed ? (
 										<>
@@ -179,7 +156,7 @@ export default function Footer() {
 										</>
 									) : (
 										<>
-											<Send className='h-4 w-4' />
+											<Send className='w-4 h-4' />
 											<span>Subscribe</span>
 										</>
 									)}
@@ -216,17 +193,17 @@ export default function Footer() {
                   href={href}
                   className={`p-3 bg-slate-800/50 rounded-full text-slate-400 ${color} transition-all duration-300 hover:scale-110 hover:bg-slate-700/50 hover:shadow-lg`}
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon className="w-5 h-5" />
                 </a>
               ))}
             </div> */}
           </div>
 
           {/* Links Sections */}
-          <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 gap-8 lg:col-span-8 md:grid-cols-4">
             {footerLinks.map((group, i) => (
               <div key={i} className="space-y-6">
-                <h3 className="text-lg font-semibold text-white relative">
+                <h3 className="relative text-lg font-semibold text-white">
                   {group.title}
                   <div className="absolute -bottom-2 left-0 w-8 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
                 </h3>
@@ -235,7 +212,7 @@ export default function Footer() {
                     <li key={j}>
                       <a
                         href={link.href}
-                        className="text-slate-400 hover:text-white transition-colors duration-200 hover:translate-x-1 transform inline-block"
+                        className="inline-block transition-colors duration-200 transform text-slate-400 hover:text-white hover:translate-x-1"
                       >
                         {link.name}
                       </a>
@@ -248,17 +225,17 @@ export default function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="my-12 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
+        <div className="h-px my-12 bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
 
         {/* Bottom Section */}
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-8">
-            <p className="text-slate-400 text-sm">
-              © {currentYear} Zuvia. All rights reserved.
+        <div className="flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0">
+          <div className="flex flex-col items-center space-y-2 md:flex-row md:space-y-0 md:space-x-8">
+            <p className="text-sm text-slate-400">
+              © {currentYear} Civerit. All rights reserved.
             </p>
-            <p className="text-slate-400 text-sm flex items-center">
+            <p className="flex items-center text-sm text-slate-400">
               Designed and developed with
-              <span className="text-red-500 mx-1 animate-pulse">❤️</span>
+              <span className="mx-1 text-red-500 animate-pulse">❤️</span>
               for educational institutions
             </p>
           </div>
@@ -266,9 +243,9 @@ export default function Footer() {
           {/* Back to top button */}
           <button
             onClick={scrollToTop}
-            className="p-3 bg-slate-800/50 hover:bg-slate-700/50 text-slate-400 hover:text-white rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg group"
+            className="p-3 transition-all duration-300 rounded-full bg-slate-800/50 hover:bg-slate-700/50 text-slate-400 hover:text-white hover:scale-110 hover:shadow-lg group"
           >
-            <ArrowUp className="h-5 w-5 group-hover:-translate-y-1 transition-transform" />
+            <ArrowUp className="w-5 h-5 transition-transform group-hover:-translate-y-1" />
           </button>
         </div>
 

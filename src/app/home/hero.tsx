@@ -155,7 +155,7 @@ export default function Hero() {
 
               <p className="max-w-2xl text-lg leading-relaxed md:text-xl lg:text-2xl text-slate-600 dark:text-slate-300">
                 Simplify exams, results, and parent communication — all in one
-                place. Zuvia is built for schools looking to digitize without
+                place. Civerit is built for schools looking to digitize without
                 the stress.
               </p>
             </motion.div>
@@ -276,7 +276,7 @@ export default function Hero() {
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600" />
                     <span className="font-semibold text-slate-800 dark:text-slate-200">
-                      Zuvia Dashboard
+                      Civerit Dashboard
                     </span>
                   </div>
                   <div className="flex gap-2">

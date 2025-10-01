@@ -20,7 +20,7 @@ export default function ModernTestimonialsUI() {
   const testimonials = [
     {
       quote:
-        "Zuvia has helped us move from paper-based report cards to digital ones — parents now receive results instantly.",
+        "Civerit has helped us move from paper-based report cards to digital ones — parents now receive results instantly.",
       author: "Mrs. Adeola James",
       role: "Principal, Bright Future School, Ibadan",
       avatar: "AJ",
@@ -38,7 +38,7 @@ export default function ModernTestimonialsUI() {
     },
     {
       quote:
-        "Setting up exams and generating results is now so simple. Zuvia saved us hours of admin work.",
+        "Setting up exams and generating results is now so simple. Civerit saved us hours of admin work.",
       author: "Mrs. Amina Bello",
       role: "Admin Officer, Harmony School, Abuja",
       avatar: "AB",
@@ -77,12 +77,12 @@ export default function ModernTestimonialsUI() {
   };
 
   return (
-    <div className="min-h-screen md:px-6 lg:px-12 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden md:px-6 lg:px-12 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Animated background elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000"></div>
-        <div className="absolute -bottom-20 left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-2000"></div>
+        <div className="absolute bg-purple-500 rounded-full top-20 left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div className="absolute delay-1000 rounded-full top-40 right-20 w-96 h-96 bg-cyan-500 mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div className="absolute bg-pink-500 rounded-full -bottom-20 left-40 w-80 h-80 mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-2000"></div>
       </div>
 
       {/* Floating particles */}
@@ -103,24 +103,24 @@ export default function ModernTestimonialsUI() {
 
       <div className="relative z-10 px-6 py-20">
         {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 mb-4">
+        <div className="mb-16 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 border rounded-full bg-white/5 backdrop-blur-sm border-white/10">
             <Star className="w-4 h-4 text-yellow-400 fill-current" />
             <span className="text-sm font-medium text-white">
               5-Star Reviews
             </span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-            <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+          <h1 className="mb-6 text-5xl font-bold text-white md:text-7xl">
+            <span className="text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text">
               Built for
             </span>
             <br />
             <span className="text-white">Modern Nigerian Schools</span>
           </h1>
 
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Hear from real school leaders using Zuvia to simplify results,
+          <p className="max-w-2xl mx-auto text-xl leading-relaxed text-gray-300">
+            Hear from real school leaders using Civerit to simplify results,
             engage parents, and manage academics better — with less stress.
           </p>
         </div>
@@ -129,7 +129,7 @@ export default function ModernTestimonialsUI() {
         <div className="max-w-6xl mx-auto mb-16">
           <div className="relative">
             {/* Featured testimonial */}
-            <div className="bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 p-8 md:p-12 shadow-2xl">
+            <div className="p-8 border shadow-2xl bg-white/5 backdrop-blur-lg rounded-3xl border-white/10 md:p-12">
               <div className="flex items-start gap-6">
                 <div
                   className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${testimonials[activeIndex].color} flex items-center justify-center text-white font-bold text-xl shadow-lg`}
@@ -147,14 +147,14 @@ export default function ModernTestimonialsUI() {
                     ))}
                   </div>
 
-                  <Quote className="w-8 h-8 text-purple-400 mb-4 opacity-60" />
+                  <Quote className="w-8 h-8 mb-4 text-purple-400 opacity-60" />
 
-                  <blockquote className="text-2xl md:text-3xl text-white leading-relaxed mb-6 font-light">
+                  <blockquote className="mb-6 text-2xl font-light leading-relaxed text-white md:text-3xl">
                     "{testimonials[activeIndex].quote}"
                   </blockquote>
 
                   <div>
-                    <p className="text-lg font-semibold text-white mb-1">
+                    <p className="mb-1 text-lg font-semibold text-white">
                       {testimonials[activeIndex].author}
                     </p>
                     <p className="text-gray-400">
@@ -170,21 +170,21 @@ export default function ModernTestimonialsUI() {
               <div className="flex items-center gap-4">
                 <button
                   onClick={prevTestimonial}
-                  className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
+                  className="flex items-center justify-center w-12 h-12 text-white transition-all duration-300 border rounded-full bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 hover:scale-110"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
 
                 <button
                   onClick={nextTestimonial}
-                  className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
+                  className="flex items-center justify-center w-12 h-12 text-white transition-all duration-300 border rounded-full bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 hover:scale-110"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
 
                 <button
                   onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-                  className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
+                  className="flex items-center justify-center w-12 h-12 text-white transition-all duration-300 border rounded-full bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 hover:scale-110"
                 >
                   {isAutoPlaying ? (
                     <Pause className="w-5 h-5" />
@@ -213,7 +213,7 @@ export default function ModernTestimonialsUI() {
         </div>
 
         {/* Testimonial grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 gap-6 mx-auto md:grid-cols-2 lg:grid-cols-4 max-w-7xl">
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
@@ -244,10 +244,10 @@ export default function ModernTestimonialsUI() {
                       {testimonial.avatar}
                     </div>
                     <div className="flex-1">
-                      <p className="text-white font-medium text-sm">
+                      <p className="text-sm font-medium text-white">
                         {testimonial.author}
                       </p>
-                      <p className="text-gray-400 text-xs">
+                      <p className="text-xs text-gray-400">
                         {testimonial.role}
                       </p>
                     </div>
@@ -262,7 +262,7 @@ export default function ModernTestimonialsUI() {
                     ))}
                   </div>
 
-                  <p className="text-gray-300 text-sm leading-relaxed line-clamp-4">
+                  <p className="text-sm leading-relaxed text-gray-300 line-clamp-4">
                     "{testimonial.quote}"
                   </p>
 
@@ -281,9 +281,9 @@ export default function ModernTestimonialsUI() {
         </div>
 
         {/* Call to action */}
-        <div className="text-center mt-20">
+        <div className="mt-20 text-center">
           <div
-            className="inline-flex items-center gap-4 px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer"
+            className="inline-flex items-center gap-4 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 rounded-full shadow-xl cursor-pointer bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-2xl hover:scale-105"
             onClick={() => {
               router.push("/register");
             }}
@@ -291,7 +291,7 @@ export default function ModernTestimonialsUI() {
             <span>
               <span>Not 10,000 schools yet — but yours could be.</span>
             </span>
-            <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20">
               <ChevronRight className="w-4 h-4" />
             </div>
           </div>
