@@ -267,12 +267,18 @@ export default function Hero() {
             }}
             className="relative"
           >
-            {/* <Image src={"/images/hero.png"} alt="Hero Image" fill /> */}
             <div className="relative">
               {/* Main Dashboard Mockup */}
-              <div className="relative p-8 transition-shadow duration-500 border shadow-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-slate-200 dark:border-slate-700 rounded-3xl hover:shadow-3xl">
+              <div className="relative p-8 transition-shadow duration-500 border shadow-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-slate-200 dark:border-slate-700 rounded-3xl hover:shadow-3xl h-[23rem]">
+                <Image
+                  src={"/images/hero-img.png"}
+                  alt="Hero Image"
+                  fill
+                  className=""
+                />
+
                 {/* Header */}
-                <div className="flex items-center justify-between mb-6">
+                {/* <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600" />
                     <span className="font-semibold text-slate-800 dark:text-slate-200">
@@ -284,10 +290,10 @@ export default function Hero() {
                     <div className="w-3 h-3 bg-yellow-400 rounded-full" />
                     <div className="w-3 h-3 bg-green-400 rounded-full" />
                   </div>
-                </div>
+                </div> */}
 
                 {/* Content Grid */}
-                <div className="space-y-4">
+                {/* <div className="space-y-4">
                   <div className="grid grid-cols-3 gap-4">
                     {[
                       {
@@ -318,7 +324,7 @@ export default function Hero() {
                       <div className="h-6 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 opacity-40" />
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Floating Cards */}
